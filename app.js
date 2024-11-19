@@ -8,8 +8,7 @@ require("dotenv").config();
 
 const app = express();
 
-//  Uncomment when you created initialize function for the server
-// const {initialize} = require("./initialization/serverinitialize")
+const {initialize} = require("./initialization/serverinitialize")
 
 const CORS_ALLOWED = process.env.ALLOWED_CORS
 
@@ -30,9 +29,8 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    //  Uncomment when you created initialize function for the server
-    // initialize();
-    // console.log("MongoDB Connected");
+    initialize();
+    console.log("MongoDB Connected");
   })
   .catch((err) => console.log(err));
   

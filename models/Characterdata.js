@@ -7,6 +7,10 @@ const CharacterDataSchema = new mongoose.Schema(
             ref: "Users",
             index: true
         },
+        username: {
+            type: String,
+            index: true,
+        },
         gender: {
             type: String,
             index: true

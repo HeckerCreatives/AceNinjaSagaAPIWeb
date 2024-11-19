@@ -10,6 +10,9 @@ const UsersSchema = new mongoose.Schema(
         password: {
             type: String
         },
+        email: {
+            type: String
+        },
         gametoken: {
             type: String
         },

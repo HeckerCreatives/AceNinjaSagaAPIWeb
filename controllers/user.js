@@ -1,6 +1,11 @@
 const { default: mongoose } = require("mongoose")
 const Users = require("../models/Users")
 
+const encrypt = async password => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+}
+
 exports.totalregistration = async (req, res) => {
         const totalUsers = await Users.countDocuments()
         .then(data => data)
@@ -199,3 +204,32 @@ exports.userlist = async (req, res) => {
     return res.json({ message: "success", data: data});
 
 } 
+
+
+exports.changeuserpasswordsuperadmin = async(req, res) => {
+
+    const { userid, password } = req.query
+
+    if(!userid || !password){
+        return res.status(400).json({ message: "failed", data: "Please input userid and password."})
+    }
+    
+    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    if(!passwordRegex.test(password)){
+        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+    }
+
+
+    const encryptedPassword = await encrypt(password)
+
+    await Users
+    .findOneAndUpdate({ _id: new mongoose.Types.ObjectId(userid)}, { $set: { password: encryptedPassword }})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while changing user password. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    return res.status(200).json({ message: "success" })
+}

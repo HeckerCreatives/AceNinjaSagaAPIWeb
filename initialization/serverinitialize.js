@@ -1,11 +1,12 @@
 const Maintenance = require("../models/Maintenance")
+const Staffusers = require("../models/Staffusers")
 const Users = require("../models/Users")
 const { default: mongoose } = require("mongoose")
 
 
 exports.initialize = async () => {
 
-    const admin = await Users.find({ auth: "superadmin"})
+    const admin = await Staffusers.find({ auth: "superadmin"})
     .then(data => data)
     .catch(err => {
         console.log(`Error finding the admin data: ${err}`)
@@ -13,7 +14,7 @@ exports.initialize = async () => {
     })
 
     if(admin.length <= 0 ){
-        await Users.create({ username: "aceninjasagaadmin", password: "KXiBP9gMaGoA", webtoken: "", status: "active", auth: "superadmin", email: "aceadmin@gmail.com"})
+        await Staffusers.create({ username: "aceninjasagaadmin", password: "KXiBP9gMaGoA", webtoken: "", status: "active", auth: "superadmin", email: "aceadmin@gmail.com"})
         .catch(err => {
             console.log(`Error saving admin data: ${err}`)
             return

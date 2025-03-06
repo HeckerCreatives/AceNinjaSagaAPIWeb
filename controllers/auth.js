@@ -9,6 +9,7 @@ const path = require("path");
 
 const privateKey = fs.readFileSync(path.resolve(__dirname, "../keys/private-key.pem"), 'utf-8');
 const { default: mongoose } = require("mongoose");
+const Staffusers = require("../models/Staffusers");
 
 const encrypt = async password => {
     const salt = await bcrypt.genSalt(10);
@@ -55,10 +56,51 @@ exports.register = async (req, res) => {
 
 }
 
+exports.registerstaffuser = async (req, res) => {
+    const { username, password, email, auth } = req.body
+
+    if(username.length < 5 || username.length > 20){
+        return res.status(400).json({ message: "failed", data: "Username input must be atleast 5 characters and maximum of 20 characters."})
+    }
+    if(password.length < 5 || password.length > 20){
+        return res.status(400).json({ message: "failed", data: "Password input must be atleast 5 characters and maximum of 20 characters."})
+    }
+  
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(!emailRegex.test(email)){
+        return res.status(400).json({ message: "failed", data: "Please input a valid email."})      
+    }   
+     if(!usernameRegex.test(username)){
+        return res.status(400).json({ message: "failed", data: "Special characters like &, %,^ are not allowed. Please input a valid username."})      
+    }    
+    if(!passwordRegex.test(password)){
+        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+    }
+
+    const userExists = await Staffusers.findOne({ $or: [{ username: { $regex: `^${username}$`, $options: 'i'}, email: { $regex: `^${email}$`, $options: 'i'}}]})
+
+    if(userExists){
+        return res.status(400).json({ message: "failed", data: "Username/Email has already been used."})
+    }
+
+    await Staffusers.create({ username: username, password: password, email: email, status: "active", webtoken: "", auth: auth })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while creating user account. Error: ${err}`)
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    return res.status(200).json({ message: "success"})
+
+}
+
+
 exports.authlogin = async(req, res) => {
     const { username, password } = req.query;
 
-    Users.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i') } })
+    Staffusers.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i') } })
     .then(async user => {
         if (user && (await user.matchPassword(password))){
             if (user.status != "active"){
@@ -67,7 +109,7 @@ exports.authlogin = async(req, res) => {
             if (user.auth === "superadmin"){
                 const token = await encrypt(privateKey)
 
-                await Users.findByIdAndUpdate({_id: user._id}, {$set: {webtoken: token}}, { new: true })
+                await Staffusers.findByIdAndUpdate({_id: user._id}, {$set: {webtoken: token}}, { new: true })
                 .then(async () => {
                     const payload = { id: user._id, username: user.username, status: user.status, token: token, auth: user.auth }
 

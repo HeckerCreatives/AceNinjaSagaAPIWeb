@@ -7,120 +7,136 @@ const Characterwallet = require("../models/Characterwallet")
 const Rankings = require("../models/Ranking")
 
 exports.createcharacter = async (req, res) => {
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
 
-    const { id } = req.user
-    const { username, gender, outfit, hair, eyes, facedetails, color } = req.body
-   
-    if(!id){
-        return res.status(401).json({ message: "failed", data: "You are not authorized to view this page. Please login the right account to view the page."})
-    }
+        const { id } = req.user;
+        const { username, gender, outfit, hair, eyes, facedetails, color, itemindex } = req.body;
 
-
-    const characterCount = await Characterdata.countDocuments({ owner: id });
-    if (characterCount >= 4) {
-        return res.status(400).json({ message: "failed", data: "Character limit reached. You cannot create more than 4 characters." });
-    }   
-    // check if username exists
-    await Characterdata.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i')} })
-    .then(async character => {
-        // if username exists throw error else start creating
-        if(character){
-            return res.json({ message: "failed", data: "Username already exist."})
-        } else {      
-            await Characterdata.create({ 
-                owner: id, 
-                username: username,
-                gender: gender, 
-                outfit: outfit,
-                hair: hair,
-                eyes: eyes,
-                facedetails: facedetails,
-                color: color,
-                title: "",
-                experience: 0,
-                level: 1,
-                badge: ""
-            })
-            .then(async data => {
-                await CharacterStats.create({
-                    owner: data._id,
-                    health: 100,
-                    energy: 50,
-                    armor: 20,
-                    magicresist: 15,
-                    speed: 10,
-                    attackdamage: 9,
-                    armorpen: 0,
-                    magicpen: 0,
-                    critchance: 0,
-                    magicdamage: 15,
-                    lifesteal: 0,
-                    omnivamp: 0,
-                    healshieldpower: 0,
-                    critdamage: 0,
-                })
-                .catch(async error => {
-                    await Characterdata.findByIdAndDelete(data._id)
-                    res.status(400).json({ message: "bad-request", data: error.message })
-                })
-
-                await Charactertitle.create({ owner: data._id, items: [{ itemid: "" }]})
-                .catch(async error => {
-                    await Characterdata.findByIdAndDelete(data._id)
-                    await CharacterStats.findOneAndDelete({ owner: data._id })
-                    res.status(400).json({ message: "bad-request", data: error.message })
-                })
-                
-                await Rankings.create({ owner: data._id, mmr: 10 })
-                .catch(async error => {
-                    await Characterdata.findByIdAndDelete(data._id)
-                    await CharacterStats.findOneAndDelete({ owner: data._id })
-                    await Charactertitle.findOneAndDelete({ owner: data._id })
-                    res.status(400).json({ message: "bad-request", data: error.message })
-                })
-
-                const walletListData = ["coins", "crystal"];
-                const walletBulkwrite = walletListData.map(walletData => ({
-                    insertOne: {
-                        document: { owner: data._id, type: walletData, amount: "0" }
-                    }
-                }));
-
-                await Characterwallet.bulkWrite(walletBulkwrite)
-                .catch(async error => {
-                    await Characterdata.findByIdAndDelete(data._id)
-                    await CharacterStats.findOneAndDelete({ owner: data._id })
-                    await Charactertitle.findOneAndDelete({ owner: data._id })
-                    await Rankings.findOneAndDelete({ owner: data._id })
-                    res.status(400).json({ message: "bad-request", data: error.message })
-                })
-
-                const inventoryListData = ["weapon", "outfit", "hair", "face", "eyes", "skincolor", "skins"];
-                const inventoryBulkWrite = inventoryListData.map(inventoryData => ({
-                    insertOne: {
-                        document: { owner: data._id, type: inventoryData }
-                    }
-                }));
-
-                await Characterinventory.bulkWrite(inventoryBulkWrite)
-                .catch(async error => {
-                    await Characterdata.findByIdAndDelete(data._id)
-                    await CharacterStats.findOneAndDelete({ owner: data._id })
-                    await Charactertitle.findOneAndDelete({ owner: data._id })
-                    await Characterwallet.deleteMany({ owner: data._id })
-                    await Rankings.findOneAndDelete({ owner: data._id })
-                    res.status(400).json({ message: "bad-request", data: error.message })
-                })
-
-                return res.status(200).json({ message: "success"})
-            })
-          .catch(error => res.status(400).json({ message: "bad-request", data: error.message }))
+        // Validation checks...
+        if(!id) {
+            return res.status(401).json({ 
+                message: "failed", 
+                data: "You are not authorized to view this page. Please login the right account to view the page."
+            });
         }
-    })
-    .catch(error => res.status(400).json({ message: "bad-request", data: error.message }))
 
-}
+            
+        const usernameRegex = /^[a-zA-Z0-9]+$/;
 
+        if(username.length < 5 || username.length > 20){
+            return res.status(400).json({ message: "failed", data: "Username length should be greater than 5 and less than 20 characters."})
+        }
+        if(!usernameRegex.test(username)){
+            return res.status(400).json({ message: "failed", data: "No special characters are allowed for username"})
+        }
+
+        if(!hair){
+            return res.status(400).json({ message: "failed", data: "Character creation failed: Missing required attributes. Please select gender, outfit, hair, eyes, face details, and color."})
+        }
+
+
+        const characterCount = await Characterdata.countDocuments({ owner: id });
+        if (characterCount >= 4) {
+            return res.status(400).json({ message: "failed", data: "Character limit reached. You cannot create more than 4 characters." });
+        }   
+
+        const exists = await Characterdata.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i')} })
+
+        if(!exists){
+            return res.status(400).json({ message: "failed", data: "Username already used." });
+        }
+        // Create character data
+        const data = await Characterdata.create([{ 
+            owner: id, 
+            username,
+            gender, 
+            outfit,
+            hair,
+            eyes,
+            facedetails,
+            color,
+            title: 0,
+            experience: 0,
+            level: 1,
+            badge: "",
+            itemindex
+        }], { session });
+
+        const characterId = data[0]._id;
+
+        // Create character stats
+        await CharacterStats.create([{
+            owner: characterId,
+            health: 100,
+            energy: 50,
+            armor: 20,
+            magicresist: 15,
+            speed: 10,
+            attackdamage: 9,
+            armorpen: 0,
+            magicpen: 0,
+            critchance: 0,
+            magicdamage: 15,
+            lifesteal: 0,
+            omnivamp: 0,
+            healshieldpower: 0,
+            critdamage: 0,
+        }], { session });
+
+        // Create character titles
+        await Charactertitle.create([{ 
+            owner: characterId, 
+            items: [{ itemid: "" }]
+        }], { session });
+
+        // Create rankings
+        await Rankings.create([{ 
+            owner: characterId, 
+            mmr: 10 
+        }], { session });
+
+        // Create skill tree
+        await CharacterSkillTree.create([{ 
+            owner: characterId, 
+            skillPoints: 0, 
+            skills: [], 
+            unlockedSkills: [] 
+        }], { session });
+
+        // Create wallets
+        const walletListData = ["coins", "crystal", "emerald"];
+        const walletBulkwrite = walletListData.map(walletData => ({
+            insertOne: {
+                document: { owner: characterId, type: walletData, amount: "0" }
+            }
+        }));
+        await Characterwallet.bulkWrite(walletBulkwrite, { session });
+
+        // Create inventory
+        const inventoryListData = ["weapon", "outfit", "hair", "face", "eyes", "skincolor", "skins"];
+        const inventoryBulkWrite = inventoryListData.map(inventoryData => ({
+            insertOne: {
+                document: { owner: characterId, type: inventoryData }
+            }
+        }));
+        await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
+
+        await session.commitTransaction();
+        return res.status(200).json({ message: "success" });
+
+    } catch (error) {
+        await session.abortTransaction();
+        console.log(`Error in character creation: ${error}`);
+        return res.status(400).json({ 
+            message: "bad-request", 
+            data: error.message 
+        });
+    } finally {
+        session.endSession();
+    }
+};
 
 exports.getplayerdata = async (req, res) => {
     const { userid } = req.query
@@ -204,6 +220,43 @@ exports.getplayerdata = async (req, res) => {
 
     return res.status(200).json({ message: "success", data: characterData})
 }
+
+exports.getplayercharacters = async (req, res) => {
+    const {id} = req.user
+
+    const tempdata = await Characterdata.find({owner: new mongoose.Types.ObjectId(id)})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching character datas for user: ${id}. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    const data = {}
+
+    tempdata.forEach(temp => {
+        const {_id, username, gender, outfit, hair, eyes, facedetails, color, title, experience, badge, itemindex} = temp;
+
+        data[itemindex] = {
+            id: _id,
+            Username: username,
+            CharacterCostume: {
+                Gender: gender,
+                OutfitId: outfit,
+                HairId: hair,
+                EyesId: eyes,
+                FaceDetailsId: facedetails,
+                ColorId: color,
+            },
+            Title: title,
+            CurrentXP: experience,
+            badge: badge,
+            Level: 1,
+        }
+    })
+
+    return res.json({message: "success", data: data})
+} 
 
 exports.getinventory = async (req, res) => {
     const { characterid } = req.query
@@ -327,4 +380,229 @@ exports.getWallet = async (req, res) => {
     })
 
     return res.status(200).json({ message: "success", data: data})
+}
+
+exports.getcharactertitles = async (req, res) => {
+    const { characterid } = req.query
+
+    if(!characterid){
+        return res.status(400).json({ message: "failed", data: "Please input character ID."})
+    }
+
+    const charactertitles = await Charactertitle.find({ owner: new mongoose.Types.ObjectId(characterid)})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while fetching character titles. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+
+    const formattedResponse = {
+        data: charactertitles.reduce((acc, title, index) => {
+            acc[index + 1] = {
+                id: title._id,
+                type: title.type,
+                items: title.items
+            }
+            return acc
+        }, {})
+    }
+
+    return res.status(200).json({ 
+        message: "success", 
+        data: formattedResponse.data 
+    })
+}
+
+exports.addxp = async (req, res) => {
+    const { characterid, xp } = req.body;
+
+    if(!characterid || !xp) {
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "Please input character ID and XP."
+        });
+    }
+
+    try {
+        const character = await Characterdata.findOne({ 
+            _id: new mongoose.Types.ObjectId(characterid)
+        });
+
+        if(!character) {
+            return res.status(400).json({ 
+                message: "failed", 
+                data: "Character not found."
+            });
+        }
+
+        let currentLevel = character.level;
+        let currentXP = character.experience + xp;
+        let levelsGained = 0;
+
+        // Calculate multiple level ups
+        while (true) {
+            let xpNeeded = 80 * currentLevel;
+            
+            if (currentXP >= xpNeeded) {
+                currentLevel++;
+                currentXP -= xpNeeded;
+                levelsGained++;
+            } else {
+                break;
+            }
+        }
+
+        // If levels were gained, update stats and skill points
+        if (levelsGained > 0) {
+            await CharacterStats.findOneAndUpdate(
+                { owner: characterid }, 
+                {
+                    $inc: {
+                        health: 10 * levelsGained,
+                        energy: 5 * levelsGained,
+                        armor: 2 * levelsGained,
+                        magicresist: 1 * levelsGained,
+                        speed: 1 * levelsGained,
+                        attackdamage: 1 * levelsGained,
+                        armorpen: 1 * levelsGained,
+                        magicpen: 1 * levelsGained,
+                        magicdamage: 1 * levelsGained,
+                        critdamage: 1 * levelsGained
+                    }
+                }
+            );
+
+            await CharacterSkillTree.findOneAndUpdate(
+                { owner: characterid }, 
+                {
+                    $inc: {
+                        skillPoints: 4 * levelsGained
+                    }
+                }
+            );
+        }
+
+        // Update character level and experience
+        character.level = currentLevel;
+        character.experience = currentXP;
+        await character.save();
+
+        return res.status(200).json({ 
+            message: "success",
+            data: {
+                newLevel: currentLevel,
+                levelsGained,
+                currentXP,
+                nextLevelXP: 80 * currentLevel
+            }
+        });
+
+    } catch (err) {
+        console.log(`Error in XP addition: ${err}`);
+        return res.status(500).json({
+            message: "failed",
+            data: "There's a problem with the server. Please contact support for more details."
+        });
+    }
+};
+
+exports.updateplayerprofile = async (req, res) => {
+
+    const { username, characterid } = req.body
+
+    if(!username || !characterid){
+        return res.status(400).json({ message: "failed", data: "Please input username and character ID."})
+    }
+
+    const character = await Characterdata.findOne({ _id: new mongoose.Types.ObjectId(characterid)})
+
+    if(!character){
+        return res.status(400).json({ message: "failed", data: "Character not found."})
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+
+    if(username.length < 5 || username.length > 20){
+        return res.status(400).json({ message: "failed", data: "Username length should be greater than 5 and less than 20 characters."})
+    }
+    if(!usernameRegex.test(username)){
+        return res.status(400).json({ message: "failed", data: "No special characters are allowed for username"})
+    }
+
+    character.username = username
+
+    await character.save()
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while saving character data. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    return res.status(200).json({ message: "success"})
+
+}
+
+exports.updateplayertitle = async (req, res) => {
+    const { titleid, characterid } = req.body;
+
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
+
+        // Find title in character's titles
+        const character = await Charactertitle.findOne(
+            { owner: new mongoose.Types.ObjectId(characterid) }
+        ).session(session);
+
+        if (!character) {
+            await session.abortTransaction();
+            return res.status(404).json({ 
+                message: "failed", 
+                data: "Character title not found" 
+            });
+        }
+
+        // Check if title exists in character's titles
+        const hasTitle = character.items.some(item => item.itemid === titleid);
+        if (!hasTitle) {
+            await session.abortTransaction();
+            return res.status(404).json({ 
+                message: "failed", 
+                data: "Title not found in character's collection" 
+            });
+        }
+
+        // check if there is a title equipped
+        const equippedTitle = character.items.find(item => item.isEquipped === true);
+        if (equippedTitle) {
+            // Unequip the title
+            equippedTitle.isEquipped = false;
+        }
+
+        // Equip the new title
+        const titleIndex = character.items.findIndex(item => item.itemid === titleid);
+        character.items[titleIndex].isEquipped = true;
+
+        // Save the updated title
+
+        await character.save({ session });
+
+        await session.commitTransaction();
+        return res.status(200).json({ 
+            message: "success",
+        });
+
+    } catch (err) {
+        await session.abortTransaction();
+        console.log(`Error in update title transaction: ${err}`);
+        return res.status(500).json({ 
+            message: "failed", 
+            data: "Failed to update title" 
+        });
+    } finally {
+        session.endSession();
+    }
 }

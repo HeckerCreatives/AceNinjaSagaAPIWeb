@@ -1,12 +1,13 @@
 const { creatnews, getnews, editnews, deletenews } = require("../controllers/news")
+const { protectsuperadmin } = require("../middleware/middleware")
 
 const router = require("express").Router()
 
 
 router
-.post("/createnews", creatnews)
+.post("/createnews", protectsuperadmin, creatnews)
 .get("/getnews", getnews)
-.post("/editnews", editnews)
-.get("/deletenews", deletenews)
+.post("/editnews", protectsuperadmin, editnews)
+.get("/deletenews", protectsuperadmin, deletenews)
 
 module.exports = router

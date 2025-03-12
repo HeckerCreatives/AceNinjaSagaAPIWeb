@@ -11,11 +11,17 @@ exports.getmaintenance = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
     })
 
-    const finaldata = {
-        id: maintenanceList._id,
-        type: maintenanceList.type,
-        value: maintenanceList.value
-    }
+    const finaldata = []
+
+    maintenanceList.forEach(data => {
+        const { id, type, value} = data
+
+        finaldata.push({
+            id: id,
+            type: type,
+            value: value
+        })
+    })
 
     return res.status(200).json({ message: "success", data: finaldata})
 

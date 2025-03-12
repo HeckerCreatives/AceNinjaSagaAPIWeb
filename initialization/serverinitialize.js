@@ -28,7 +28,7 @@ exports.initialize = async () => {
     })
 
     if (maintenanceList.length <= 0) {
-        const maintenanceListData = ["ingame", "fullgame"];
+        const maintenanceListData = ["fullgame", "market", "store", "battlepass", "quest", "dailyspin", "dailyxpspin", "weeklylogin", "monthlylogin", "chest", "pvp", "clan", "raidboss"];
         const maintenanceBulkWrite = maintenanceListData.map(maintenanceData => ({
             insertOne: {
                 document: { type: maintenanceData, value: "0" }

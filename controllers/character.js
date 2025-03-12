@@ -139,16 +139,16 @@ exports.createcharacter = async (req, res) => {
 };
 
 exports.getplayerdata = async (req, res) => {
-    const { userid } = req.query
+    const { characterid } = req.query
 
-    if(!userid){
+    if(!characterid){
         return res.status(400).json({ message: "failed", data: "Please input character ID."})
     }
 
     const matchCondition = [
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(userid) 
+                _id: new mongoose.Types.ObjectId(characterid) 
             }
         },
         {
@@ -233,26 +233,51 @@ exports.getplayercharacters = async (req, res) => {
     })
 
     const data = {}
-
+    let index = 0;
     tempdata.forEach(temp => {
-        const {_id, username, gender, outfit, hair, eyes, facedetails, color, title, experience, badge, itemindex} = temp;
+        const {_id, username, gender, outfit, hair, eyes, facedetails, level, color, title, experience, badge} = temp;
 
-        data[itemindex] = {
+        data[index] = {
             id: _id,
             Username: username,
             CharacterCostume: {
                 Gender: gender,
-                OutfitId: outfit,
-                HairId: hair,
-                EyesId: eyes,
-                FaceDetailsId: facedetails,
-                ColorId: color,
+                Outfit: outfit,
+                Hair: hair,
+                Eyes: eyes,
+                Facedetails: facedetails,
+                Color: color,
             },
             Title: title,
             CurrentXP: experience,
-            badge: badge,
-            Level: 1,
+            Badge: badge,
+            Level: level,
         }
+        index++;
+    })
+
+    return res.json({message: "success", data: data})
+} 
+
+exports.getplayercharactersweb = async (req, res) => {
+    const {id} = req.user
+
+    const tempdata = await Characterdata.find({owner: new mongoose.Types.ObjectId(id)})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching character datas for user: ${id}. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    const data = []
+    tempdata.forEach(temp => {
+        const {_id, username } = temp;
+
+        data.push({
+            id: _id,
+            username: username,
+        })
     })
 
     return res.json({message: "success", data: data})

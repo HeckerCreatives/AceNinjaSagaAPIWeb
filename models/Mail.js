@@ -3,6 +3,11 @@ const { default: mongoose } = require("mongoose");
 
 const MailSchema = new mongoose.Schema(
     {
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Characterdata',
+            required: true
+        },  
         title: {
             type: String,
             index: true
@@ -27,3 +32,7 @@ const MailSchema = new mongoose.Schema(
         timestamps: true
     }
 )
+
+const Mail = mongoose.model("Mail", MailSchema)
+
+module.exports = Mail

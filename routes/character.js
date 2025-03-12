@@ -1,4 +1,4 @@
-const { createcharacter, getplayerdata, userplayerdata, getinventory, getxplevel, getWallet, getplayercharacters, getcharactertitles, addxp, updateplayerprofile, updateplayertitle } = require("../controllers/character")
+const { createcharacter, getplayerdata, userplayerdata, getinventory, getxplevel, getWallet, getplayercharacters, getcharactertitles, addxp, updateplayerprofile, updateplayertitle, getplayercharactersweb } = require("../controllers/character")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 
 const router = require("express").Router()
@@ -8,6 +8,7 @@ router
 // #region PLAYER
 .get("/getplayerdata", getplayerdata)
 .get("/getplayercharacters", protectplayer, getplayercharacters)
+.get("/getplayercharactersweb", protectplayer, getplayercharactersweb)
 .get("/getinventorydata", protectplayer, getinventory)
 .get("/getxplevel", getxplevel)
 .get("/getwallet", getWallet)

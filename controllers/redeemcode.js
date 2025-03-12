@@ -1,10 +1,11 @@
+const Mail = require("../models/Mail")
 const { Redeemcode, CodesRedeemed } = require("../models/Redeemcode")
 
 
 
 exports.createcode = async (req, res) => {
 
-    const { code, description, status, expiry, rewards } = req.body
+    const { code, title, description, status, expiry, rewards } = req.body
 
     if(!code || !description || !status || !expiry || !rewards) {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
@@ -66,6 +67,14 @@ exports.claimcode = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
+    // get the code details
+
+    const codedeets = await Redeemcode.findOne({ code: code })
+
+    if(!codedeets) {
+        return res.status(400).json({ message: "failed", data: "Code does not exist"})
+    }
+
     // check if user has redeemed the code
 
     const hasRedeem = await CodesRedeemed.findOne({ owner: characterid, code: code })
@@ -86,6 +95,24 @@ exports.claimcode = async (req, res) => {
     // create redeem code
 
     await CodesRedeemed.create({ owner: characterid, code: code })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while creating redeem code. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    await Mail.create({ owner: characterid, title: codedeets.title, message: codedeets.description, status: "unread", type: "rewards", rewards: codedeets.rewards })
+    .then(data => data)
+    .catch(async err => {
+        console.log(`There's a problem while creating redeem code. Error: ${err}`)
+
+        await CodesRedeemed.findOneAndDelete({
+            owner: characterid,
+            code: code
+        })
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
 
     return res.status(200).json({ message: "success"})
 

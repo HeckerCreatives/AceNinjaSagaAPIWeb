@@ -7,6 +7,10 @@ const RedeemCodeSchema = new mongoose.Schema(
             type: String,
             index: true
         },
+        title: {
+            type: String,
+            required: true
+        },
         description: {
             type: String
         },
@@ -39,11 +43,6 @@ const CodesRedeemedSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Redeemcode',
             required: true
-        },
-        status: {
-            type: String,
-            enum: ["pending", "redeemed"],
-            default: "pending"
         },
     },
     {

@@ -1,11 +1,35 @@
+const { getannouncement, createannouncement, deleteannouncement, editannouncement } = require("../controllers/announcement")
+const { protectsuperadmin } = require("../middleware/middleware")
+
+
+const upload = require("../middleware/uploadpics")
+
+const uploadimg = upload.single("link")
+const uploadimgs = upload.array("link", 10)
+
+
 const router = require("express").Router()
-const { createannouncement, getannouncement, editannouncement, deleteannnouncement } = require("../controllers/announcement")
+
 
 
 router
-.post("/createannouncement", createannouncement)
 .get("/getannouncement", getannouncement)
-.post("/editannouncement", editannouncement)
-.get("/deleteannouncement", deleteannnouncement)
+.post("/createannouncement", protectsuperadmin, function (req, res, next){
+    uploadimg(req, res, function(err){
+        if(err){
+            return res.status(400).send({ message: "failed", data: err.message })
+        }
+        next()
+    })
+}, createannouncement)
+.post("/deleteannouncement", protectsuperadmin, deleteannouncement)
+.post("/updateannouncement", protectsuperadmin,  function (req, res, next){
+    uploadimg(req, res, function(err){
+        if(err){
+            return res.status(400).send({ message: "failed", data: err.message })
+        }
+        next()
+    })
+}, editannouncement)
 
 module.exports = router

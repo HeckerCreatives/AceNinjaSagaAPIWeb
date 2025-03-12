@@ -27,14 +27,14 @@ exports.register = async (req, res) => {
     }
   
     const usernameRegex = /^[a-zA-Z0-9]+$/;
-    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailRegex.test(email)){
         return res.status(400).json({ message: "failed", data: "Please input a valid email."})      
     }   
-     if(!usernameRegex.test(username)){
+    if(!usernameRegex.test(username)){
         return res.status(400).json({ message: "failed", data: "Special characters like &, %,^ are not allowed. Please input a valid username."})      
     }    
+    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
     if(!passwordRegex.test(password)){
         return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
     }

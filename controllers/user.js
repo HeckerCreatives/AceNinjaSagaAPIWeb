@@ -233,3 +233,51 @@ exports.changeuserpasswordsuperadmin = async(req, res) => {
 
     return res.status(200).json({ message: "success" })
 }
+
+exports.changeuserpassword = async(req, res) => {
+
+    const { id } = req.user;
+
+    const { oldpw, newpw } = req.body
+
+    if(!oldpw || !newpw){
+        return res.status(400).json({ message: "failed", data: "Please input old password and new password."})
+    }
+
+
+    const user = await Users.findOne({ _id: id })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while fetching user. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+
+    if(!user){
+        return res.status(400).json({ message: "failed", data: "User not found."})
+    }
+
+    if(!await user.matchPassword(oldpw)){
+        return res.status(400).json({ message: "failed", data: "Old password is incorrect."})
+    }
+
+    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    if(!passwordRegex.test(newpw)){
+        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+    }
+
+    const encryptedPassword = await encrypt(newpw)
+
+    await Users
+    .findOneAndUpdate({ _id: id}, { $set: { password: encryptedPassword }})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while changing user password. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    return res.status(200).json({ message: "success" })
+
+}

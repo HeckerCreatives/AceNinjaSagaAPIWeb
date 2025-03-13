@@ -5,6 +5,8 @@ const CharacterStats = require("../models/Characterstats")
 const Charactertitle = require("../models/Charactertitles")
 const Characterwallet = require("../models/Characterwallet")
 const Rankings = require("../models/Ranking")
+const { CharacterSkillTree } = require("../models/Skills")
+const { Battlepass } = require("../models/Battlepass")
 
 exports.createcharacter = async (req, res) => {
     const session = await mongoose.startSession();
@@ -44,7 +46,7 @@ exports.createcharacter = async (req, res) => {
 
         const exists = await Characterdata.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i')} })
 
-        if(!exists){
+        if(exists){
             return res.status(400).json({ message: "failed", data: "Username already used." });
         }
         // Create character data
@@ -121,7 +123,20 @@ exports.createcharacter = async (req, res) => {
                 document: { owner: characterId, type: inventoryData }
             }
         }));
-        await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
+        await Characterinventory.bulkWrite(inventoryBulkWrite, { session });
+
+        const battlepassData = await Battlepass.findOne
+        ({ owner: id, season: 1 })
+
+        if(!battlepassData){
+            await Battlepass.create([{
+                owner: id,
+                season: 1,
+                level: 1,
+                xp: 0,
+                rewards: []
+            }], { session })
+        }
 
         await session.commitTransaction();
         return res.status(200).json({ message: "success" });
@@ -136,7 +151,7 @@ exports.createcharacter = async (req, res) => {
     } finally {
         session.endSession();
     }
-};
+}
 
 exports.getplayerdata = async (req, res) => {
     const { characterid } = req.query
@@ -184,6 +199,15 @@ exports.getplayerdata = async (req, res) => {
             }
         },
         {
+            $lookup: {
+                from: "characterstats",
+                localField: "_id",
+                foreignField: "owner",
+                as: "stats"
+            }
+        },
+        { $unwind: "$stats"},
+        {
             $project: {
                 id: 1,
                 user: { $arrayElemAt: ["$user.username", 0] }, // Flatten user.username
@@ -191,6 +215,7 @@ exports.getplayerdata = async (req, res) => {
                 username: 1,
                 title: 1,
                 level: 1,
+                experience: 1,
                 mmr: { $arrayElemAt: ["$ranking.mmr", 0] },      // Flatten ranking.mmr
                 wallet: {                 
                     $map: {               
@@ -212,6 +237,22 @@ exports.getplayerdata = async (req, res) => {
                         }
                     }
                 },
+                stats: {
+                    health: "$stats.health",
+                    energy: "$stats.energy",
+                    armor: "$stats.armor",
+                    magicresist: "$stats.magicresist",
+                    speed: "$stats.speed",
+                    attackdamage: "$stats.attackdamage",
+                    armorpen: "$stats.armorpen",
+                    magicpen: "$stats.magicpen",
+                    critchance: "$stats.critchance",
+                    magicdamage: "$stats.magicdamage",
+                    lifesteal: "$stats.lifesteal",
+                    omnivamp: "$stats.omnivamp",
+                    healshieldpower: "$stats.healshieldpower",
+                    critdamage: "$stats.critdamage",
+                }
             }
         }
     ];

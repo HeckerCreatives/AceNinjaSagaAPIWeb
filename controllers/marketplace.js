@@ -61,6 +61,7 @@ exports.getMarketItems = async (req, res) => {
                     type: '$items.type',
                     rarity: '$items.rarity',
                     price: '$items.price',
+                    currency: '$items.currency',
                     description: '$items.description',
                     stats: '$items.stats',
                     imageUrl: '$items.imageUrl'

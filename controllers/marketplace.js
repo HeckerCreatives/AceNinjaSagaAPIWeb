@@ -486,3 +486,76 @@ exports.listequippeditems = async (req, res) => {
         });
     }
 }
+
+
+exports.grantplayeritemsuperadmin = async (req, res) => {
+    const { characterid, itemid, quantity } = req.body
+
+    try {
+        const item = await Market.findOne(
+            { 'items._id': itemid },
+            { 'items.$': 1 }
+        );
+
+        if (!item?.items[0]) {
+            return res.status(404).json({ message: "failed", data: "Item not found" });
+        }
+
+        const itemData = item.items[0];
+
+        const session = await mongoose.startSession();
+
+        try {
+
+            await session.startTransaction();
+
+            // Check if item already exists in inventory
+            const inventory = await CharacterInventory.findOne(
+                { owner: characterid, 'items.item': itemid },
+                { 'items.$': 1 }
+            ).session(session);
+
+            if (inventory?.items[0]) {
+                await CharacterInventory.findOneAndUpdate(
+                    { owner: characterid, 'items.item': itemid },
+                    { $inc: { 'items.$.quantity': quantity } },
+                    { session }
+                );
+            } else {
+                await CharacterInventory.findOneAndUpdate(
+                    { owner: characterid, type: itemData.type },
+                    { $push: { items: { item: itemData._id, quantity } } },
+                    { upsert: true, new: true, session }
+                );
+            }
+
+            await session.commitTransaction();
+
+            return res.status(200).json({ 
+                message: "success",
+                data: {
+                    item: itemData.name,
+                    quantity
+                }
+            });
+
+        }
+        catch (err) {
+            await session.abortTransaction();
+            console.log(`Error granting item to player: ${err}`);
+            return res.status(500).json({ 
+                message: "failed", 
+                data: "Failed to grant item" 
+            });
+        } finally {
+            session.endSession();
+        }
+
+    } catch (err) {
+        console.log(`Error finding item: ${err}`);
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "There's a problem with the server! Please try again later." 
+        });
+    }
+}

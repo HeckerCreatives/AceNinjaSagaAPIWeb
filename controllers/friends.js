@@ -352,3 +352,107 @@ exports.playerlist = async (req, res) => {
         });
     }
 };
+
+exports.removefriend = async (req, res) => {
+
+    const { id } = req.user;
+    const { characterId, friendId } = req.body;
+
+    if(!characterId || !friendId || !mongoose.Types.ObjectId.isValid(characterId) || !mongoose.Types.ObjectId.isValid(friendId)){
+        return res.status(400).json({
+            message: "failed",
+            data: "Invalid character ID"
+        });
+    }
+
+    const checker = await checkcharacter(id, characterId);
+
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this page. Please login the right account to view the page."
+        });
+    }
+
+    const friendship = await Friends.findOne({
+        $or: [
+            { character: characterId, friend: friendId },
+            { character: friendId, friend: characterId }
+        ]
+    });
+
+    if(!friendship){
+        return res.status(400).json({
+            message: "failed",
+            data: "Friendship not found"
+        });
+    }
+
+    await Friends.findOneAndDelete({
+        $or: [
+            { character: characterId, friend: friendId },
+            { character: friendId, friend: characterId }
+        ]
+    })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while removing friend. Error: ${err}`)
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    });
+
+    res.status(200).json({
+        message: "success"
+    });
+}
+
+exports.blockunblock = async (req, res) => {
+    const { id } = req.user;
+    const { characterId, friendId, status } = req.body;
+
+    if(!characterId || !friendId || !status || !mongoose.Types.ObjectId.isValid(characterId) || !mongoose.Types.ObjectId.isValid(friendId)){
+        return res.status(400).json({
+            message: "failed",
+            data: "Invalid character ID"
+        });
+    }
+
+    const checker = await checkcharacter(id, characterId);
+
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this page. Please login the right account to view the page."
+        });
+    }
+
+    const friendship = await Friends.findOne({
+        $or: [
+            { character: characterId, friend: friendId },
+            { character: friendId, friend: characterId }
+        ]
+    });
+
+    if(!friendship){
+        return res.status(400).json({
+            message: "failed",
+            data: "Friendship not found"
+        });
+    }
+
+    await Friends.findOneAndUpdate({
+        $or: [
+            { character: characterId, friend: friendId },
+            { character: friendId, friend: characterId }
+        ]
+    }, { status })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while blocking/unblocking friend. Error: ${err}`)
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    });
+
+    res.status(200).json({
+        message: "success"
+    });
+
+}

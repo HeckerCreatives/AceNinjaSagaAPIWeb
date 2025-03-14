@@ -8,6 +8,7 @@ const { CharacterSkillTree } = require("../models/Skills")
 const { Battlepass } = require("../models/Battlepass")
 const { checkcharacter } = require("../utils/character")
 const { CharacterInventory } = require("../models/Market")
+const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
 
 exports.createcharacter = async (req, res) => {
     const session = await mongoose.startSession();
@@ -124,7 +125,7 @@ exports.createcharacter = async (req, res) => {
                 document: { owner: characterId, type: inventoryData }
             }
         }));
-        await Characterinventory.bulkWrite(inventoryBulkWrite, { session });
+        await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
 
         const battlepassData = await Battlepass.findOne
         ({ owner: id, season: 1 })
@@ -138,6 +139,16 @@ exports.createcharacter = async (req, res) => {
                 rewards: []
             }], { session })
         }
+
+        await MonthlyLogin.create({
+            owner: characterId,
+            month: new Date().getMonth(),
+            year: new Date().getFullYear()
+        }, { session })
+        
+        await SpinnerRewards.create({
+            owner: characterId
+        }, { session })
 
         await session.commitTransaction();
         return res.status(200).json({ message: "success" });

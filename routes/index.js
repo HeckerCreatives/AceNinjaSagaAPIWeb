@@ -13,6 +13,8 @@ const routers = app => {
     app.use("/patchnote", require("./patchnote"))
     app.use("/payin", require("./payin"))
     app.use("/ranking", require("./ranking"))
+    app.use("/redeemcode", require("./redeemcode"))
+    app.use("/rewards", require("./rewards"))
     app.use("/skills", require("./skills"))
     app.use("/sociallinks", require("./sociallinks"))
     app.use("/subscription", require("./subscription"))

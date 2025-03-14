@@ -21,7 +21,6 @@ const verifyJWT = async (token) => {
 exports.protectplayer = async (req, res, next) => {
     const token = req.headers.cookie?.split('; ').find(row => row.startsWith('sessionToken='))?.split('=')[1]
 
-    console.log(token);
 
     if (!token){
         return res.status(401).json({ message: 'Unauthorized', data: "You are not authorized to view this page. Please login the right account to view the page." });

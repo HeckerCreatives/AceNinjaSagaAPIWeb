@@ -1,13 +1,15 @@
-const {  addFriend, acceptrejectFriendRequest, getFriends } = require("../controllers/friends")
+const {  addFriend, acceptrejectFriendRequest, getFriends, getFriendRequests, playerlist } = require("../controllers/friends")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 
 const router = require("express").Router()
 
 router
 // #region PLAYER
- .get("/getfriends", protectplayer, getFriends)
- .post("/addfriend", protectplayer, addFriend)
- .post("/acceptrejectfriendrequest", protectplayer, acceptrejectFriendRequest)
+.get("/getfriends", protectplayer, getFriends)
+.get("/getfriendrequests", protectplayer, getFriendRequests)
+.post("/addfriend", protectplayer, addFriend)
+.post("/acceptrejectfriendrequest", protectplayer, acceptrejectFriendRequest)
+.get("/playerlist", protectplayer, playerlist)
 // #endregion
 
 // #region SUPERADMIN

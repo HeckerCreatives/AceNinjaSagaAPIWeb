@@ -1,12 +1,13 @@
 const { default: mongoose } = require("mongoose")
 const Characterdata = require("../models/Characterdata")
-const Characterinventory = require("../models/Characterinventory")
 const CharacterStats = require("../models/Characterstats")
 const Charactertitle = require("../models/Charactertitles")
 const Characterwallet = require("../models/Characterwallet")
 const Rankings = require("../models/Ranking")
 const { CharacterSkillTree } = require("../models/Skills")
 const { Battlepass } = require("../models/Battlepass")
+const { checkcharacter } = require("../utils/character")
+const { CharacterInventory } = require("../models/Market")
 
 exports.createcharacter = async (req, res) => {
     const session = await mongoose.startSession();
@@ -325,31 +326,107 @@ exports.getplayercharactersweb = async (req, res) => {
 } 
 
 exports.getinventory = async (req, res) => {
-    const { characterid } = req.query
+    const { id } = req.user;
+    const { characterid, page = 0, limit = 10 } = req.query;
 
     if(!characterid) {
-        res.status(400).json({ message: "failed", data: "Please input characterId"})
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "Please input character ID"
+        });
     }
 
-    const inventorydata = await Characterinventory.find({ owner: new mongoose.Types.ObjectId(characterid)})
-    .then(data => data)
-    .catch(err => {
-        console.log(`There's a problem while fetching inventory data for user: ${characterid}. Error: ${err}`)
+    try {
+        const pageOptions = {
+            page: parseInt(page),
+            limit: parseInt(limit)
+        };
 
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
-    })
+        const [inventoryResults, totalItems] = await Promise.all([
+            CharacterInventory.aggregate([
+                { 
+                    $match: { 
+                        owner: new mongoose.Types.ObjectId(characterid) 
+                    } 
+                },
+                { 
+                    $unwind: { 
+                        path: "$items",
+                        preserveNullAndEmptyArrays: true 
+                    } 
+                },
+                {
+                    $lookup: {
+                        from: "items",
+                        localField: "items.item",
+                        foreignField: "_id",
+                        as: "itemDetails"
+                    }
+                },
+                { $unwind: { path: "$itemDetails", preserveNullAndEmptyArrays: true } },
+                { $skip: pageOptions.page * pageOptions.limit },
+                { $limit: pageOptions.limit }
+            ]),
+            CharacterInventory.aggregate([
+                { 
+                    $match: { 
+                        owner: new mongoose.Types.ObjectId(characterid) 
+                    } 
+                },
+                { 
+                    $unwind: { 
+                        path: "$items",
+                        preserveNullAndEmptyArrays: true 
+                    } 
+                },
+                { $count: "total" }
+            ])
+        ]);
 
-    const data = []
-    inventorydata.forEach(temp => {
-        data.push({
-            id: temp.id,
-            type: temp.type,
-            items: temp.items
-        })
-    })
+        const formattedResponse = {
+            data: inventoryResults.reduce((acc, item, index) => {
+                acc[index + 1] = {
+                    id: item._id,
+                    type: item.type,
+                    item: item.items ? {
+                        id: item.items.item,
+                        quantity: item.items.quantity,
+                        isEquipped: item.items.isEquipped,
+                        acquiredAt: item.items.acquiredAt,
+                        details: item.itemDetails ? {
+                            name: item.itemDetails.name,
+                            description: item.itemDetails.description,
+                            rarity: item.itemDetails.rarity,
+                            stats: item.itemDetails.stats,
+                            level: item.itemDetails.level,
+                            price: item.itemDetails.price
+                        } : null
+                    } : null
+                };
+                return acc;
+            }, {}),
+            pagination: {
+                total: totalItems[0]?.total || 0,
+                page: pageOptions.page,
+                limit: pageOptions.limit,
+                pages: Math.ceil((totalItems[0]?.total || 0) / pageOptions.limit)
+            }
+        };
 
-    return res.status(200).json({ message: "success", data: data})
-}
+        return res.status(200).json({ 
+            message: "success", 
+            data: formattedResponse.data,
+            pagination: formattedResponse.pagination
+        });
+
+    } catch (err) {
+        console.error(`Error fetching inventory: ${err}`);
+        return res.status(400).json({ 
+            message: "bad-request", 
+            data: "There's a problem with the server. Please try again later."
+        });
+    }
+};
 
 exports.getranking = async (req, res) => {
     const { characterid } = req.query 

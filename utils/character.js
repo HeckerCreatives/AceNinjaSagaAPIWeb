@@ -13,6 +13,7 @@ exports.checkcharacter = async (id, characterid) => {
         _id: characterid
     })
 
+
     if (!character) {
         return "failed"
     }

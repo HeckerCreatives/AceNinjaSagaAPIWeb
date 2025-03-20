@@ -222,6 +222,7 @@ exports.getplayerdata = async (req, res) => {
         {
             $project: {
                 id: 1,
+                userid: { $arrayElemAt: ["$user._id", 0] },
                 user: { $arrayElemAt: ["$user.username", 0] }, // Flatten user.username
                 status: { $arrayElemAt: ["$user.status", 0] },    // Flatten user.status
                 username: 1,

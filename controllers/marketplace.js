@@ -216,7 +216,6 @@ exports.sellitem = async (req, res) => {
                 { 'items.$': 1 }
             ).session(session);
 
-
             if (!item?.items[0]) {
                 await session.abortTransaction();
                 return res.status(404).json({ message: "failed", data: "Item not found" });

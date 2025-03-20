@@ -6,7 +6,9 @@ const router = require("express").Router()
 router
 // #region PLAYER
 .get("/getfriends", protectplayer, getFriends)
+.get("/getfriendssa", protectsuperadmin, getFriends)
 .get("/getfriendrequests", protectplayer, getFriendRequests)
+.get("/getfriendrequestssa", protectsuperadmin, getFriendRequests)
 .post("/addfriend", protectplayer, addFriend)
 .post("/acceptrejectfriendrequest", protectplayer, acceptrejectFriendRequest)
 .get("/playerlist", protectplayer, playerlist)

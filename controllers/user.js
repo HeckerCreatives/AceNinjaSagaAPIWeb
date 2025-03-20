@@ -41,12 +41,12 @@ exports.totalregistration = async (req, res) => {
 }
 
 exports.banunbanuser = async (req, res) => {
-    const { userid, status } = req.query
+    const { userid, status } = req.body
 
     if(!userid || !status){
         return res.status(400).json({ message: "failed", data: "Please input userid and status."})
     }
-    await Users.findOneAndUpdate({ id: new mongoose.Types.ObjectId(userid)}, { $set: { status: status}})
+    await Users.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(userid)}, { $set: { status: status}})
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem encounter while banning/unbanning users. Error: ${err}`)

@@ -9,7 +9,7 @@ const RedeemCodeSchema = new mongoose.Schema(
         },
         title: {
             type: String,
-            required: true
+            // required: true
         },
         description: {
             type: String

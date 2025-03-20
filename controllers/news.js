@@ -24,7 +24,7 @@ exports.creatnews = async (req, res) => {
 
 exports.getnews = async (req, res) => {
 
-    const {page, limit} = req.query
+    const {page, limit} = req.body
 
     const pageOptions = {
         page: parseInt(page) || 0,
@@ -145,7 +145,7 @@ exports.editnews = async (req, res) => {
 }
 
 exports.deletenews = async (req, res) => {
-    const { id } = req.query
+    const { id } = req.body
 
     if(!id){
         return res.status(400).json({ message: "failed", data: "Please input News id."})

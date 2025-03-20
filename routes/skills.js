@@ -9,7 +9,9 @@ router
 // #region USER
 .get("/getskills", protectplayer, getSkills)
 .get("/getskillswithcharacter", protectplayer, getSkillsWithCharacter)
+.get("/getskillswithcharactersa", protectsuperadmin, getSkillsWithCharacter)
 .get("/getcharacterskills", protectplayer, getcharacterSkills)
+.get("/getcharacterskillssa", protectsuperadmin, getcharacterSkills)
 .post("/acquirespbasedskills", protectplayer, acquirespbasedskills)
 .post("/acquirebuybasedskills", protectplayer, acquirebuybasedskills)
 .post("/equipskill", protectplayer, equipskill)

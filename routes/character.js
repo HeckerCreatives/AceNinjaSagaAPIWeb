@@ -10,6 +10,7 @@ router
 .get("/getplayercharacters", protectplayer, getplayercharacters)
 .get("/getplayercharactersweb", protectplayer, getplayercharactersweb)
 .get("/getinventorydata", protectplayer, getinventory)
+.get("/getinventorydatasa", protectsuperadmin, getinventory)
 .get("/getxplevel", getxplevel)
 .get("/getwallet", getWallet)
 .get("/getcharactertitles", protectplayer, getcharactertitles)

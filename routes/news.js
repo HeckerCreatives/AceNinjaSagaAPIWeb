@@ -8,6 +8,6 @@ router
 .post("/createnews", protectsuperadmin, creatnews)
 .get("/getnews", getnews)
 .post("/editnews", protectsuperadmin, editnews)
-.get("/deletenews", protectsuperadmin, deletenews)
+.post("/deletenews", protectsuperadmin, deletenews)
 
 module.exports = router

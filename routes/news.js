@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { creatnews, getnews, editnews, deletenews } = require("../controllers/news")
+const { createnews, getnews, editnews, deletenews } = require("../controllers/news")
 const { protectsuperadmin } = require("../middleware/middleware")
 
 const upload = require("../middleware/uploadpics")
@@ -14,7 +14,7 @@ router
 
         next()
     })
- }, creatnews)
+ }, createnews)
 .get("/getnews", getnews)
 .post("/editnews", protectsuperadmin,function (req, res, next) {
     uploadimg(req, res, function(err){

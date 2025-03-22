@@ -22,7 +22,7 @@ const News = require("../models/News")
 
 // }
 
-exports.creatnews = async (req, res) => {
+exports.createnews = async (req, res) => {
     const { title, content, contentType, url } = req.body;
 
     if (!title || !contentType) {
@@ -54,6 +54,48 @@ exports.creatnews = async (req, res) => {
     }
 };
 
+exports.editnews = async (req, res) => {
+    const { newsid, title, content, contentType, url } = req.body;
+
+    if (!newsid) {
+        return res.status(400).json({ message: "failed", data: "News ID is required." });
+    }
+
+    try {
+        const existingNews = await News.findOne({ _id: newsid });
+        if (!existingNews) {
+            return res.status(404).json({ message: "failed", data: "News not found." });
+        }
+
+        let mediaUrl = existingNews.url; 
+        if (contentType === "image") {
+            if (req.file) {
+                mediaUrl = req.file.path; 
+            }
+        } else if (contentType === "video") {
+            if (url) {
+                mediaUrl = url; 
+            }
+        } else if (contentType) {
+            return res.status(400).json({ message: "failed", data: "Invalid content type. Allowed: image, video." });
+        }
+
+        await News.updateOne(
+            { _id: newsid },
+            {
+                title: title || existingNews.title, 
+                content: content || existingNews.content, 
+                type: contentType || existingNews.type,
+                url: mediaUrl
+            }
+        );
+
+        return res.status(200).json({ message: "success" });
+    } catch (err) {
+        console.error(`Error updating news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
+    }
+}
 
 exports.getnews = async (req, res) => {
 
@@ -95,81 +137,81 @@ exports.getnews = async (req, res) => {
 
 }
 
-exports.editnews = async (req, res) => {
+// exports.editnews = async (req, res) => {
     
-    const {id, action, title, content} = req.body
+//     const {id, action, title, content} = req.body
 
-    if(!id || !action){
-        return res.status(400).json({ message: "failed", data: "Please input News id and action."})
-    }
+//     if(!id || !action){
+//         return res.status(400).json({ message: "failed", data: "Please input News id and action."})
+//     }
 
-    if(!content){
-        return res.status(400).json({ message: "failed", data: "Please input content fields."})
-    }
+//     if(!content){
+//         return res.status(400).json({ message: "failed", data: "Please input content fields."})
+//     }
 
-    if(action === "add"){
-        await News.findByIdAndUpdate(
-            id, 
-            { 
-                $set: { title: title},
-                $push: { 
-                content: { 
-                    $each: Array.isArray(content) ? content: [content] 
-                } 
-            } 
-        })
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
+//     if(action === "add"){
+//         await News.findByIdAndUpdate(
+//             id, 
+//             { 
+//                 $set: { title: title},
+//                 $push: { 
+//                 content: { 
+//                     $each: Array.isArray(content) ? content: [content] 
+//                 } 
+//             } 
+//         })
+//         .then(data => data)
+//         .catch(err => {
+//             console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
 
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
-        })
-    } else if(action === "edit"){
-        const bulkOps = content.map((content) => ({
-            updateOne: {
-                filter: { _id: id, "content._id": content.id },
-                update: {
-                    $set: {
-                        "content.$.type": content.type,
-                        "content.$.value": content.value,
-                    },
-                },
-            },
-        }));
+//             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+//         })
+//     } else if(action === "edit"){
+//         const bulkOps = content.map((content) => ({
+//             updateOne: {
+//                 filter: { _id: id, "content._id": content.id },
+//                 update: {
+//                     $set: {
+//                         "content.$.type": content.type,
+//                         "content.$.value": content.value,
+//                     },
+//                 },
+//             },
+//         }));
 
-        if (title) {
-            bulkOps.push({
-                updateOne: {
-                    filter: { _id: id },
-                    update: { $set: { title } },
-                },
-            });
-        }
-         await News.bulkWrite(bulkOps)
-         .then(data => data)
-         .catch(err => {
-            console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
+//         if (title) {
+//             bulkOps.push({
+//                 updateOne: {
+//                     filter: { _id: id },
+//                     update: { $set: { title } },
+//                 },
+//             });
+//         }
+//          await News.bulkWrite(bulkOps)
+//          .then(data => data)
+//          .catch(err => {
+//             console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
 
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
-         })
-    } else if(action === "force"){
-        const newNewsData = {
-            id: id,
-            title: title,
-            content: content
-        }
-        await News.findOneAndReplace({ _id: id}, newNewsData)
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
-        })
-    } else {
-        return res.status(400).json({ message: "failed", data: "Action must be add/edit or delete."})
-    }
+//             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+//          })
+//     } else if(action === "force"){
+//         const newNewsData = {
+//             id: id,
+//             title: title,
+//             content: content
+//         }
+//         await News.findOneAndReplace({ _id: id}, newNewsData)
+//         .then(data => data)
+//         .catch(err => {
+//             console.log(`There's a problem encountered while editting News with the action ${action}. Error: ${err}`)
+//             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+//         })
+//     } else {
+//         return res.status(400).json({ message: "failed", data: "Action must be add/edit or delete."})
+//     }
 
-    return res.status(200).json({ message: "success"})
-}
+//     return res.status(200).json({ message: "success"})
+// }
 
 exports.deletenews = async (req, res) => {
     const { id } = req.body

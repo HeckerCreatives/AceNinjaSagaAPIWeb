@@ -22,6 +22,7 @@ const routers = app => {
     app.use("/user", require("./user"))
     app.use("/transaction", require("./transaction"))
     app.use("/uploads", require('./picture'));
+    app.use("/downloadlinks", require('./downloadlinks'));
 
 }
 

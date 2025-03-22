@@ -2,98 +2,230 @@ const { default: mongoose } = require("mongoose")
 const Announcement = require("../models/Announcement")
 
 exports.createannouncement = async (req, res) => {
-    const { id } = req.user
-    const { title, description, type } = req.body
-    const link = req.file?.path || ""
+    const { title, content, contentType, url } = req.body;
 
-    if (!title || !description || !type) {
-        return res.status(400).json({ message: "failed", data: "Please input all data." })
+    if (!title || !contentType) {
+        return res.status(400).json({ message: "failed", data: "Please provide title and content type." });
+    }
+
+    let mediaUrl = "";
+
+    if (contentType === "image") {
+        if (!req.file) {
+            return res.status(400).json({ message: "failed", data: "Please select an image first!" });
+        }
+        mediaUrl = req.file.path;
+    } else if (contentType === "video") {
+        if (!url) {
+            return res.status(400).json({ message: "failed", data: "Please provide a video URL." });
+        }
+        mediaUrl = url;
+    } else {
+        return res.status(400).json({ message: "failed", data: "Invalid content type. Allowed: image, video." });
     }
 
     try {
-        await Announcement.create({ owner: id, title, description, type, link })
-        return res.status(200).json({ message: "success" })
+        await Announcement.create({ title, content, type: contentType, url: mediaUrl });
+        return res.status(200).json({ message: "success" });
     } catch (err) {
-        console.log(`There's a problem encountered while creating Content. Error: ${err}.`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+        console.error(`Error creating news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
     }
-}
-
+};
 
 exports.editannouncement = async (req, res) => {
-    const { id, title, description, type } = req.body
-    const link = req.file?.path || ""
+    const { newsid, title, content, contentType, url } = req.body;
 
-    if (!title || !description || !type) {
-        return res.status(400).json({ message: "failed", data: "Please input all data." })
+    if (!newsid) {
+        return res.status(400).json({ message: "failed", data: "News ID is required." });
     }
 
     try {
-        await Announcement.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { title, description, type, link })
-        return res.status(200).json({ message: "success" })
+        const existingNews = await News.findOne({ _id: newsid });
+        if (!existingNews) {
+            return res.status(404).json({ message: "failed", data: "News not found." });
+        }
+
+        let mediaUrl = existingNews.url; 
+        if (contentType === "image") {
+            if (req.file) {
+                mediaUrl = req.file.path; 
+            }
+        } else if (contentType === "video") {
+            if (url) {
+                mediaUrl = url; 
+            }
+        } else if (contentType) {
+            return res.status(400).json({ message: "failed", data: "Invalid content type. Allowed: image, video." });
+        }
+
+        await Announcement.updateOne(
+            { _id: newsid },
+            {
+                title: title || existingNews.title, 
+                content: content || existingNews.content, 
+                type: contentType || existingNews.type,
+                url: mediaUrl
+            }
+        );
+
+        return res.status(200).json({ message: "success" });
     } catch (err) {
-        console.log(`There's a problem encountered while updating Content. Error: ${err}.`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-    }
-}
-
-exports.deleteannouncement = async (req, res) => {
-    const { id } = req.query
-
-    if (!id) {
-        return res.status(400).json({ message: "failed", data: "Please input ID field." })
-    }
-
-    try {
-        await Announcement.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id) })
-        return res.status(200).json({ message: "success" })
-    } catch (err) {
-        console.log(`There's a problem encountered when deleting content. Error: ${err}`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+        console.error(`Error updating news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
     }
 }
 
 exports.getannouncement = async (req, res) => {
-    const { type, limit, page } = req.query
+
+    const {page, limit} = req.body
+
     const pageOptions = {
-        limit: parseInt(limit) || 10,
-        page: parseInt(page) || 0
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10
     }
 
-    try {
-        const contentData = await Announcement.aggregate([
-            {
-                $match: {
-                    type: { $regex: `^${type}$`, $options: 'i' }
-                }
-            },
-            {
-                $sort: { createdAt: -1 }
-            },
-            {
-                $limit: pageOptions.limit
-            },
-            {
-                $skip: pageOptions.limit * pageOptions.page
-            }
-        ])
+    const AnnouncementData = await Announcement.find()
+    .skip(pageOptions.page * pageOptions.limit)
+    .limit(pageOptions.limit)
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while fetching News data. Error: ${err}`)
 
-        const finalData = contentData.map(temp => {
-            const { _id, title, description, link } = temp
-            return {
-                id: _id,
-                title,
-                description,
-                link
-            }
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    const totalList = await News.countDocuments();
+
+    const finalData = []
+
+
+    AnnouncementData.forEach(data => {
+        const { id, title, content, type, url } = data
+
+        finalData.push({
+            id: id,
+            title: title,
+            content: content,
+            type: type,
+            url: url
         })
+    });
 
-        return res.status(200).json({ message: "success", data: finalData })
-    } catch (err) {
-        console.log(`There's a problem while fetching content data. Error: ${err}`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-    }
+    return res.status(200).json({ message: "success", data: finalData, totalPages: Math.ceil(totalList / pageOptions.limit)})
+
 }
+
+exports.deleteannouncement = async (req, res) => {
+    const { id } = req.body
+
+    if(!id){
+        return res.status(400).json({ message: "failed", data: "Please input News id."})
+    }
+
+    await Announcement.findByIdAndDelete(new mongoose.Types.ObjectId(id))
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while deleting News. Error: ${err}`)
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    return res.status(200).json({ message: "success"})
+}
+
+// exports.createannouncement = async (req, res) => {
+//     const { id } = req.user
+//     const { title, description, type } = req.body
+//     const link = req.file?.path || ""
+
+//     if (!title || !description || !type) {
+//         return res.status(400).json({ message: "failed", data: "Please input all data." })
+//     }
+
+//     try {
+//         await Announcement.create({ owner: id, title, description, type, link })
+//         return res.status(200).json({ message: "success" })
+//     } catch (err) {
+//         console.log(`There's a problem encountered while creating Content. Error: ${err}.`)
+//         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+//     }
+// }
+
+
+// exports.editannouncement = async (req, res) => {
+//     const { id, title, description, type } = req.body
+//     const link = req.file?.path || ""
+
+//     if (!title || !description || !type) {
+//         return res.status(400).json({ message: "failed", data: "Please input all data." })
+//     }
+
+//     try {
+//         await Announcement.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { title, description, type, link })
+//         return res.status(200).json({ message: "success" })
+//     } catch (err) {
+//         console.log(`There's a problem encountered while updating Content. Error: ${err}.`)
+//         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+//     }
+// }
+
+// exports.deleteannouncement = async (req, res) => {
+//     const { id } = req.query
+
+//     if (!id) {
+//         return res.status(400).json({ message: "failed", data: "Please input ID field." })
+//     }
+
+//     try {
+//         await Announcement.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id) })
+//         return res.status(200).json({ message: "success" })
+//     } catch (err) {
+//         console.log(`There's a problem encountered when deleting content. Error: ${err}`)
+//         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+//     }
+// }
+
+// exports.getannouncement = async (req, res) => {
+//     const { type, limit, page } = req.query
+//     const pageOptions = {
+//         limit: parseInt(limit) || 10,
+//         page: parseInt(page) || 0
+//     }
+
+//     try {
+//         const contentData = await Announcement.aggregate([
+//             {
+//                 $match: {
+//                     type: { $regex: `^${type}$`, $options: 'i' }
+//                 }
+//             },
+//             {
+//                 $sort: { createdAt: -1 }
+//             },
+//             {
+//                 $limit: pageOptions.limit
+//             },
+//             {
+//                 $skip: pageOptions.limit * pageOptions.page
+//             }
+//         ])
+
+//         const finalData = contentData.map(temp => {
+//             const { _id, title, description, link } = temp
+//             return {
+//                 id: _id,
+//                 title,
+//                 description,
+//                 link
+//             }
+//         })
+
+//         return res.status(200).json({ message: "success", data: finalData })
+//     } catch (err) {
+//         console.log(`There's a problem while fetching content data. Error: ${err}`)
+//         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+//     }
+// }
 
 
 

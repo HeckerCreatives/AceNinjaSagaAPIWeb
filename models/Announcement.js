@@ -6,15 +6,15 @@ const AnnouncementSchema = new mongoose.Schema(
             type: String,
             index: true
         },
-        description: {
-            type: String
+        content: {
+            type: String,
         },
         type: {
-            type: String
-        }, // video  description  image
-        link: {
-            type: String
-        },  
+            type: String,
+        },
+        url: {
+            type: String,
+        }
     },
     {
         timestamps: true

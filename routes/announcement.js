@@ -1,11 +1,10 @@
-const { getannouncement, createannouncement, deleteannouncement, editannouncement } = require("../controllers/announcement")
+const { getannouncement, createannouncement, editannouncement, deleteannouncement} = require("../controllers/announcement")
 const { protectsuperadmin } = require("../middleware/middleware")
 
 
 const upload = require("../middleware/uploadpics")
 
-const uploadimg = upload.single("link")
-const uploadimgs = upload.array("link", 10)
+const uploadimg = upload.single("url")
 
 
 const router = require("express").Router()

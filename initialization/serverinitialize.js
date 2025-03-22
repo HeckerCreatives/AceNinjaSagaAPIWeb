@@ -1,6 +1,7 @@
 const Maintenance = require("../models/Maintenance")
 const Staffusers = require("../models/Staffusers")
 const Users = require("../models/Users")
+const Downloadlinks = require("../models/Downloadlinks")
 const { default: mongoose } = require("mongoose")
 
 
@@ -38,6 +39,26 @@ exports.initialize = async () => {
 
         await Maintenance.bulkWrite(maintenanceBulkWrite);
     }
+
+
+    //Download links
+    const defaultLinks = [
+        { link: "https://play.google.com/store/apps/details?id=com.example.app", title: "Playstore", type: "android" },
+        { link: "https://apps.apple.com/us/app/example-app/id123456789", title: "Appstore", type: "ios" },
+        { link: "https://store.steampowered.com/app/123456/ExampleGame", title: "Steam", type: "pc" }
+    ];
+
+    const existingDownloadLinks = await Downloadlinks.countDocuments();
+    if (existingDownloadLinks > 0) {
+        console.log("Download links already initialized.");
+        return;
+    } else {
+        await Downloadlinks.insertMany(defaultLinks);
+
+    }
+
+    
+
 
 
     console.log("SERVER DATA INITIALIZED")

@@ -4,7 +4,8 @@ const Users = require("../models/Users")
 
 exports.deletenewsletter = async (req, res) => {
 
-    const { newsletterid } = req.query
+    const { newsletterid } = req.body
+
 
     if(!newsletterid) {
         return res.status(400).json({ message: "failed", data: "Please input newsletter id field."})
@@ -42,31 +43,33 @@ exports.editnewsletter = async (req, res) => {
 }
 
 
-exports.createnewsletter = async (req, res) => {    
-    const { id } = req.user;
+ exports.createnewsletter = async (req, res) => {    
+     const { id } = req.user;
 
-    const { title, description, type } = req.body;
+     const { title, description, type } = req.body;
 
-    if(!title || !description || !type) {
-        return res.status(400).json({ message: "failed", data: "Incomplete input fields."})
-    }
-    let bannerimg = "";
+     if(!title || !description || !type) {
+         return res.status(400).json({ message: "failed", data: "Incomplete input fields."})
+     }
+     let bannerimg = "";
 
-    if(req.file) {
-        bannerimg = req.file.path
-    } else {
-        return res.json({message: "failed", data: "Please select an image first!"})
-    }
+     if(req.file) {
+         bannerimg = req.file.path
+     } else {
+         return res.json({message: "failed", data: "Please select an image first!"})
+     }
 
-     const data = await Newsletter.create({ owner: id, title: title, description: description, banner: bannerimg, type: type})
-     .then(data => data)
-     .catch(err => {
-        console.log(`There's a problem encourted while creating newsletter. Error: ${err}`)
-        return res.status(400).json({ message: "Bad-request", data: "There's a problem with the server. Please contact support for more details."})
-     })
+      const data = await Newsletter.create({ owner: id, title: title, description: description, banner: bannerimg, type: type})
+      .then(data => data)
+      .catch(err => {
+         console.log(`There's a problem encourted while creating newsletter. Error: ${err}`)
+         return res.status(400).json({ message: "Bad-request", data: "There's a problem with the server. Please contact support for more details."})
+      })
 
-     return res.status(200).json({ message: "success", data: data.banner })
-}
+      return res.status(200).json({ message: "success", data: data.banner })
+ }
+
+
 
 
 exports.getnewsletterlist = async (req, res) => {

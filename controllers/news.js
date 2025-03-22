@@ -2,25 +2,58 @@ const { default: mongoose } = require("mongoose")
 const News = require("../models/News")
 
 
-exports.creatnews = async (req, res) => {
+// exports.creatnews = async (req, res) => {
    
-    const { title, content} = req.body
+//     const { title, content} = req.body
 
-    if(!title || !content){
-        return res.status(400).json({ message: "failed", data: "Please input title and type."})
+//     if(!title || !content){
+//         return res.status(400).json({ message: "failed", data: "Please input title and type."})
+//     }
+
+//     await News.create({ title: title, content: content})
+//     .then(data => data)
+//     .catch(err => {
+//         console.log(`There's a problem encountered while creating News. Error: ${err}`)
+
+//         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+//     })
+
+//     return res.status(200).json({ message: "success"})
+
+// }
+
+exports.creatnews = async (req, res) => {
+    const { title, content, contentType, url } = req.body;
+
+    if (!title || !contentType) {
+        return res.status(400).json({ message: "failed", data: "Please provide title and content type." });
     }
 
-    await News.create({ title: title, content: content})
-    .then(data => data)
-    .catch(err => {
-        console.log(`There's a problem encountered while creating News. Error: ${err}`)
+    let mediaUrl = "";
 
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
-    })
+    if (contentType === "image") {
+        if (!req.file) {
+            return res.status(400).json({ message: "failed", data: "Please select an image first!" });
+        }
+        mediaUrl = req.file.path;
+    } else if (contentType === "video") {
+        if (!url) {
+            return res.status(400).json({ message: "failed", data: "Please provide a video URL." });
+        }
+        mediaUrl = url;
+    } else {
+        return res.status(400).json({ message: "failed", data: "Invalid content type. Allowed: image, video." });
+    }
 
-    return res.status(200).json({ message: "success"})
+    try {
+        await News.create({ title, content, type: contentType, url: mediaUrl });
+        return res.status(200).json({ message: "success" });
+    } catch (err) {
+        console.error(`Error creating news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
+    }
+};
 
-}
 
 exports.getnews = async (req, res) => {
 
@@ -47,20 +80,14 @@ exports.getnews = async (req, res) => {
 
 
     NewsData.forEach(data => {
-        const { id, title, content } = data
-        const edittedcontent = []
+        const { id, title, content, type, url } = data
 
-        content.forEach(content => {
-            edittedcontent.push({
-                id: content._id,
-                type: content.type,
-                value: content.value
-            })
-        })
         finalData.push({
             id: id,
             title: title,
-            content: edittedcontent,
+            content: content,
+            type: type,
+            url: url
         })
     });
 

@@ -10,7 +10,7 @@ const uploadimg = upload.single("bannerimg")
 
 router
  .get("/getnewsletterlist", protectsuperadmin, getnewsletterlist)
- .get("/deletenewsletter", protectsuperadmin, deletenewsletter)
+ .post("/deletenewsletter", protectsuperadmin, deletenewsletter)
  .post("/createnewsletter", protectsuperadmin, function (req, res, next) {
     uploadimg(req, res, function(err){
         if(err) {

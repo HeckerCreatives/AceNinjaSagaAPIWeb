@@ -11,7 +11,7 @@ exports.createcode = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
-    await Redeemcode.create({ code, description, status, expiration: expiry, rewards })
+    await Redeemcode.create({ code,title, description, status, expiration: expiry, rewards })
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem while creating redeem code. Error: ${err}`)

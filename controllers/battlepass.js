@@ -27,6 +27,32 @@ exports.getbattlepass = async (req, res) => {
     return res.status(200).json({ message: "success", data: battlepassdata })
 }
 
+exports.getbattlepasssa = async (req, res) => {
+
+    const { id } = req.user
+    const { characterid, userid } = req.query
+
+    const checker = await checkcharacter(userid, characterid)
+    if (checker === "failed") {
+        return res.status(400).json({ message: "failed", data: "Character not found." })
+    }
+
+
+    const battlepassdata = await Battlepass.findOne({ owner: characterid })
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding battlepass data: ${err}`)
+        return
+    })
+
+    if(!battlepassdata){
+        return res.status(400).json({ message: "failed", data: "Battlepass data not found." })
+    }
+
+    return res.status(200).json({ message: "success", data: battlepassdata })
+}
+
+
 exports.addexperience = async (req, res) => {
 
     const { id } = req.user

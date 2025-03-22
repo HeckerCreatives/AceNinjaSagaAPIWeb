@@ -99,7 +99,7 @@ exports.editnews = async (req, res) => {
 
 exports.getnews = async (req, res) => {
 
-    const {page, limit} = req.body
+    const {page, limit} = req.query
 
     const pageOptions = {
         page: parseInt(page) || 0,

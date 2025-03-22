@@ -17,7 +17,8 @@ const NewsletterSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-        }
+        },
+        
     },
     {
         timestamps: true

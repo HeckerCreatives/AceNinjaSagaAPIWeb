@@ -14,6 +14,9 @@ const AnnouncementSchema = new mongoose.Schema(
         },
         url: {
             type: String,
+        },
+        announcementtype: {
+            type: String,
         }
     },
     {

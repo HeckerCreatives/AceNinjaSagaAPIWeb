@@ -1,12 +1,14 @@
 const Maintenance = require("../models/Maintenance")
 const Staffusers = require("../models/Staffusers")
 const Users = require("../models/Users")
+const Rankings = require("../models/Ranking")
+const RankTier = require("../models/RankTier")
+const Season = require("../models/Season")
 const Downloadlinks = require("../models/Downloadlinks")
 const { default: mongoose } = require("mongoose")
 
 
 exports.initialize = async () => {
-
     const admin = await Staffusers.find({ auth: "superadmin"})
     .then(data => data)
     .catch(err => {
@@ -40,6 +42,59 @@ exports.initialize = async () => {
         await Maintenance.bulkWrite(maintenanceBulkWrite);
     }
 
+    //ranks season
+    const currentSeason = await Season.findOne({ isActive: "active" });
+
+    if (!currentSeason) {
+        console.log("No active season found. Cannot update player ranks.");
+        return;
+    } 
+
+    const allPlayers = await Rankings.find();
+
+    if (allPlayers.length === 0) {
+        console.log("No players found.");
+        return;
+    }
+    console.log("Updating player ranks based on MMR...");
+    const rankTiers = await RankTier.find().sort({ requiredmmr: 1 });
+    if (rankTiers.length === 0) {
+        console.log("No rank tiers found. Cannot update player ranks.");
+        return;
+    }
+
+    for (const player of allPlayers) {
+            let assignedRank = rankTiers[0]; 
+
+            for (const tier of rankTiers) {
+                if (player.mmr >= parseInt(tier.requiredmmr)) {
+                    assignedRank = tier;
+                } else {
+                    break;
+                }
+            }
+
+            if (
+                !player.rank || 
+                player.rank.toString() !== assignedRank._id.toString() || 
+                !player.season || 
+                player.season.toString() !== currentSeason._id.toString()
+            ) {
+                await Rankings.updateOne(
+                    { _id: player._id },
+                    { 
+                        $set: { 
+                            rank: assignedRank._id,
+                            season: currentSeason._id 
+                        } 
+                    }
+                );
+
+            }
+    }
+
+    console.log("All player season ranks updated successfully!");
+
 
     //Download links
     const defaultLinks = [
@@ -57,9 +112,9 @@ exports.initialize = async () => {
 
     }
 
+   
+
+
     
-
-
-
     console.log("SERVER DATA INITIALIZED")
 }

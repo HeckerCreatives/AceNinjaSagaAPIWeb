@@ -23,6 +23,9 @@ const routers = app => {
     app.use("/transaction", require("./transaction"))
     app.use("/uploads", require('./picture'));
     app.use("/downloadlinks", require('./downloadlinks'));
+    app.use("/seasons", require('./seasons'));
+    app.use("/pvp", require('./pvp'));
+    app.use("/ranktier", require('./ranktier'));
 
 }
 

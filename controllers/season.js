@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose")
 const Season = require("../models/Season")
-const { RemainingTime, getSeasonRemainingTimeInMilliseconds } = require("../utils/datetimetools")
+const { RemainingTime, getSeasonRemainingTimeInMilliseconds, getSeasonRemainingTime } = require("../utils/datetimetools")
 
 
 exports.getseasons = async (req, res) => {
@@ -109,29 +109,36 @@ exports.updateseason = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "You cannot change an active season to upcoming." });
         }
 
+        // Prepare fields to update
+        let updateFields = { title, duration };
+
         if (isActive === "active") {
             const currentSeason = await Season.findOne({ isActive: "active" });
 
             if (currentSeason && String(currentSeason._id) !== id) {
-                const remainingTime = getSeasonRemainingTimeInMilliseconds(currentSeason.createdAt, currentSeason.duration);
-                
+                if (!currentSeason.startedAt) {
+                    console.error("Error: startedAt is missing for the current active season.");
+                    return res.status(500).json({ message: "server-error", data: "Current active season has no start date. Contact support." });
+                }
+
+                const remainingTime = getSeasonRemainingTimeInMilliseconds(currentSeason.startedAt, currentSeason.duration);
+
+                console.log(remainingTime)
+
                 if (remainingTime > 0) {
                     return res.status(400).json({ message: "failed", data: "The current season is still active. Wait until it ends to activate a new season." });
                 }
 
                 await Season.findByIdAndUpdate(currentSeason._id, { isActive: "ended" });
             }
+
+            updateFields.isActive = "active";
+            updateFields.startedAt = new Date(); // Ensure the correct start time
+        } else {
+            updateFields.isActive = existingSeason.isActive; // Preserve current state if not changing to active
         }
 
-        const updatedSeason = await Season.findByIdAndUpdate(
-            id,
-            { 
-                title, 
-                duration, 
-                isActive: isActive ? (isActive === "active" ? "active" : existingSeason.isActive) : existingSeason.isActive // Keep current status unless setting to "active"
-            },
-            { new: true }
-        );
+        const updatedSeason = await Season.findByIdAndUpdate(id, updateFields, { new: true });
 
         return res.status(200).json({ message: "success", data: updatedSeason });
 
@@ -140,6 +147,7 @@ exports.updateseason = async (req, res) => {
         return res.status(500).json({ message: "server-error", data: "There's a problem with the server. Please contact support for more details." });
     }
 };
+
 
 
 exports.getcurrentseason = async (req, res) => {

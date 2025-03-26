@@ -558,3 +558,150 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
         });
     }
 }
+
+
+//superadmin
+exports.createItem = async (req, res) => {
+    try {
+        const {name, price, currency, type, gender, description, rarity, stats } = req.body;
+
+    
+        if (!name || !price || !currency || !type || !gender || !rarity) {
+            return res.status(400).json({ message: "failed", data: "Missing required fields." });
+        }
+
+        let imageUrl = "";
+        if (req.file) {
+            imageUrl = req.file.path;
+        } else {
+            return res.status(400).json({ message: "failed", data: "Please select an image first!" });
+        }
+
+        const validCurrencies = ["coins", "emerald", "crystal"];
+        const validRarities = ["basic", "common", "epic", "rare", "legendary"];
+        const validGenders = ["male", "female", "unisex"];
+
+        if (!validCurrencies.includes(currency)) {
+            return res.status(400).json({ message: "failed", data: "Invalid currency type." });
+        }
+        if (!validRarities.includes(rarity)) {
+            return res.status(400).json({ message: "failed", data: "Invalid rarity type." });
+        }
+        if (!validGenders.includes(gender)) {
+            return res.status(400).json({ message: "failed", data: "Invalid gender type." });
+        }
+
+        const defaultStats = {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0,
+        };
+        const itemStats = { ...defaultStats, ...stats };
+
+        const market = await Market.findOne();
+        if (!market) {
+            return res.status(404).json({ message: "failed", data: "Market not found." });
+        }
+
+        const newItem = {
+            _id: new mongoose.Types.ObjectId(),
+            name,
+            price,
+            currency,
+            type,
+            gender,
+            description: description || "N/A",
+            rarity,
+            imageUrl,
+            stats: itemStats,
+        };
+
+        market.items.push(newItem);
+        await market.save();
+
+        return res.status(201).json({ message: "success", data: newItem });
+
+    } catch (err) {
+        console.error(`Error creating item: ${err}`);
+        return res.status(500).json({ message: "server-error", data: "There's a problem with the server." });
+    }
+};
+
+
+exports.deleteItem = async (req, res) => {
+    try {
+        const { itemId } = req.query;
+
+        if (!itemId) {
+            return res.status(400).json({ message: "failed", data: "Item ID is required." });
+        }
+
+        let market = await Market.findOne();
+        if (!market) {
+            return res.status(404).json({ message: "failed", data: "Market not found." });
+        }
+
+        const itemIndex = market.items.findIndex(item => item._id.toString() === itemId);
+        if (itemIndex === -1) {
+            return res.status(404).json({ message: "failed", data: "Item not found in Market." });
+        }
+
+        market.items.splice(itemIndex, 1);
+        await market.save();
+
+        return res.status(200).json({ message: "success", data: "Item deleted successfully." });
+
+    } catch (err) {
+        console.error(`Error deleting item: ${err}`);
+        return res.status(500).json({ message: "server-error", data: "There's a problem with the server." });
+    }
+};
+
+exports.updateItem = async (req, res) => {
+    try {
+        const { itemId,name, price, currency, type, gender, description, rarity, stats } = req.body;
+
+        if (!itemId) {
+            return res.status(400).json({ message: "failed", data: "Item ID is required." });
+        }
+
+        let market = await Market.findOne();
+        if (!market) {
+            return res.status(404).json({ message: "failed", data: "Market not found." });
+        }
+
+        const itemIndex = market.items.findIndex(item => item._id.toString() === itemId);
+        if (itemIndex === -1) {
+            return res.status(404).json({ message: "failed", data: "Item not found in Market." });
+        }
+
+        let prevImageUrl = market.items[itemIndex].imageUrl;
+
+        let imageUrl = req.file ? req.file.path : prevImageUrl;
+
+        if (name) market.items[itemIndex].name = name;
+        if (price) market.items[itemIndex].price = price;
+        if (currency) market.items[itemIndex].currency = currency;
+        if (type) market.items[itemIndex].type = type;
+        if (gender) market.items[itemIndex].gender = gender;
+        if (description) market.items[itemIndex].description = description;
+        if (rarity) market.items[itemIndex].rarity = rarity;
+        market.items[itemIndex].imageUrl = imageUrl;
+
+        if (stats) {
+            market.items[itemIndex].stats = { ...market.items[itemIndex].stats, ...stats };
+        }
+
+        await market.save();
+
+        return res.status(200).json({ message: "success", data: market.items[itemIndex] });
+
+    } catch (err) {
+        console.error(`Error updating item: ${err}`);
+        return res.status(500).json({ message: "server-error", data: "There's a problem with the server." });
+    }
+};
+
+
+

@@ -86,3 +86,21 @@ exports.getSeasonRemainingTimeInMilliseconds = (createdAt, durationInDays) => {
     return remainingTimeMilliseconds > 0 ? remainingTimeMilliseconds : 0;
 };
 
+
+
+exports.getSeasonRemainingTime = (startedAt, durationInDays) => {
+    if (!startedAt) {
+        console.error("Error: startedAt is undefined");
+        return 0; // Prevent incorrect calculations
+    }
+
+    const now = new Date();
+    const seasonStart = new Date(startedAt); // The exact time the season started
+    const seasonEnd = new Date(seasonStart.getTime() + durationInDays * 24 * 60 * 60 * 1000); // Add full days
+
+    const remainingTime = seasonEnd - now; // Calculate time left
+
+    return Math.max(remainingTime, 0); // Prevent negative values
+}
+
+

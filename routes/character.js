@@ -14,7 +14,9 @@ router
 .get("/getxplevel", getxplevel)
 .get("/getwallet", getWallet)
 .get("/getcharactertitles", protectplayer, getcharactertitles)
+
 .get("/getcharacterrank", protectsuperadmin, getcharacterrank)
+.get("/getrank", protectplayer, getcharacterrank)
 
 .post("/createcharacter", protectplayer, createcharacter)
 .post("/addxp", protectplayer, addxp)

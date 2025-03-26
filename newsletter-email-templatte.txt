@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACE Newsletter</title>
+</head>
+<body style="font-family: Arial, Helvetica, sans-serif; line-height: 1.5; color: #333333; background-color: #f5f5f5; margin: 0; padding: 0;">
+
+  <div style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+    
+    <!-- Header -->
+    <div>
+      <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742449869/Group_2_ptzrjq.png" alt="ACE Header" style="width: 100%; height: auto; display: block;">
+    </div>
+    
+    <!-- Content -->
+    <div style="padding: 20px;">
+      <p style="margin-bottom: 15px; font-weight: bold;">{{to_name}},</p>
+      <p style="margin-bottom: 15px; font-size: 1.2rem; font-weight: bold;">{{subject}}</p>
+      
+      <p style="font-size: 14px; margin-bottom: 15px;">
+       {{content}}
+      </p>
+      
+      <div style="margin-bottom: 20px; background-color: #f5f5f5;">
+         <img src="{{banner}}" alt="Image" style="width: 100%; display: block;">
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #000000; color: #ffffff; padding: 20px; text-align: center;">
+      <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742449867/small_LOGO_Grey_1_t0znpn.png" alt="ACE Logo" style="height: 60px; margin: 0 auto 10px; display: block;">
+      
+      <p style="font-size: 12px; margin-bottom: 10px;">© 2015 Ace. All Rights Reserved.</p>
+      
+      <p style="font-size: 12px; margin-bottom: 15px;">
+        To unsubscribe from the newsletter, follow this link: 
+        <a href="{{unsubscribeUrl}}" style="color: #ffffff; text-decoration: underline;">Unsubscribe from Ace Newsletter</a>
+      </p>
+      
+    <div style="text-align: center; padding: 10px 0;">
+        <a href="{{fb_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453575/facebook_xr8dkl.png" width="25" height="25" alt="Facebook" style="vertical-align: middle;">
+        </a>
+        <a href="{{x_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453576/twitter_nlh7mq.png" width="25" height="25" alt="Twitter (X)" style="vertical-align: middle;">
+        </a>
+        <a href="{{discord_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453576/discord_hkcici.png" width="25" height="25" alt="Discord" style="vertical-align: middle;">
+        </a>
+        <a href="{{ig_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453576/instagram_uzsw1b.png" width="25" height="25" alt="Instagram" style="vertical-align: middle;">
+        </a>
+        <a href="{{tiktok_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453576/social-media_hmtfsl.png" width="25" height="25" alt="TikTok" style="vertical-align: middle;">
+        </a>
+        <a href="{{yt_link}}" target="_blank" style="display: inline-block; background-color: #ffffff; padding: 6px; margin: 0 6px;">
+            <img src="https://res.cloudinary.com/dq49xedao/image/upload/v1742453575/youtube_azxxbu.png" width="25" height="25" alt="YouTube" style="vertical-align: middle;">
+        </a>
+    </div>
+
+    </div>
+  </div>
+</body>
+</html>

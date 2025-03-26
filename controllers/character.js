@@ -489,6 +489,41 @@ exports.getranking = async (req, res) => {
 
 }
 
+exports.getcharacterrank = async (req, res) => {
+    const { characterid } = req.query;
+
+    if (!characterid) {
+        return res.status(400).json({ message: "failed", data: "Please input characterId" });
+    }
+
+    try {
+        const rankingData = await Rankings.findOne(
+            { owner: new mongoose.Types.ObjectId(characterid) },
+            "mmr rank"
+        ).populate("rank", "name icon");
+
+        if (!rankingData) {
+            return res.status(404).json({ message: "not-found", data: "Character rank not found" });
+        }
+
+        return res.status(200).json({
+            message: "success",
+            data: {
+                mmr: rankingData.mmr,
+                rankTier: rankingData.rank?.name || "Unranked",
+                icon: rankingData.rank?.icon || null
+            }
+        });
+    } catch (err) {
+        console.error(`Error fetching ranking: ${err}`);
+        return res.status(500).json({
+            message: "server-error",
+            data: "There's a problem with the server. Please try again later."
+        });
+    }
+};
+
+
 exports.getxplevel = async (req, res) => {
     const { characterid } = req.query
 

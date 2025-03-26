@@ -143,9 +143,7 @@ exports.resetleaderboards = async (req, res) => {
     })
 }
 
-
 //leaderboard per season
-
 exports.getpvpleaderboards = async (req, res) => {
     try {
         const { page, limit, seasonid, username } = req.query;

@@ -56,41 +56,50 @@ exports.initialize = async () => {
         console.log("No players found.");
         return;
     }
+
     console.log("Updating player ranks based on MMR...");
-    const rankTiers = await RankTier.find().sort({ requiredmmr: 1 });
+    const rankTiers = await RankTier.find().sort({ requiredmmr: 1 }); // Sort ranks by required MMR
+
     if (rankTiers.length === 0) {
         console.log("No rank tiers found. Cannot update player ranks.");
         return;
     }
 
     for (const player of allPlayers) {
-            let assignedRank = rankTiers[0]; 
+        let assignedRank = null; // Start with no rank
 
-            for (const tier of rankTiers) {
-                if (player.mmr >= parseInt(tier.requiredmmr)) {
-                    assignedRank = tier;
-                } else {
-                    break;
+        for (const tier of rankTiers) {
+            const tierMMR = parseInt(tier.requiredmmr, 10); // Ensure number comparison
+
+            if (player.mmr >= tierMMR) {
+                assignedRank = tier; // Assign highest eligible rank
+            } else {
+                break; // Stop once the player MMR is below a rank
+            }
+        }
+
+        // Ensure unranked players get "Unranked"
+        if (!assignedRank) {
+            assignedRank = rankTiers.find(tier => tier.name === "Unranked");
+        }
+
+        // Update only if necessary
+        if (
+            !player.rank || 
+            player.rank.toString() !== assignedRank._id.toString() || 
+            !player.season || 
+            player.season.toString() !== currentSeason._id.toString()
+        ) {
+            await Rankings.updateOne(
+                { _id: player._id },
+                { 
+                    $set: { 
+                        rank: assignedRank._id,
+                        season: currentSeason._id 
+                    } 
                 }
-            }
-
-            if (
-                !player.rank || 
-                player.rank.toString() !== assignedRank._id.toString() || 
-                !player.season || 
-                player.season.toString() !== currentSeason._id.toString()
-            ) {
-                await Rankings.updateOne(
-                    { _id: player._id },
-                    { 
-                        $set: { 
-                            rank: assignedRank._id,
-                            season: currentSeason._id 
-                        } 
-                    }
-                );
-
-            }
+            );
+        }
     }
 
     console.log("All player season ranks updated successfully!");

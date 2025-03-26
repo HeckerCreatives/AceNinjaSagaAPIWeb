@@ -9,5 +9,9 @@ router
  .post("/pvpmatchresult", protectplayer, pvpmatchresult )
  .get("/getcharacterpvpstats", protectplayer, getcharacterpvpstats )
 
+ .get("/getcharacterpvpstatsplayer", protectsuperadmin, getcharacterpvpstats )
+ .get("/getpvphistoryplayer", protectsuperadmin, getpvphistory )
+
+
 
 module.exports = router;

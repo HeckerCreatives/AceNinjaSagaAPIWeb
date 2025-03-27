@@ -205,8 +205,6 @@ exports.getpvphistorybyseason = async (req, res) => {
     }
 };
 
-
-
 exports.getcharacterpvpstats = async (req, res) => {
     try {
         const { id } = req.user; 

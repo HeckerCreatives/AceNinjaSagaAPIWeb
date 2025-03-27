@@ -10,7 +10,7 @@ router
 .get("/userlist", protectsuperadmin, userlist)
 .post("/changeuserpasswordsuperadmin", protectsuperadmin, changeuserpasswordsuperadmin)
 .post("/banunbanuser", protectsuperadmin, banunbanuser)
-.get("/getregistrationgraph", protectsuperadmin, registrationGraph)
+.post("/getregistrationgraph", protectsuperadmin, registrationGraph)
 
 .post("/changeuserpassword", protectplayer, changeuserpassword)
 

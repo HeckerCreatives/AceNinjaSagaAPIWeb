@@ -57,7 +57,6 @@ exports.initialize = async () => {
         return;
     }
 
-    console.log("Updating player ranks based on MMR...");
     const rankTiers = await RankTier.find().sort({ requiredmmr: 1 }); // Sort ranks by required MMR
 
     if (rankTiers.length === 0) {
@@ -68,41 +67,43 @@ exports.initialize = async () => {
     for (const player of allPlayers) {
         let assignedRank = null; // Start with no rank
 
-        for (const tier of rankTiers) {
-            const tierMMR = parseInt(tier.requiredmmr, 10); // Ensure number comparison
-
-            if (player.mmr >= tierMMR) {
-                assignedRank = tier; // Assign highest eligible rank
-            } else {
-                break; // Stop once the player MMR is below a rank
-            }
-        }
-
-        // Ensure unranked players get "Unranked"
-        if (!assignedRank) {
-            assignedRank = rankTiers.find(tier => tier.name === "Unranked");
-        }
-
-        // Update only if necessary
-        if (
-            !player.rank || 
-            player.rank.toString() !== assignedRank._id.toString() || 
-            !player.season || 
-            player.season.toString() !== currentSeason._id.toString()
-        ) {
-            await Rankings.updateOne(
-                { _id: player._id },
-                { 
-                    $set: { 
-                        rank: assignedRank._id,
-                        season: currentSeason._id 
-                    } 
+        if(player.rank === null || player.rank === undefined){
+            for (const tier of rankTiers) {
+                const tierMMR = parseInt(tier.requiredmmr, 10); // Ensure number comparison
+                
+                if (player.mmr >= tierMMR) {
+                    assignedRank = tier; // Assign highest eligible rank
+                } else {
+                    break; // Stop once the player MMR is below a rank
                 }
-            );
+            }
+            
+            // Ensure unranked players get "Unranked"
+            if (!assignedRank) {
+                assignedRank = rankTiers.find(tier => tier.name === "Unranked");
+            }
+            
+            // Update only if necessary
+            if (
+                !player.rank || 
+                player.rank.toString() !== assignedRank._id.toString() || 
+                !player.season || 
+                player.season.toString() !== currentSeason._id.toString()
+            ) {
+                await Rankings.updateOne(
+                    { _id: player._id },
+                    { 
+                        $set: { 
+                            rank: assignedRank._id,
+                            season: currentSeason._id 
+                        } 
+                    }
+                );
+            }
+            console.log("All player season ranks updated successfully!");
         }
     }
 
-    console.log("All player season ranks updated successfully!");
 
 
     //Download links
@@ -113,13 +114,10 @@ exports.initialize = async () => {
     ];
 
     const existingDownloadLinks = await Downloadlinks.countDocuments();
-    if (existingDownloadLinks > 0) {
-        console.log("Download links already initialized.");
-        return;
-    } else {
+    if (existingDownloadLinks < 0) {
         await Downloadlinks.insertMany(defaultLinks);
-
-    }
+        console.log("Default download links added successfully");
+    } 
 
    
 

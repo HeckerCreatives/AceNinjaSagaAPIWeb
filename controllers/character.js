@@ -166,10 +166,13 @@ exports.createcharacter = async (req, res) => {
 }
 
 exports.getplayerdata = async (req, res) => {
-    const { characterid } = req.query
+    const { characterid } = req.query;
 
     if(!characterid){
-        return res.status(400).json({ message: "failed", data: "Please input character ID."})
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "Please input character ID."
+        });
     }
 
     const matchCondition = [
@@ -192,7 +195,7 @@ exports.getplayerdata = async (req, res) => {
                 localField: "_id",          
                 foreignField: "owner",
                 as: "wallet"      
-            },
+            }
         },
         {
             $lookup: {
@@ -201,13 +204,19 @@ exports.getplayerdata = async (req, res) => {
                 foreignField: "owner",       
                 as: "inventory"
             }
-        },        
+        },
+        {
+            $unwind: {
+                path: "$inventory",
+                preserveNullAndEmptyArrays: true
+            }
+        },
         {
             $lookup: {
-                from: "rankings",             
-                localField: "_id",       
-                foreignField: "owner",       
-                as: "ranking"
+                from: "items",
+                localField: "inventory.items.item",
+                foreignField: "_id",
+                as: "itemDetails"
             }
         },
         {
@@ -218,62 +227,103 @@ exports.getplayerdata = async (req, res) => {
                 as: "stats"
             }
         },
-        { $unwind: "$stats"},
+        {
+            $lookup: {
+                from: "rankings",
+                localField: "_id",
+                foreignField: "owner",
+                as: "ranking"
+            }
+        },
+        { $unwind: { path: "$stats", preserveNullAndEmptyArrays: true } },
+        {
+            $group: {
+                _id: "$_id",
+                user: { $first: "$user" },
+                username: { $first: "$username" },
+                title: { $first: "$title" },
+                level: { $first: "$level" },
+                experience: { $first: "$experience" },
+                wallet: { $first: "$wallet" },
+                stats: { $first: "$stats" },
+                ranking: { $first: "$ranking" },
+                inventory: {
+                    $push: {
+                        type: "$inventory.type",
+                        items: {
+                            $map: {
+                                input: "$inventory.items",
+                                as: "item",
+                                in: {
+                                    item: "$$item.item",
+                                    quantity: "$$item.quantity",
+                                    isEquipped: "$$item.isEquipped",
+                                    acquiredAt: "$$item.acquiredAt",
+                                    details: {
+                                        $arrayElemAt: [{
+                                            $filter: {
+                                                input: "$itemDetails",
+                                                as: "detail",
+                                                cond: { $eq: ["$$detail._id", "$$item.item"] }
+                                            }
+                                        }, 0]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         {
             $project: {
-                id: 1,
                 userid: { $arrayElemAt: ["$user._id", 0] },
-                user: { $arrayElemAt: ["$user.username", 0] }, // Flatten user.username
-                status: { $arrayElemAt: ["$user.status", 0] },    // Flatten user.status
+                user: { $arrayElemAt: ["$user.username", 0] },
+                status: { $arrayElemAt: ["$user.status", 0] },
                 username: 1,
                 title: 1,
                 level: 1,
                 experience: 1,
-                mmr: { $arrayElemAt: ["$ranking.mmr", 0] },      // Flatten ranking.mmr
-                wallet: {                 
-                    $map: {               
-                        input: "$wallet", 
-                        as: "w",          
-                        in: {             
-                            type: "$$w.type",      
-                            amount: "$$w.amount"  
+                mmr: { $arrayElemAt: ["$ranking.mmr", 0] },
+                wallet: {
+                    $map: {
+                        input: "$wallet",
+                        as: "w",
+                        in: {
+                            type: "$$w.type",
+                            amount: "$$w.amount"
                         }
                     }
                 },
-                inventory: {                 
-                    $map: {               
-                        input: "$inventory", 
-                        as: "w",          
-                        in: {             
-                            type: "$$w.type",      
-                            items: "$$w.items"  
-                        }
-                    }
-                },
-                stats: {
-                    health: "$stats.health",
-                    energy: "$stats.energy",
-                    armor: "$stats.armor",
-                    magicresist: "$stats.magicresist",
-                    speed: "$stats.speed",
-                    attackdamage: "$stats.attackdamage",
-                    armorpen: "$stats.armorpen",
-                    magicpen: "$stats.magicpen",
-                    critchance: "$stats.critchance",
-                    magicdamage: "$stats.magicdamage",
-                    lifesteal: "$stats.lifesteal",
-                    omnivamp: "$stats.omnivamp",
-                    healshieldpower: "$stats.healshieldpower",
-                    critdamage: "$stats.critdamage",
-                }
+                inventory: 1,
+                stats: "$stats"
             }
         }
     ];
 
-    const characterData = await Characterdata.aggregate(matchCondition)
+    try {
+        const characterData = await Characterdata.aggregate(matchCondition);
+        
+        if (!characterData || characterData.length === 0) {
+            return res.status(404).json({
+                message: "failed",
+                data: "Character not found"
+            });
+        }
 
-    return res.status(200).json({ message: "success", data: characterData})
-}
+        return res.status(200).json({
+            message: "success",
+            data: characterData[0]
+        });
+
+    } catch (error) {
+        console.error('Error in getplayerdata:', error);
+        return res.status(500).json({
+            message: "error",
+            data: "An error occurred while fetching character data"
+        });
+    }
+};
 
 exports.getplayercharacters = async (req, res) => {
     const {id} = req.user

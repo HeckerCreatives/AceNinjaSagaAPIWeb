@@ -5,7 +5,7 @@ const router = require("express").Router()
 
 router
 .get("/getdownloadlinks", protectsuperadmin, getdownloadlinks)
-.get("/getdownloadlinkslandingpage", getdownloadlinkslandingpage)
+.get("/getdownloadlinkslp", getdownloadlinkslandingpage)
 .post("/editdownloadlinks", protectsuperadmin, editdownloadlink)
 
 module.exports = router

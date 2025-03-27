@@ -15,7 +15,8 @@ router
         next()
     })
  }, createnews)
-.get("/getnews", getnews)
+ .get("/getnews", getnews)
+ .get("/getnewssa", protectsuperadmin, getnews)
 .post("/editnews", protectsuperadmin,function (req, res, next) {
     uploadimg(req, res, function(err){
         if(err) {

@@ -5,6 +5,7 @@ const routers = app => {
     app.use("/auth", require("./auth"))
     app.use("/battlepass", require("./battlepass"))
     app.use("/character", require("./character"))
+    app.use("/companion", require("./companion"))
     app.use("/contactus", require("./contactus"))
     app.use("/downloadlinks", require('./downloadlinks'));
     app.use("/friends", require("./friends"))

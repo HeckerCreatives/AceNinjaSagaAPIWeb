@@ -141,23 +141,8 @@ exports.getFriends = async (req, res) => {
 exports.getFriendssa = async (req, res) => {
     try {
         const { id } = req.user;
-        const { characterId, userid } = req.query;
+        const { characterId } = req.query;
 
-        if(!characterId || !mongoose.Types.ObjectId.isValid(characterId)){
-            return res.status(400).json({
-                message: "failed",
-                data: "Invalid character ID"
-            });
-        }
-
-        const checker = await checkcharacter(userid, characterId);
-
-        if (checker === "failed") {
-            return res.status(400).json({
-                message: "Unauthorized", 
-                data: "You are not authorized to view this page. Please login the right account to view the page."
-            });
-        }
 
 
         const friends = await Friends.find({

@@ -281,7 +281,29 @@ exports.pvpmatchresult = async (req, res) => {
             season: activeSeason._id
         });
 
+        const newMatch1 = await Pvp.create({
+            owner: opponent,
+            opponent: characterid,
+            status,
+            season: activeSeason._id
+        });
+
         let ranking = await PvpStats.findOne({ owner: characterid });
+        let enemy = await PvpStats.findOne({ owner: opponent });
+
+        let rankingmmr = await Rankings.findOne({ owner: characterid });
+        let enemymmr = await Rankings.findOne({ owner: opponent });
+
+        if (!enemy) {
+            enemy = await PvpStats.create({
+                owner: opponent,
+                mmr: 0,
+                win: 0,
+                lose: 0,
+                totalMatches: 0,
+                winRate: 0
+            });
+        }
 
         if (!ranking) {
             ranking = await PvpStats.create({
@@ -294,18 +316,58 @@ exports.pvpmatchresult = async (req, res) => {
             });
         }
 
+        if (rankingmmr.mmr < 10) rankingmmr.mmr = 10; // Ensure baseline MMR is at least 10
+        if (enemymmr.mmr < 10) enemymmr.mmr = 10; // Ensure baseline MMR is at least 10
+        
+        const BASE_K_FACTOR = 32;
+        const PLACEMENT_K_FACTOR = 64;
+        
+        // Use higher K-factor for first 10 matches (placement matches)
+        const kFactor = (ranking.totalMatches < 10 || enemy.totalMatches < 10) 
+            ? PLACEMENT_K_FACTOR 
+            : BASE_K_FACTOR;
+        
+        const mmrGap = rankingmmr.mmr - enemymmr.mmr;
+        const expectedScore = 1 / (1 + Math.pow(10, mmrGap / 400));
+        const mmrChange = Math.round(kFactor * (1 - expectedScore));
+        
+        // Ensure minimum MMR change to avoid stagnation
+        const minMMRGain = 1; // Ensures at least 1 MMR gain/loss per match
+        
         if (status === 1) {
             ranking.win += 1;
+            enemy.lose += 1;
+        
+            rankingmmr.mmr = Math.max(10, rankingmmr.mmr + Math.max(mmrChange, minMMRGain));
+            enemymmr.mmr = Math.max(10, enemymmr.mmr - Math.max(mmrChange, minMMRGain));
+        
         } else {
+            enemy.win += 1;
             ranking.lose += 1;
+            console.log("before",enemymmr.mmr)
+            console.log("before",rankingmmr.mmr)
+        
+            enemymmr.mmr = Math.max(10, enemymmr.mmr + Math.max(mmrChange, minMMRGain));
+            rankingmmr.mmr = Math.max(10, rankingmmr.mmr - Math.max(mmrChange, minMMRGain));
+
+            console.log("after",enemymmr.mmr)
+            console.log("after",rankingmmr.mmr)
         }
+        
+        enemy.totalMatches = enemy.win + enemy.lose;
+        enemy.winRate = enemy.totalMatches > 0 ? (enemy.win / enemy.totalMatches) * 100 : 0;
+
+    
 
         ranking.totalMatches = ranking.win + ranking.lose;
         ranking.winRate = ranking.totalMatches > 0 ? (ranking.win / ranking.totalMatches) * 100 : 0;
 
+        await rankingmmr.save();
+        await enemymmr.save();
+        await enemy.save();
         await ranking.save();
 
-        return res.status(200).json({ message: "success", data: newMatch });
+        return res.status(200).json({ message: "success" });
 
     } catch (err) {
         console.error(`Error creating PvP match: ${err}`);

@@ -3,27 +3,53 @@ const { default: mongoose } = require("mongoose");
 
 const CompanionSchema = new mongoose.Schema(
     {
+        name: {
+            type: String
+        },
+        levelrequirement: {
+            type: Number
+        },
+        price: {
+            type: Number
+        },
+        currency: {
+            type: String
+        },
+        activedescription: {
+            type: String
+        },
+        passivedescription: {
+            type: String
+        },
+        passiveeffects: {
+            type: Map, 
+            of: Number 
+        },
+        activeeffects: {
+            type: Map, 
+            of: Number 
+        },
+    },
+    {
+        timestamps: true
+    }
+)
+
+const CharacterCompanionSchema = new mongoose.Schema(
+    {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Characterdata",
             index: true
         },
-        name: {
-            type: String
-        },
-        rarity: {
-            type: String
+        companion: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Companion",
+            index: true
         },
         isEquipped: {
             type: Boolean,
             default: false
-        },
-        skill: {
-            type: String
-        },
-        effects: {
-            type: Map, 
-            of: Number 
         }
     },
     {
@@ -31,5 +57,10 @@ const CompanionSchema = new mongoose.Schema(
     }
 )
 
+
+const CharacterCompanion = mongoose.model("CharacterCompanion", CharacterCompanionSchema)
 const Companion = mongoose.model("Companion", CompanionSchema);
-module.exports = Companion;
+module.exports = {
+    Companion,
+    CharacterCompanion
+};

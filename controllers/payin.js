@@ -5,7 +5,44 @@ const { addanalytics, deleteanalytics } = require("../utils/analyticstools")
 const { createpayin } = require("../utils/payintools")
 const Characterwallet = require("../models/Characterwallet")
 const Characterdata = require("../models/Characterdata")
+const { checkcharacter } = require("../utils/character")
 //  #region USER
+
+exports.getusertotalpayin = async(req, res)  => {
+
+    const {id, username} = req.user
+    const { characterid } = req.query
+
+    // const checker = await checkcharacter(id, characterid);
+    // if (checker === "failed") {
+    //     return res.status(400).json({
+    //         message: "Unauthorized",
+    //         data: "You are not authorized to view this page."
+    //     });
+    // }
+
+
+    const totalpayin = await Payin.aggregate(
+        [
+            {
+                $match: {
+                    status: "done",
+                    owner: new mongoose.Types.ObjectId(characterid),
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalAmount: { $sum: "$value" }
+                }
+            }
+        ]
+    )
+
+    return res.json({message: "success", data: {
+        totalpayin: totalpayin.length > 0 ? totalpayin[0].totalAmount : 0,
+    }})
+}
 
 exports.getpayinhistoryplayer = async (req, res) => {
     try {

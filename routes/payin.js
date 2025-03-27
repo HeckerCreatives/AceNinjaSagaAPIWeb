@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { sendtopupplayer, deletepayinplayersuperadmin, getpayinhistorysuperadmin, getpayinhistoryplayer, getpayinhistoryplayerforsuperadmin, r, sendtopupplayerequestpayin, requestpayin } = require("../controllers/payin")
+const { sendtopupplayer, deletepayinplayersuperadmin, getpayinhistorysuperadmin, getpayinhistoryplayer, getpayinhistoryplayerforsuperadmin, r, sendtopupplayerequestpayin, requestpayin, getusertotalpayin } = require("../controllers/payin")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 
 router
@@ -9,8 +9,9 @@ router
     .get("/getpayinhistoryuser", protectsuperadmin, getpayinhistoryplayer)
     .post("/requestpayin", protectplayer, requestpayin)
     //  #endregion
-
+    
     //  #region SUPERADMIN
+    .get("/getusertotalpayinsa", protectsuperadmin, getusertotalpayin)
 
     .get("/getpayinhistorysuperadmin", protectsuperadmin, getpayinhistorysuperadmin)
     .get("/getpayinhistoryplayerforsuperadmin", protectsuperadmin, getpayinhistoryplayerforsuperadmin)

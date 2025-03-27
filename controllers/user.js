@@ -1,5 +1,7 @@
 const { default: mongoose } = require("mongoose")
-const Users = require("../models/Users")
+const Users = require("../models/Users");
+const { daily, weekly, monthly } = require("../utils/graphfilter");
+const { startOfISOWeek, endOfISOWeek, startOfYear, endOfYear } = require('date-fns');
 
 const encrypt = async password => {
     const salt = await bcrypt.genSalt(10);
@@ -69,13 +71,14 @@ exports.userlist = async (req, res) => {
     let searchMatchStage = {};
     let filterMatchStage = {};
 
-    if(search){
+    if(search) {
         searchMatchStage = {
-            username: { $regex: search, $options: 'i' },
+            $or: [
+                { username: { $regex: search, $options: 'i' } },
+                { 'character.username': { $regex: search, $options: 'i' } }
+            ]
         };
-
     }
-
     if(filter === 'active' || filter === 'inactive'){
         filterMatchStage = {
             status: filter,
@@ -280,4 +283,151 @@ exports.changeuserpassword = async(req, res) => {
 
     return res.status(200).json({ message: "success" })
 
+}
+
+
+exports.registrationGraph = async (req, res) => {
+
+    const { charttype } =  req.query
+    const filter = charttype
+    let projectCondition = {};
+    let matchCondition = {};
+    let groupCondition = {};
+    let sortCondition = {};
+
+    if (filter === 'daily') {
+        const currentDate = new Date();
+        const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(currentDate.setHours(24, 0, 0, 0));
+
+        matchCondition = {
+            createdAt: {
+              $gte: startOfDay,
+              $lt: endOfDay
+            }
+          }
+        projectCondition = {
+            hour_created: { $hour: "$createdAt" }
+        };
+        groupCondition = {
+            _id: { hour: "$hour_created" },
+            value: { $sum: 1 }
+        }
+        sortCondition = { "_id.hour": 1 };
+
+    } else if (filter === 'weekly') {
+
+        const currentDate = new Date();
+        const startOfWeek = startOfISOWeek(currentDate);
+        const endOfWeek = endOfISOWeek(currentDate);
+
+        matchCondition = {
+            createdAt: {
+                $gte: startOfWeek,
+                $lt: endOfWeek
+            }
+        };
+        
+        projectCondition = {
+            day_of_week: { $dayOfWeek: "$createdAt" }
+        };
+        
+        groupCondition = {
+            _id: { day: "$day_of_week" },
+            value: { $sum: 1 }
+        };
+        
+        sortCondition = { "_id.day": 1 };
+
+    } else if (filter === 'monthly') {
+        const currentYear = new Date().getFullYear();
+
+        const startOfCurrentYear = startOfYear(new Date(currentYear, 0, 1)); 
+        const endOfCurrentYear = endOfYear(new Date(currentYear, 0, 1));
+
+        matchCondition = {
+            createdAt: {
+                $gte: startOfCurrentYear, 
+                $lt: endOfCurrentYear 
+            }
+        };
+        projectCondition = {
+            month: { 
+                $month: "$createdAt" 
+            },
+        };
+       groupCondition = {
+            _id: {
+                month: "$month"
+            },
+            value: { 
+                $sum: 1 
+            }
+        };
+        sortCondition = { "_id.month": 1 };
+
+    } else if (filter === 'yearly') {    
+        projectCondition = {
+            year_created: {
+                $year: "$createdAt"
+            }
+        }
+        groupCondition = {
+            _id: { 
+                year: "$year_created"
+            },
+            value: { 
+                $sum: 1 
+            }
+        };
+        sortCondition = { "_id.year": 1 };
+    } else {
+        return res.status(400).json({ message: "failed", data: "Invalid filter. Use 'daily', 'weekly', 'monthly', or 'yearly'." });
+    }
+
+    const data = await Users.aggregate([
+        { $match: matchCondition },
+        { $project: projectCondition },
+        { $group: groupCondition },
+        { $sort: sortCondition }
+    ]);
+
+
+    let finalData = {}
+
+    // filtering data 
+    if(filter === 'daily'){
+        daily.forEach((time, index) => {
+            const matchingEntry = data.find(entry => entry._id.hour === index + 1);
+            
+            finalData[time] = matchingEntry ? matchingEntry.value : 0;
+        });
+    } else if (filter === 'weekly'){
+        weekly.forEach((weekday, index)=>{
+            const matchingEntry = data.find(entry => entry._id.day === index + 1);
+
+            finalData[weekday] = matchingEntry ? matchingEntry.value : 0;
+        })
+    } else if(filter === 'monthly'){
+        monthly.forEach((month, index) => {
+            const matchingEntry = data.find(entry => entry._id.month === index + 1);
+
+            finalData[month] = matchingEntry ? matchingEntry.value : 0;
+        })
+    } else if(filter === 'yearly') {
+
+        const releasedYear = 2025
+        const currentYear = new Date().getFullYear();
+
+        for(let year = releasedYear; year <= currentYear; year++){
+            const matchingEntry = data.find(entry => entry._id.year === parseInt(year, 10));
+
+            finalData[year] = matchingEntry ? matchingEntry.value : 0;
+        }
+    } else {
+        return res.status(400).json({ message: "failed", data: "Invalid filter. Use 'daily', 'weekly', 'monthly', or 'yearly'." });
+    }
+
+    
+    return res.json({ message: "success", data: finalData});
 }

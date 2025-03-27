@@ -1,21 +1,39 @@
 const Contactus = require("../models/Contactus")
 
 
-
 exports.sendmessage = async (req, res) => {
-
-    const { email, message } = req.body
+    const { email, message } = req.body;
 
     if (!email || !message) {
-        return res.status(400).json({ message: "failed", data: "Please input all data." })
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "Please input all data." 
+        });
     }
 
     try {
-        await Contactus.create({ email, message })
-        return res.status(200).json({ message: "success" })
+        // Check if email already exists
+        const existingContact = await Contactus.findOne({ email });
+        
+        if (existingContact) {
+            // Update existing contact with new message
+            existingContact.message = message;
+            existingContact.updatedAt = new Date();
+            await existingContact.save();
+        } else {
+            // Create new contact
+            await Contactus.create({ email, message });
+        }
+
+        return res.status(200).json({ 
+            message: "success" 
+        });
     } catch (err) {
-        console.log(`There's a problem encountered while creating Content. Error: ${err}.`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
+        console.error(`Error in contact form submission: ${err}`);
+        return res.status(400).json({ 
+            message: "bad-request", 
+            data: "There's a problem with the server. Please try again later." 
+        });
     }
 }
 

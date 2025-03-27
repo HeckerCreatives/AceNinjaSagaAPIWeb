@@ -217,8 +217,15 @@ exports.getcharacterpvpstats = async (req, res) => {
 
         const user = await Rankings.findOne({ owner: characterid }).lean();
 
-        const userrank = await Rankings.countDocuments({ mmr: { $gt: user.mmr } });
-
+        const userrank = await Rankings.countDocuments({
+            $or: [
+                { mmr: { $gt: user.mmr } },
+                {
+                    mmr: user.mmr,
+                    updatedAt: { $lt: user.updatedAt }
+                }
+            ]
+        });
 
         const finaldata = {
             mmr: user.mmr,

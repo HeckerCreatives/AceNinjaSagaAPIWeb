@@ -41,6 +41,13 @@ exports.getpvphistory = async (req, res) => {
             .limit(pageOptions.limit);
 
         const totalList = await Pvp.countDocuments(query);
+        if(pvpData.length === 0){
+            return res.status(200).json({
+                message: "success",
+                data: "No PvP history found.",
+                totalPages: 0
+            });
+        }
 
         const finalData = pvpData.map(data => ({
             _id: data._id,
@@ -49,6 +56,7 @@ exports.getpvphistory = async (req, res) => {
             owner: data.owner,
             createdAt: data.createdAt,
         }));
+
 
         return res.status(200).json({
             message: "success",

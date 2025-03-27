@@ -418,6 +418,11 @@ exports.getinventory = async (req, res) => {
                     } 
                 },
                 {
+                    $match: {
+                        "items.quantity": { $gt: 0 }
+                    }
+                },
+                {
                     $lookup: {
                         from: "items",
                         localField: "items.item",
@@ -440,6 +445,11 @@ exports.getinventory = async (req, res) => {
                         path: "$items",
                         preserveNullAndEmptyArrays: true 
                     } 
+                },
+                {
+                    $match: {
+                        "items.quantity": { $gt: 0 }
+                    }
                 },
                 { $count: "total" }
             ])
@@ -476,8 +486,8 @@ exports.getinventory = async (req, res) => {
         };
 
         if(Object.keys(formattedResponse.data).length === 0) {
-            return res.status(400).json({
-                message: "failed",
+            return res.status(200).json({
+                message: "success",
                 data: "No items found."
             })
         }

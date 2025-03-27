@@ -475,6 +475,13 @@ exports.getinventory = async (req, res) => {
             }
         };
 
+        if(Object.keys(formattedResponse.data).length === 0) {
+            return res.status(400).json({
+                message: "failed",
+                data: "No items found."
+            })
+        }
+
         return res.status(200).json({ 
             message: "success", 
             data: formattedResponse.data,

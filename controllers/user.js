@@ -288,7 +288,7 @@ exports.changeuserpassword = async(req, res) => {
 
 exports.registrationGraph = async (req, res) => {
 
-    const { charttype } =  req.body
+    const { charttype } =  req.query
     const filter = charttype
     let projectCondition = {};
     let matchCondition = {};

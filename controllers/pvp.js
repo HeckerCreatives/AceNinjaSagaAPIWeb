@@ -44,7 +44,7 @@ exports.getpvphistory = async (req, res) => {
         if(pvpData.length === 0){
             return res.status(200).json({
                 message: "success",
-                data: "No PvP history found.",
+                data: [],
                 totalPages: 0
             });
         }

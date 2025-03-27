@@ -72,51 +72,52 @@ exports.editnewsletter = async (req, res) => {
 
 
 
-exports.getnewsletterlist = async (req, res) => {
-    const { page, limit, filter } = req.query
+ exports.getnewsletterlist = async (req, res) => {
+    const { page, limit, filter } = req.query;
 
     const pageOptions = {
         page: parseInt(page) || 0,
         limit: parseInt(limit) || 10,
+    };
+
+    let filterStage = {};
+
+    if (filter) {
+        filterStage = { type: filter };
     }
 
-    let filterstage = {}
+    try {
+        // Get the total count of filtered documents
+        const totalCount = await Newsletter.countDocuments(filterStage);
+        const totalpages = Math.ceil(totalCount / pageOptions.limit);
 
-    if(filter) {
-        filterstage = { type: filter }
+        // Fetch paginated data
+        const newsListPipeline = [
+            ...(filter ? [{ $match: filterStage }] : []),
+            { $sort: { createdAt: -1 } },
+            { $skip: pageOptions.page * pageOptions.limit },
+            { $limit: pageOptions.limit }
+        ];
+
+        const news = await Newsletter.aggregate(newsListPipeline);
+
+        // Format response
+        const data = {
+            totalpages,
+            totalCount, // Optional: Return total count if needed
+            news: news.map(({ _id, description, title, banner }) => ({
+                newsid: _id,
+                description,
+                title,
+                banner
+            }))
+        };
+
+        return res.status(200).json({ message: "success", data });
+    } catch (error) {
+        console.error("Error fetching newsletters:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
+};
 
-    const newsListPipeline = [
-        ...(filter ? [ { $match: filterstage }] : []),
-        { $sort: { createdAt: -1 } }, 
-        { $skip: pageOptions.page * pageOptions.limit },
-        { $limit: pageOptions.limit }
-    ]
-
-   const news = await Newsletter.aggregate(newsListPipeline)
-   const totalCount = await Newsletter.countDocuments()
-   .then(data => data)
-   .catch(err => {
-       console.log(`There's a problem encountered while fetching total count of newsletter. Error: ${err}`)
-
-       return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
-   });
-
-   const finalpages = Math.ceil(totalCount / pageOptions.limit)
-   const data = {
-    totalpages: finalpages,
-    news: []
-   }
-
-   news.forEach(tempdata => {
-    const { _id, description, title, banner } = tempdata
-        data.news.push({
-            newsid: _id,
-            description: description,
-            title: title,
-            banner: banner
-        })
-   })
-   return res.status(200).json({ message: "success", data: data})
-}
 

@@ -210,14 +210,28 @@ exports.getcharacterpvpstats = async (req, res) => {
         const { id } = req.user; 
         const {characterid} = req.query
 
-        const rankingData = await PvpStats.find({ owner: characterid })
-            .populate("owner", "name") 
+        const pvpstats = await PvpStats.find({ owner: characterid })
+            .populate("owner")
             .sort({ mmr: -1 })
             .lean();
 
+        const user = await Rankings.findOne({ owner: characterid }).lean();
+
+        const userrank = await Rankings.countDocuments({ mmr: { $gt: user.mmr } });
+
+
+        const finaldata = {
+            mmr: user.mmr,
+            win: pvpstats[0].win,
+            lost: pvpstats[0].lose,
+            totalMatches: pvpstats[0].totalMatches,
+            winRate: pvpstats[0].winRate,
+            rank: userrank + 1,
+            username: pvpstats[0].owner.username
+        }
         return res.status(200).json({
             message: "success",
-            data: rankingData[0]
+            data: finaldata
         });
 
     } catch (err) {

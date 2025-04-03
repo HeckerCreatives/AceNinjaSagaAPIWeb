@@ -345,6 +345,7 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
             characterUsername: valuedata.characterUsername,
             characterId: valuedata.characterId,
             value: valuedata.value,
+            currency: valuedata.currency,
             status: valuedata.status,
             type: valuedata.type,
             createdAt: valuedata.createdAt,

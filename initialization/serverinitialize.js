@@ -58,24 +58,24 @@ exports.initialize = async () => {
         return;
     }
 
-    const rankTiers = await RankTier.find().sort({ requiredmmr: 1 }); // Sort ranks by required MMR
+    // const rankTiers = await RankTier.find().sort({ requiredmmr: 1 }); // Sort ranks by required MMR
 
-    if (rankTiers.length === 0) {
-        console.log("No rank tiers found. Cannot update player ranks.");
-        return;
-    }
+    // if (rankTiers.length === 0) {
+    //     console.log("No rank tiers found. Cannot update player ranks.");
+    //     return;
+    // }
 
-    for (const player of allPlayers) {
-        // Find the appropriate rank tier for the player based on their MMR
-        const newRankTier = rankTiers.find(tier => player.mmr >= tier.requiredmmr);
+    // for (const player of allPlayers) {
+    //     // Find the appropriate rank tier for the player based on their MMR
+    //     const newRankTier = rankTiers.find(tier => player.mmr >= tier.requiredmmr);
 
-        if (newRankTier) {
-            player.rank = newRankTier._id; // Update player's rank to the new rank tier
-            await player.save(); // Save the updated player data
-        }
+    //     if (newRankTier) {
+    //         player.rank = newRankTier._id; // Update player's rank to the new rank tier
+    //         await player.save(); // Save the updated player data
+    //     }
 
-        console.log(`Updated rank for player ${player.owner.username} to ${newRankTier.name}`);
-    }
+    //     console.log(`Updated rank for player ${player.owner.username} to ${newRankTier.name}`);
+    // }
 
 
 

@@ -20,11 +20,17 @@ exports.sendmessage = async (req, res) => {
             // Update existing contact with new message
             existingContact.message = message;
             existingContact.updatedAt = new Date();
+            
+            const hasSubscription = await Subscription.findOne({ email });
+            if (!hasSubscription) {
+                await Subscription.create({ email: email });
+            }
+
             await existingContact.save();
         } else {
             // Create new contact
             await Contactus.create({ email, message });
-            await Subscription.create({ email });
+            await Subscription.create({ email: email });
         }
 
         return res.status(200).json({ 

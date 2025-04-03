@@ -158,7 +158,8 @@ exports.sendtopupplayer = async (req, res) => {
             amount,
             id,
             "done",
-            player._id.toString()  // Added character ID
+            player._id.toString(),  // Added character ID
+            type
         );
 
         if (!addpayin || addpayin.message !== "success") {
@@ -171,7 +172,7 @@ exports.sendtopupplayer = async (req, res) => {
             addpayin.data._id.toString(),
             type,
             `Add balance to user ${playerusername} with a value of ${amount} processed by ${username}`,
-            amount
+            amount,
         );
 
         if (analyticsResult !== "success") {
@@ -259,13 +260,16 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
             limit: parseInt(limit) || 10
         };
 
-        const payinpipelinelist = [
-            {
-                $match: {
-                    // Remove status filter or add all possible statuses
-                    status: { $exists: true }
-                }
-            },
+        // Build match condition
+        const matchCondition = {};
+        if (searchUsername) {
+            matchCondition.$or = [
+                { "ownerinfo.username": { $regex: new RegExp(searchUsername, 'i') } },
+                { "characterinfo.username": { $regex: new RegExp(searchUsername, 'i') } }
+            ];
+        }
+
+        const pipeline = [
             {
                 $lookup: {
                     from: "characterdatas",
@@ -283,121 +287,88 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
                 }
             },
             {
-                // Handle potential null ownerinfo
                 $unwind: {
                     path: "$ownerinfo",
                     preserveNullAndEmptyArrays: true
                 }
             },
             {
-                // Handle potential null characterinfo
                 $unwind: {
                     path: "$characterinfo",
                     preserveNullAndEmptyArrays: true
                 }
-            },
+            }
         ];
 
-        // Add debug stages to check data at each step
-        payinpipelinelist.push({
-            $addFields: {
-                debug_stage: "after_lookups"
-            }
-        });
-        
-        if (searchUsername) {
-            payinpipelinelist.push({
-                $match: {
-                    $or: [
-                        { "ownerinfo.username": { $regex: new RegExp(searchUsername, 'i') } },
-                        { "characterinfo.username": { $regex: new RegExp(searchUsername, 'i') } }
-                    ]
-                }
-            });
+        if (Object.keys(matchCondition).length > 0) {
+            pipeline.push({ $match: matchCondition });
         }
 
-        payinpipelinelist.push({ $sort: { createdAt: -1 } });
+        // Get total count first
+        const totalCount = await Payin.aggregate([
+            ...pipeline,
+            { $count: "total" }
+        ]);
 
-        // Add debug logging before facet
-        console.log('Before facet stage - pipeline:', JSON.stringify(payinpipelinelist, null, 2));
-
-        payinpipelinelist.push({
-            $facet: {
-                totalPages: [{ $count: "count" }],
-                data: [
-                    {
-                        $project: {
-                            _id: 1,
-                            status: 1,
-                            value: 1,
-                            type: 1,
-                            username: { $ifNull: ["$ownerinfo.username", "Unknown"] },
-                            userid: { $ifNull: ["$ownerinfo._id", null] },
-                            characterUsername: { $ifNull: ["$characterinfo.username", "Unknown"] },
-                            characterId: { $ifNull: ["$characterinfo._id", null] },
-                            createdAt: 1
-                        }
-                    },
-                    { $skip: pageOptions.page * pageOptions.limit },
-                    { $limit: pageOptions.limit }
-                ]
-            }
-        });
-
-        // Execute pipeline and add debug logging
-        const payinhistory = await Payin.aggregate(payinpipelinelist);
-        console.log('Payin results:', JSON.stringify(payinhistory, null, 2));
-
-        // Check if we have results
-        if (!payinhistory?.[0]?.data?.length) {
-            return res.status(200).json({
-                success: true,
-                message: "No records found",
-                data: {
-                    payinhistory: [],
-                    totalPages: 0
+        // Add pagination and projection to pipeline
+        pipeline.push(
+            { $sort: { createdAt: -1 } },
+            { $skip: pageOptions.page * pageOptions.limit },
+            { $limit: pageOptions.limit },
+            {
+                $project: {
+                    _id: 1,
+                    status: 1,
+                    value: 1,
+                    type: 1,
+                    currency: 1,
+                    username: { $ifNull: ["$ownerinfo.username", "Unknown"] },
+                    userid: { $ifNull: ["$ownerinfo._id", null] },
+                    characterUsername: { $ifNull: ["$characterinfo.username", "Unknown"] },
+                    characterId: { $ifNull: ["$characterinfo._id", null] },
+                    createdAt: 1
                 }
-            });
-        }
+            }
+        );
 
-        const totalPages = payinhistory[0].totalPages[0]?.count || 0;
-        const pages = Math.ceil(totalPages / pageOptions.limit);
+        // Execute main query
+        const payinhistory = await Payin.aggregate(pipeline);
+
+        const total = totalCount[0]?.total || 0;
+        const totalPages = Math.ceil(total / pageOptions.limit);
         const currentTime = new Date();
 
-        const data = {
-            payinhistory: payinhistory[0].data.map(valuedata => ({
-                id: valuedata._id,
-                username: valuedata.username,
-                userid: valuedata.userid,
-                characterUsername: valuedata.characterUsername,
-                characterId: valuedata.characterId,
-                firstname: valuedata.firstname,
-                lastname: valuedata.lastname,
-                value: valuedata.value,
-                status: valuedata.status,
-                type: valuedata.type,
-                createdAt: valuedata.createdAt,
-                canbedeleted: (currentTime - new Date(valuedata.createdAt)) >= (1000 * 60 * 60 * 24)
-            })),
-            totalPages: pages
-        };
+        const formattedPayinHistory = payinhistory.map(valuedata => ({
+            id: valuedata._id,
+            username: valuedata.username,
+            userid: valuedata.userid,
+            characterUsername: valuedata.characterUsername,
+            characterId: valuedata.characterId,
+            value: valuedata.value,
+            status: valuedata.status,
+            type: valuedata.type,
+            createdAt: valuedata.createdAt,
+            canbedeleted: (currentTime - new Date(valuedata.createdAt)) >= (1000 * 60 * 60 * 24)
+        }));
 
         return res.json({
-            success: true,
             message: "success",
-            data
+            data: {
+                payinhistory: formattedPayinHistory,
+                totalPages,
+                currentPage: pageOptions.page,
+                total
+            }
         });
 
     } catch (error) {
         console.error(`Error in getpayinhistorysuperadmin: ${error}`);
         return res.status(500).json({
-            success: false,
-            message: "Internal server error",
+            message: "bad-request",
             error: error.message
         });
     }
 };
-
 exports.gettotalpayin = async(req, res)  => {
     const totalpayin = await Payin.aggregate(
         [

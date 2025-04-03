@@ -23,7 +23,10 @@ const PayinSchema = new mongoose.Schema(
         },
         value: {
             type: Number
-        }
+        },
+        currency: {
+            type: String
+        },
     },
     {
         timestamps: true

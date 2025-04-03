@@ -252,7 +252,6 @@ exports.deletepayinplayersuperadmin = async (req, res) => {
 
 exports.getpayinhistorysuperadmin = async (req, res) => {
     try {
-        const { id, username } = req.user;
         const { page, limit, searchUsername } = req.query;
 
         const pageOptions = {
@@ -263,18 +262,10 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
         const payinpipelinelist = [
             {
                 $match: {
-                    status: { $in: ["done", "reject"] }
+                    // Remove status filter or add all possible statuses
+                    status: { $exists: true }
                 }
             },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "owner",
-                    foreignField: "_id",
-                    as: "ownerinfo"
-                }
-            },
-            { $unwind: "$ownerinfo" },
             {
                 $lookup: {
                     from: "characterdatas",
@@ -283,17 +274,36 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
                     as: "characterinfo"
                 }
             },
-            { $unwind: "$characterinfo" },
             {
                 $lookup: {
-                    from: "userdetails",
-                    localField: "owner",
-                    foreignField: "owner",
-                    as: "userdetails"
+                    from: "users",
+                    localField: "characterinfo.owner",
+                    foreignField: "_id",
+                    as: "ownerinfo"
                 }
             },
-            { $unwind: "$userdetails" }
+            {
+                // Handle potential null ownerinfo
+                $unwind: {
+                    path: "$ownerinfo",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                // Handle potential null characterinfo
+                $unwind: {
+                    path: "$characterinfo",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
         ];
+
+        // Add debug stages to check data at each step
+        payinpipelinelist.push({
+            $addFields: {
+                debug_stage: "after_lookups"
+            }
+        });
         
         if (searchUsername) {
             payinpipelinelist.push({
@@ -305,9 +315,12 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
                 }
             });
         }
-        
+
         payinpipelinelist.push({ $sort: { createdAt: -1 } });
-        
+
+        // Add debug logging before facet
+        console.log('Before facet stage - pipeline:', JSON.stringify(payinpipelinelist, null, 2));
+
         payinpipelinelist.push({
             $facet: {
                 totalPages: [{ $count: "count" }],
@@ -318,12 +331,10 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
                             status: 1,
                             value: 1,
                             type: 1,
-                            username: "$ownerinfo.username",
-                            userid: "$ownerinfo._id",
-                            characterUsername: "$characterinfo.username",
-                            characterId: "$characterinfo._id",
-                            firstname: "$userdetails.firstname",
-                            lastname: "$userdetails.lastname",
+                            username: { $ifNull: ["$ownerinfo.username", "Unknown"] },
+                            userid: { $ifNull: ["$ownerinfo._id", null] },
+                            characterUsername: { $ifNull: ["$characterinfo.username", "Unknown"] },
+                            characterId: { $ifNull: ["$characterinfo._id", null] },
                             createdAt: 1
                         }
                     },
@@ -333,11 +344,19 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
             }
         });
 
+        // Execute pipeline and add debug logging
         const payinhistory = await Payin.aggregate(payinpipelinelist);
-        if (!payinhistory || !payinhistory.length) {
-            return res.status(404).json({
-                success: false,
-                message: "No payin history found"
+        console.log('Payin results:', JSON.stringify(payinhistory, null, 2));
+
+        // Check if we have results
+        if (!payinhistory?.[0]?.data?.length) {
+            return res.status(200).json({
+                success: true,
+                message: "No records found",
+                data: {
+                    payinhistory: [],
+                    totalPages: 0
+                }
             });
         }
 
@@ -346,28 +365,20 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
         const currentTime = new Date();
 
         const data = {
-            payinhistory: payinhistory[0].data.map(valuedata => {
-                const {
-                    _id, status, value, type, username, 
-                    characterUsername, characterId, userid,
-                    firstname, lastname, createdAt
-                } = valuedata;
-
-                return {
-                    id: _id,
-                    username,
-                    userid,
-                    characterUsername,
-                    characterId,
-                    firstname,
-                    lastname,
-                    value,
-                    status,
-                    type,
-                    createdAt,
-                    canbedeleted: (currentTime - new Date(createdAt)) >= (1000 * 60 * 60 * 24)
-                };
-            }),
+            payinhistory: payinhistory[0].data.map(valuedata => ({
+                id: valuedata._id,
+                username: valuedata.username,
+                userid: valuedata.userid,
+                characterUsername: valuedata.characterUsername,
+                characterId: valuedata.characterId,
+                firstname: valuedata.firstname,
+                lastname: valuedata.lastname,
+                value: valuedata.value,
+                status: valuedata.status,
+                type: valuedata.type,
+                createdAt: valuedata.createdAt,
+                canbedeleted: (currentTime - new Date(valuedata.createdAt)) >= (1000 * 60 * 60 * 24)
+            })),
             totalPages: pages
         };
 

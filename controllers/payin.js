@@ -120,7 +120,7 @@ exports.requestpayin = async (req, res) => {
 exports.sendtopupplayer = async (req, res) => {
     const session = await mongoose.startSession();
     try {
-        session.startTransaction();
+        await session.startTransaction();
         
         const {id, username} = req.user;
         const {playerusername, amount, type} = req.body;
@@ -133,14 +133,8 @@ exports.sendtopupplayer = async (req, res) => {
             });
         }
 
-        if (amount <= 0) {
-            return res.status(400).json({
-                message: "failed",
-                data: "Amount must be positive"
-            });
-        }
-
-        const player = await Characterdata.findOne({username: playerusername});
+        // Find player and ensure it exists
+        const player = await Characterdata.findOne({username: playerusername}).session(session);
         if (!player) {
             return res.status(404).json({
                 message: "failed",
@@ -150,25 +144,34 @@ exports.sendtopupplayer = async (req, res) => {
 
         // Update wallet
         await Characterwallet.findOneAndUpdate(
-            {owner: player._id, type},
+            {
+                owner: player._id,
+                type
+            },
             {$inc: {amount}},
             {session}
         );
 
         // Create payin record
-        const addpayin = await createpayin(player._id, amount, id, "done", session);
+        const addpayin = await createpayin(
+            player._id.toString(),
+            amount,
+            id,
+            "done",
+            player._id.toString()  // Added character ID
+        );
+
         if (!addpayin || addpayin.message !== "success") {
             throw new Error("Failed to create payin record");
         }
 
         // Add analytics
         const analyticsResult = await addanalytics(
-            player._id,
-            addpayin.data._id,
+            player._id.toString(),
+            addpayin.data._id.toString(),
             type,
-            `Add balance to user ${player._id} with a value of ${amount} processed by ${username}`,
-            amount,
-            session
+            `Add balance to user ${playerusername} with a value of ${amount} processed by ${username}`,
+            amount
         );
 
         if (analyticsResult !== "success") {
@@ -186,11 +189,9 @@ exports.sendtopupplayer = async (req, res) => {
             data: "An error occurred while processing the top-up"
         });
     } finally {
-        session.endSession();
+        await session.endSession();
     }
-}
-
-// Improve deletepayinplayersuperadmin with transaction support
+};
 exports.deletepayinplayersuperadmin = async (req, res) => {
     const session = await mongoose.startSession();
     try {

@@ -5,7 +5,7 @@ const Characterdata = require("../models/Characterdata")
 
 
 exports.getMarketItems = async (req, res) => {
-    const { page, limit, type, rarity, search } = req.query
+    const { page, limit, type, rarity, search, markettype } = req.query
 
     const pageOptions = {
         page: parseInt(page, 10) || 0,
@@ -15,6 +15,11 @@ exports.getMarketItems = async (req, res) => {
     try {
         // Build pipeline stages
         const pipeline = [
+            {
+                $match: {
+                    marketType: markettype || { $in: ['market', 'shop'] }
+                }
+            },
             { $unwind: '$items' },
             {
                 $match: {
@@ -25,7 +30,7 @@ exports.getMarketItems = async (req, res) => {
 
         // Add search conditions if search parameter exists
         if (search) {
-            pipeline[1].$match.$and.push({
+            pipeline[2].$match.$and.push({
                 $or: [
                     { 'items.type': { $regex: new RegExp(search, "i") } },
                     { 'items.rarity': { $regex: new RegExp(search, "i") } },
@@ -36,19 +41,18 @@ exports.getMarketItems = async (req, res) => {
 
         // Add type filter if specified
         if (type) {
-            pipeline[1].$match.$and.push({ 'items.type': type });
+            pipeline[2].$match.$and.push({ 'items.type': type });
         }
 
         // Add rarity filter if specified
         if (rarity) {
-            pipeline[1].$match.$and.push({ 'items.rarity': rarity });
+            pipeline[2].$match.$and.push({ 'items.rarity': rarity });
         }
 
         // If no conditions were added, remove the $and operator
-        if (pipeline[1].$match.$and.length === 0) {
-            delete pipeline[1].$match.$and;
+        if (pipeline[2].$match.$and.length === 0) {
+            delete pipeline[2].$match.$and;
         }
-
         // Add pagination
         pipeline.push(
             { $skip: pageOptions.page * pageOptions.limit },
@@ -599,7 +603,7 @@ exports.createItem = async (req, res) => {
         };
         const itemStats = { ...defaultStats, ...stats };
 
-        const market = await Market.findOne();
+        const market = await Market.findOne({ marketType: "shop"});
         if (!market) {
             return res.status(404).json({ message: "failed", data: "Market not found." });
         }

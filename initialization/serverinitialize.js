@@ -8,6 +8,7 @@ const Downloadlinks = require("../models/Downloadlinks")
 const { default: mongoose } = require("mongoose")
 const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
+const { Market } = require("../models/Market")
 
 exports.initialize = async () => {
     const admin = await Staffusers.find({ auth: "superadmin"})
@@ -190,6 +191,13 @@ exports.initialize = async () => {
         console.log("Default companions added successfully");
     }
 
+
+    const market = await Market.findOne({ marketType: "shop" });
+
+    if (!market) {
+        await Market.create({ marketType: "shop", items: [] });
+        console.log("Market initialized successfully");
+    }
 
     
     console.log("SERVER DATA INITIALIZED")

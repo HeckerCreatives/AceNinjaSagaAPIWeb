@@ -66,43 +66,15 @@ exports.initialize = async () => {
     }
 
     for (const player of allPlayers) {
-        let assignedRank = null; // Start with no rank
+        // Find the appropriate rank tier for the player based on their MMR
+        const newRankTier = rankTiers.find(tier => player.mmr >= tier.requiredmmr);
 
-        if(player.rank === null || player.rank === undefined){
-            for (const tier of rankTiers) {
-                const tierMMR = parseInt(tier.requiredmmr, 10); // Ensure number comparison
-                
-                if (player.mmr >= tierMMR) {
-                    assignedRank = tier; // Assign highest eligible rank
-                } else {
-                    break; // Stop once the player MMR is below a rank
-                }
-            }
-            
-            // Ensure unranked players get "Unranked"
-            if (!assignedRank) {
-                assignedRank = rankTiers.find(tier => tier.name === "Unranked");
-            }
-            
-            // Update only if necessary
-            if (
-                !player.rank || 
-                player.rank.toString() !== assignedRank._id.toString() || 
-                !player.season || 
-                player.season.toString() !== currentSeason._id.toString()
-            ) {
-                await Rankings.updateOne(
-                    { _id: player._id },
-                    { 
-                        $set: { 
-                            rank: assignedRank._id,
-                            season: currentSeason._id 
-                        } 
-                    }
-                );
-            }
-            console.log("All player season ranks updated successfully!");
+        if (newRankTier) {
+            player.rank = newRankTier._id; // Update player's rank to the new rank tier
+            await player.save(); // Save the updated player data
         }
+
+        console.log(`Updated rank for player ${player.owner.username} to ${newRankTier.name}`);
     }
 
 

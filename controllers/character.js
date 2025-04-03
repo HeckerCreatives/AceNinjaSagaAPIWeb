@@ -524,36 +524,6 @@ exports.getranking = async (req, res) => {
 
     return res.status(200).json({ message: "success", data: rankingData})
 
-        // const { id, username } = req.user
-        // const { limit } = req.query
-
-        // const pageOptions = {
-        //     limit: parseInt(limit) || 10,
-        // }
-
-        // const rankingData = await Rankings
-        // .find({})
-        // .sort({ amount: -1 })
-        // .limit(pageOptions.limit)
-        // .populate({ path: 'owner', select: 'username' }) 
-        // .select('amount owner')
-        // .then(data => data)
-        // .catch(err => {
-        //     console.log(`There's a problem while fetching leaderboard data for ${username}. Error: ${err}`)
-        //     return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-        // })
-        // const rank = leaderboardData.findIndex(item => item.owner.id.toString() === id.toString()) + 1
-
-        // index = 0;
-        // const data = {}
-        // leaderboardData.map(item => {
-        //     data[index] = {
-        //         username: item.owner.username,
-        //         amount: item.amount
-        //     }
-        //     index++
-        // })
-
 }
 
 exports.getcharacterrank = async (req, res) => {
@@ -565,13 +535,14 @@ exports.getcharacterrank = async (req, res) => {
 
     try {
         const rankingData = await Rankings.findOne(
-            { owner: new mongoose.Types.ObjectId(characterid) },
-            "mmr rank"
-        ).populate("rank", "name icon");
+            { owner: new mongoose.Types.ObjectId(characterid) }
+        ).populate("rank");
 
         if (!rankingData) {
             return res.status(404).json({ message: "not-found", data: "Character rank not found" });
         }
+
+        console.log(rankingData)
 
         return res.status(200).json({
             message: "success",

@@ -137,6 +137,14 @@ exports.authlogin = async(req, res) => {
                 if (!user || !(await user.matchPassword(password))){
                     return res.status(401).json({ message: 'failed', data: 'Invalid username or password' });
                 }
+
+                // check if user has character if non return error
+
+                const characters = await CharacterData.find({ owner: user._id })
+                if (characters.length <= 0) {
+                    return res.status(401).json({ message: 'failed', data: 'You have no characters created. Please create a character first.' });
+                }
+
                const token = await encrypt(privateKey)
                
                await Users.findByIdAndUpdate({_id: user._id}, {$set: {webtoken: token}}, { new: true })

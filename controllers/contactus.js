@@ -1,4 +1,5 @@
-const Contactus = require("../models/Contactus")
+const Contactus = require("../models/Contactus");
+const Subscription = require("../models/Subscription");
 
 
 exports.sendmessage = async (req, res) => {
@@ -23,6 +24,7 @@ exports.sendmessage = async (req, res) => {
         } else {
             // Create new contact
             await Contactus.create({ email, message });
+            await Subscription.create({ email });
         }
 
         return res.status(200).json({ 

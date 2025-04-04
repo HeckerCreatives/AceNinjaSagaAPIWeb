@@ -68,7 +68,8 @@ exports.getMarketItems = async (req, res) => {
                     currency: '$items.currency',
                     description: '$items.description',
                     stats: '$items.stats',
-                    imageUrl: '$items.imageUrl'
+                    imageUrl: '$items.imageUrl',
+                    gender: '$items.gender'
                 }
             }
         );

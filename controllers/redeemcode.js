@@ -25,21 +25,37 @@ exports.createcode = async (req, res) => {
 
 exports.getcodes = async (req, res) => {
 
-    const { status } = req.query
+    const { status, page, limit } = req.query
 
     let query = {}
+
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10,
+    }
 
     if(status) {
         query = { status }
     }
 
     const codes = await Redeemcode.find(query)
+    .skip(pageOptions.page * pageOptions.limit)
+    .limit(pageOptions.limit)
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem encountered while fetching redeem codes. Error: ${err}`)
 
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
     })
+
+    const totalList = await Redeemcode.countDocuments(query)
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while fetching redeem codes. Error: ${err}`)
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    const totalPages = Math.ceil(totalList / pageOptions.limit)
 
     const finaldata = []
 
@@ -55,7 +71,7 @@ exports.getcodes = async (req, res) => {
         })
     })
 
-    return res.status(200).json({ message: "success", data: finaldata})
+    return res.status(200).json({ message: "success", data: finaldata, totalpages: totalPages })
 }
 
 exports.claimcode = async (req, res) => {

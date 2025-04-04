@@ -718,13 +718,13 @@ exports.createItem = async (req, res) => {
 
 exports.deleteItem = async (req, res) => {
     try {
-        const { itemId } = req.query;
+        const { itemId } = req.body;
 
         if (!itemId) {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
         }
 
-        let market = await Market.findOne();
+        let market = await Market.findOne({ marketType: "shop" });
         if (!market) {
             return res.status(404).json({ message: "failed", data: "Market not found." });
         }
@@ -753,7 +753,7 @@ exports.updateItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
         }
 
-        let market = await Market.findOne();
+        let market = await Market.findOne({ marketType: "shop" });
         if (!market) {
             return res.status(404).json({ message: "failed", data: "Market not found." });
         }

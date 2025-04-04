@@ -1,5 +1,7 @@
 const Mail = require("../models/Mail")
 const { Redeemcode, CodesRedeemed } = require("../models/Redeemcode")
+const { default: mongoose } = require("mongoose");
+
 
 
 
@@ -196,7 +198,7 @@ exports.updatecode = async (req, res) => {
 };
 
 exports.deletecode = async (req, res) => {
-    const { id } = req.query
+    const { id } = req.body
 
     if(!id) {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})

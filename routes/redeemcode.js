@@ -6,7 +6,7 @@ const router = require('express').Router();
 router
  .post("/createcode", protectsuperadmin, createcode)
  .get("/getcodes", protectsuperadmin, getcodes)
- .get("/deletecode", protectsuperadmin, deletecode)
+ .post("/deletecode", protectsuperadmin, deletecode)
  .post("/updatecode", protectsuperadmin, updatecode)
  .post("/claimcode", claimcode)
  .get("/redeemcodeanalytics", protectsuperadmin, redeemanalytics)

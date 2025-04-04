@@ -62,12 +62,22 @@ exports.getcodes = async (req, res) => {
     codes.forEach(data => {
         const { id, code, status, expiration, rewards} = data
 
+        // check how many times it has been redeemed
+
+        const redeemedCount = CodesRedeemed.countDocuments({ code: id })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching redeem codes. Error: ${err}`)
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+        })
+
         finaldata.push({
             id: id,
             code: code,
             status: status,
             expiration: expiration,
-            rewards: rewards
+            rewards: rewards,
+            redeemedCount: redeemedCount || 0
         })
     })
 
@@ -201,4 +211,35 @@ exports.deletecode = async (req, res) => {
     })
 
     return res.status(200).json({ message: "success"})
+}
+
+
+exports.redeemanalytics = async (req, res) => {
+
+    const { id, username } = req.user
+
+    const finaldata = {
+        redeemed: 0,
+        total: 0,
+    }
+
+    // get all redeemed codes
+    const redeemedCodes = await CodesRedeemed.find()
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    finaldata.redeemed = redeemedCodes.length
+    finaldata.total = await Redeemcode.countDocuments()
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    return res.status(200).json({ message: "success", data: finaldata })
 }

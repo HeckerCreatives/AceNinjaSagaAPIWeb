@@ -10,7 +10,7 @@ const path = require("path");
 const privateKey = fs.readFileSync(path.resolve(__dirname, "../keys/private-key.pem"), 'utf-8');
 const { default: mongoose } = require("mongoose");
 const Staffusers = require("../models/Staffusers");
-
+const CharacterData = require("../models/Characterdata");
 const encrypt = async password => {
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);

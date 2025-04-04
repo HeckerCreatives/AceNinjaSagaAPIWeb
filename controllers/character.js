@@ -9,6 +9,7 @@ const { Battlepass } = require("../models/Battlepass")
 const { checkcharacter } = require("../utils/character")
 const { CharacterInventory } = require("../models/Market")
 const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
+const { format } = require("date-fns/fp")
 
 exports.createcharacter = async (req, res) => {
     const session = await mongoose.startSession();
@@ -249,10 +250,12 @@ exports.getplayerdata = async (req, res) => {
                 from: "companions",
                 localField: "companions.companion",
                 foreignField: "_id",
-                as: "companions.companionDetails"
+                as: "companionsdeets"
             }
         },
         { $unwind: { path: "$companions", preserveNullAndEmptyArrays: true } },
+        { $unwind: { path: "$companionsdeets", preserveNullAndEmptyArrays: true } },
+
         {
             $group: {
                 _id: "$_id",
@@ -264,7 +267,20 @@ exports.getplayerdata = async (req, res) => {
                 wallet: { $first: "$wallet" },
                 stats: { $first: "$stats" },
                 ranking: { $first: "$ranking" },
-                companions: { $first: "$companions" },
+                companions: { 
+                    $push: {
+                        $cond: [
+                            { $ifNull: ["$companions", false] },
+                            {
+                                _id: "$companions._id",
+                                companion: "$companions.companion",
+                                isEquipped: "$companions.isEquipped",
+                                details: "$companionsdeets"
+                            },
+                            null
+                        ]
+                    }
+                },
                 inventory: {
                     $push: {
                         type: "$inventory.type",
@@ -315,7 +331,7 @@ exports.getplayerdata = async (req, res) => {
                 },
                 inventory: 1,
                 stats: "$stats",
-                companions: "$companions.companionDetails",
+                companions: 1,
             }
         }
     ];
@@ -330,9 +346,72 @@ exports.getplayerdata = async (req, res) => {
             });
         }
 
+
+        const formattedResponse = characterData.map(temp => {
+
+            const { _id, username, title, level, experience, wallet, stats, inventory, companions } = temp;
+
+             
+            return {
+                id: _id,
+                username,
+                title,
+                level,
+                experience,
+                wallet,
+                stats: {
+                    health: stats.health,
+                    energy: stats.energy,
+                    armor: stats.armor,
+                    magicresist: stats.magicresist,
+                    speed: stats.speed,
+                    attackdamage: stats.attackdamage,
+                    armorpen: stats.armorpen,
+                    magicpen: stats.magicpen,
+                    critchance: stats.critchance,
+                    magicdamage: stats.magicdamage,
+                    lifesteal: stats.lifesteal,
+                    omnivamp: stats.omnivamp,
+                    healshieldpower: stats.healshieldpower,
+                    critdamage: stats.critdamage,
+                },
+                inventory: inventory.reduce((acc, item) => {
+                    const { type, items } = item;
+                    if (!acc[type]) {
+                        acc[type] = items.map(i => ({
+                            id: i.item,
+                            quantity: i.quantity,
+                            isEquipped: i.isEquipped,
+                            acquiredAt: i.acquiredAt,
+                            details: i.details
+                        }));
+                    }
+                    return acc;
+                }, {}),
+                companions: companions.reduce((acc, companion) => {
+                    const { _id, companion: companionId, isEquipped, details } = companion;
+                    if (isEquipped) {
+                        return {
+                            id: _id,
+                            companion: companionId,
+                            isEquipped,
+                            companionname: details.name,
+                            levelrequirement: details.levelrequirement,
+                            activedescription: details.activedescription,
+                            activeeffects: details.activeeffects,
+                            passivedescription: details.passivedescription,
+                            passiveeffects: details.passiveeffects,
+                        };
+                    }
+                    return acc;
+                }, null), // Use null as initial value instead of empty object
+            };
+        });
+
+
         return res.status(200).json({
             message: "success",
-            data: characterData[0]
+            data: formattedResponse[0]
         });
 
     } catch (error) {

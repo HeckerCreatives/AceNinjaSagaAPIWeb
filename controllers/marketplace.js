@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose")
 const Characterwallet = require("../models/Characterwallet")
-const { Market, CharacterInventory } = require("../models/Market")
+const { Market, CharacterInventory, Item } = require("../models/Market")
 const Characterdata = require("../models/Characterdata")
 
 
@@ -566,14 +566,20 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
 
 //superadmin
 exports.createItem = async (req, res) => {
+    // Start session for transaction
+    const session = await mongoose.startSession();
+    
     try {
+        await session.startTransaction();
+
         const {name, price, currency, type, gender, description, rarity, stats } = req.body;
 
-    
+        // Validate required fields
         if (!name || !price || !currency || !type || !gender || !rarity) {
             return res.status(400).json({ message: "failed", data: "Missing required fields." });
         }
 
+        // Handle image upload
         let imageUrl = "";
         if (req.file) {
             imageUrl = req.file.path;
@@ -581,6 +587,7 @@ exports.createItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Please select an image first!" });
         }
 
+        // Validate enums
         const validCurrencies = ["coins", "emerald", "crystal"];
         const validRarities = ["basic", "common", "epic", "rare", "legendary"];
         const validGenders = ["male", "female", "unisex"];
@@ -595,6 +602,7 @@ exports.createItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Invalid gender type." });
         }
 
+        // Prepare stats
         const defaultStats = {
             level: 1,
             damage: 0,
@@ -603,13 +611,8 @@ exports.createItem = async (req, res) => {
         };
         const itemStats = { ...defaultStats, ...stats };
 
-        const market = await Market.findOne({ marketType: "shop"});
-        if (!market) {
-            return res.status(404).json({ message: "failed", data: "Market not found." });
-        }
-
-        const newItem = {
-            _id: new mongoose.Types.ObjectId(),
+        // Create new item in Items collection
+        const itemData = {
             name,
             price,
             currency,
@@ -621,14 +624,43 @@ exports.createItem = async (req, res) => {
             stats: itemStats,
         };
 
-        market.items.push(newItem);
-        await market.save();
+        // Create in Items collection
+        const newItem = await Item.create([itemData], { session });
+        const createdItem = newItem[0];
 
-        return res.status(201).json({ message: "success", data: newItem });
+        // Find and update Market
+        const market = await Market.findOne({ marketType: "shop" }).session(session);
+        if (!market) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "failed", data: "Market not found." });
+        }
+
+        // Add to market items array
+        market.items.push({
+            _id: createdItem._id,
+            ...itemData
+        });
+
+        await market.save({ session });
+        await session.commitTransaction();
+
+        return res.status(201).json({ 
+            message: "success", 
+            data: {
+                itemId: createdItem._id,
+                ...itemData
+            }
+        });
 
     } catch (err) {
+        await session.abortTransaction();
         console.error(`Error creating item: ${err}`);
-        return res.status(500).json({ message: "server-error", data: "There's a problem with the server." });
+        return res.status(500).json({ 
+            message: "server-error", 
+            data: "There's a problem with the server." 
+        });
+    } finally {
+        session.endSession();
     }
 };
 

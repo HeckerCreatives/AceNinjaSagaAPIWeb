@@ -96,10 +96,14 @@ exports.createcharacter = async (req, res) => {
             items: [{ itemid: "" }]
         }], { session });
 
+        const getranktier = await RankTier.findOne({ name: "Rookie" })
+        const currentseason = await Season.findOne({ isActive: "active" })
         // Create rankings
         await Rankings.create([{ 
             owner: characterId, 
-            mmr: 10 
+            mmr: 10,
+            ranktier: getranktier._id, 
+            season: currentseason._id
         }], { session });
 
         // Create skill tree
@@ -128,28 +132,32 @@ exports.createcharacter = async (req, res) => {
         }));
         await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
 
-        const battlepassData = await Battlepass.findOne
-        ({ owner: id, season: 1 })
 
-        if(!battlepassData){
             await Battlepass.create([{
                 owner: id,
-                season: 1,
+                season: currentseason._id,
                 level: 1,
                 xp: 0,
                 rewards: []
             }], { session })
-        }
 
-        await MonthlyLogin.create({
+        await MonthlyLogin.create([{
             owner: characterId,
-            month: new Date().getMonth(),
-            year: new Date().getFullYear()
-        }, { session })
-        
-        await SpinnerRewards.create({
-            owner: characterId
-        }, { session })
+            month: new Date().getMonth().toString(), 
+            year: new Date().getFullYear().toString(), 
+            login: 0,
+            isClaimed: "0",
+            lastClaimed: new Date()
+        }], { session });
+
+        await SpinnerRewards.create([{
+            owner: characterId,
+            daily: 0,
+            isClaimed: "0",
+            lastClaimed: new Date()
+        }], { session });
+
+
 
         await session.commitTransaction();
         return res.status(200).json({ message: "success" });
@@ -165,7 +173,6 @@ exports.createcharacter = async (req, res) => {
         session.endSession();
     }
 }
-
 exports.getplayerdata = async (req, res) => {
     const { characterid } = req.query;
 

@@ -536,10 +536,6 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
 
             return res.status(200).json({ 
                 message: "success",
-                data: {
-                    item: itemData.name,
-                    quantity
-                }
             });
 
         }

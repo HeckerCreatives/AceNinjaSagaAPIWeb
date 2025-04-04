@@ -9,6 +9,7 @@ const { default: mongoose } = require("mongoose")
 const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market } = require("../models/Market")
+const { Skill } = require("../models/Skills")
 
 exports.initialize = async () => {
     const admin = await Staffusers.find({ auth: "superadmin"})
@@ -198,6 +199,20 @@ exports.initialize = async () => {
         await Market.create({ marketType: "shop", items: [] });
         console.log("Market initialized successfully");
     }
+
+    // get all skills with max level to 5 and set to 1
+
+    const skills = await Skill.find({ maxLevel: 5 });
+
+    if (skills.length > 0) {
+        for (const skill of skills) {
+            skill.maxLevel = 1;
+            await skill.save();
+            
+            console.log(`Skill ${skill.name} max level updated to 1`);
+        }
+    }
+
 
     
     console.log("SERVER DATA INITIALIZED")

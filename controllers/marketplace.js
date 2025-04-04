@@ -492,73 +492,128 @@ exports.listequippeditems = async (req, res) => {
 
 
 exports.grantplayeritemsuperadmin = async (req, res) => {
-    const { characterid, itemid, quantity } = req.body
+    const { username, items } = req.body;
+
+    if (!username || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ 
+            message: "failed", 
+            data: "Please provide username and items array" 
+        });
+    }
+
+    const session = await mongoose.startSession();
 
     try {
-        const item = await Market.findOne(
-            { 'items._id': itemid },
-            { 'items.$': 1 }
-        );
+        await session.startTransaction();
 
-        if (!item?.items[0]) {
-            return res.status(404).json({ message: "failed", data: "Item not found" });
+        // Find character by username
+        const character = await Characterdata.findOne({ username }).session(session);
+        if (!character) {
+            return res.status(404).json({
+                message: "failed",
+                data: "Character not found"
+            });
         }
 
-        const itemData = item.items[0];
+        console.log(character)
 
-        const session = await mongoose.startSession();
-
-        try {
-
-            await session.startTransaction();
-
-            // Check if item already exists in inventory
-            const inventory = await CharacterInventory.findOne(
-                { owner: characterid, 'items.item': itemid },
+        // Process each item
+        const results = [];
+        for (const itemid of items) {
+            // Find item in market
+            const marketItem = await Market.findOne(
+                { 'items._id': itemid },
                 { 'items.$': 1 }
             ).session(session);
 
-            if (inventory?.items[0]) {
-                await CharacterInventory.findOneAndUpdate(
-                    { owner: characterid, 'items.item': itemid },
-                    { $inc: { 'items.$.quantity': quantity } },
-                    { session }
-                );
-            } else {
-                await CharacterInventory.findOneAndUpdate(
-                    { owner: characterid, type: itemData.type },
-                    { $push: { items: { item: itemData._id, quantity } } },
-                    { upsert: true, new: true, session }
-                );
+            if (!marketItem?.items[0]) {
+                results.push({
+                    itemid,
+                    status: 'failed',
+                    message: 'Item not found'
+                });
+                continue;
             }
 
-            await session.commitTransaction();
+            const itemData = marketItem.items[0];
 
-            return res.status(200).json({ 
-                message: "success",
-            });
+            try {
+                // Check if item exists in inventory
+                const inventory = await CharacterInventory.findOne(
+                    { 
+                        owner: character._id, 
+                        'items.item': itemid 
+                    },
+                    { 'items.$': 1 }
+                ).session(session);
 
+                if (inventory?.items[0]) {
+                    // Update existing item quantity by 1
+                    await CharacterInventory.findOneAndUpdate(
+                        { 
+                            owner: character._id, 
+                            'items.item': itemid 
+                        },
+                        { $inc: { 'items.$.quantity': 1 } },
+                        { session }
+                    );
+                } else {
+                    // Add new item to inventory
+                    await CharacterInventory.findOneAndUpdate(
+                        { 
+                            owner: character._id, 
+                            type: itemData.type 
+                        },
+                        { 
+                            $push: { 
+                                items: { 
+                                    item: itemData._id,
+                                    quantity: 1
+                                } 
+                            } 
+                        },
+                        { 
+                            upsert: true, 
+                            new: true, 
+                            session 
+                        }
+                    );
+                }
+
+                results.push({
+                    itemid,
+                    status: 'success',
+                    name: itemData.name
+                });
+
+            } catch (err) {
+                results.push({
+                    itemid,
+                    status: 'failed',
+                    message: 'Error processing item'
+                });
+            }
         }
-        catch (err) {
-            await session.abortTransaction();
-            console.log(`Error granting item to player: ${err}`);
-            return res.status(500).json({ 
-                message: "failed", 
-                data: "Failed to grant item" 
-            });
-        } finally {
-            session.endSession();
-        }
+
+        await session.commitTransaction();
+
+        console.log(results)
+        return res.status(200).json({ 
+            message: "success",
+
+        });
 
     } catch (err) {
-        console.log(`Error finding item: ${err}`);
-        return res.status(400).json({ 
+        await session.abortTransaction();
+        console.error(`Error in grantplayeritemsuperadmin: ${err}`);
+        return res.status(500).json({ 
             message: "failed", 
-            data: "There's a problem with the server! Please try again later." 
+            data: "Failed to grant items" 
         });
+    } finally {
+        session.endSession();
     }
-}
-
+};
 
 //superadmin
 exports.createItem = async (req, res) => {

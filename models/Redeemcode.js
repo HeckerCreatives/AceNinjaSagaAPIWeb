@@ -7,13 +7,6 @@ const RedeemCodeSchema = new mongoose.Schema(
             type: String,
             index: true
         },
-        title: {
-            type: String,
-            // required: true
-        },
-        description: {
-            type: String
-        },
         rewards: {
             type: Map, 
             of: Number 

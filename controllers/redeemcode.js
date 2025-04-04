@@ -5,13 +5,13 @@ const { Redeemcode, CodesRedeemed } = require("../models/Redeemcode")
 
 exports.createcode = async (req, res) => {
 
-    const { code, title, description, status, expiry, rewards } = req.body
+    const { code , status, expiry, rewards } = req.body
 
-    if(!code || !description || !status || !expiry || !rewards) {
+    if(!code || !status || !expiry || !rewards) {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
-    await Redeemcode.create({ code,title, description, status, expiration: expiry, rewards })
+    await Redeemcode.create({ code, status, expiration: expiry, rewards })
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem while creating redeem code. Error: ${err}`)
@@ -44,12 +44,11 @@ exports.getcodes = async (req, res) => {
     const finaldata = []
 
     codes.forEach(data => {
-        const { id, code, description, status, expiration, rewards} = data
+        const { id, code, status, expiration, rewards} = data
 
         finaldata.push({
             id: id,
             code: code,
-            description: description,
             status: status,
             expiration: expiration,
             rewards: rewards
@@ -118,3 +117,72 @@ exports.claimcode = async (req, res) => {
 
 }
 
+exports.updatecode = async (req, res) => {
+    try {
+        const { id, code, status, expiry, rewards } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ 
+                message: "failed", 
+                data: "Please provide redeem code ID" 
+            });
+        }
+
+        // Build update object with non-empty fields only
+        const updateObj = {};
+        if (code !== undefined && code !== "") updateObj.code = code;
+        if (status !== undefined && status !== "") updateObj.status = status;
+        if (expiry !== undefined && expiry !== "") updateObj.expiration = expiry;
+        if (rewards !== undefined && rewards !== "") updateObj.rewards = rewards;
+
+        // Check if there are fields to update
+        if (Object.keys(updateObj).length === 0) {
+            return res.status(400).json({
+                message: "failed",
+                data: "No valid fields provided for update"
+            });
+        }
+
+        const updatedCode = await Redeemcode.findOneAndUpdate(
+            { _id: new mongoose.Types.ObjectId(id) },
+            { $set: updateObj },
+            { new: true }
+        );
+
+        if (!updatedCode) {
+            return res.status(404).json({
+                message: "failed",
+                data: "Redeem code not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "success",
+        });
+
+    } catch (err) {
+        console.error(`Error updating redeem code: ${err}`);
+        return res.status(500).json({
+            message: "bad-request",
+            data: "There's a problem with the server. Please contact support for more details."
+        });
+    }
+};
+
+exports.deletecode = async (req, res) => {
+    const { id } = req.query
+
+    if(!id) {
+        return res.status(400).json({ message: "failed", data: "Please input the required fields"})
+    }
+
+    await Redeemcode.findOneAndDelete({ _id: new mongoose.Types.ObjectId(id) })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while deleting redeem code. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    return res.status(200).json({ message: "success"})
+}

@@ -6,12 +6,12 @@ const { protectsuperadmin, protectplayer } = require("../middleware/middleware")
 
 
 router
-.get("/totalregistration", protectsuperadmin, totalregistration)
-.get("/userlist", protectsuperadmin, userlist)
-.post("/changeuserpasswordsuperadmin", protectsuperadmin, changeuserpasswordsuperadmin)
-.post("/banunbanuser", protectsuperadmin, banunbanuser)
-.get("/getregistrationgraph", protectsuperadmin, registrationGraph)
-
 .post("/changeuserpassword", protectplayer, changeuserpassword)
 
+.get("/userlist", protectsuperadmin, userlist)
+.get("/totalregistration", protectsuperadmin, totalregistration)
+.get("/getregistrationgraph", protectsuperadmin, registrationGraph)
+
+.post("/banunbanuser", protectsuperadmin, banunbanuser)
+.post("/changeuserpasswordsuperadmin", protectsuperadmin, changeuserpasswordsuperadmin)
 module.exports = router

@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose")
 const Users = require("../models/Users");
 const { daily, weekly, monthly } = require("../utils/graphfilter");
 const { startOfISOWeek, endOfISOWeek, startOfYear, endOfYear } = require('date-fns');
+const bcrypt = require('bcrypt');
 
 const encrypt = async password => {
     const salt = await bcrypt.genSalt(10);
@@ -211,7 +212,7 @@ exports.userlist = async (req, res) => {
 
 exports.changeuserpasswordsuperadmin = async(req, res) => {
 
-    const { userid, password } = req.query
+    const { userid, password } = req.body
 
     if(!userid || !password){
         return res.status(400).json({ message: "failed", data: "Please input userid and password."})

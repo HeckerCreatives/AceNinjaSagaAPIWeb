@@ -269,6 +269,7 @@ exports.getplayerdata = async (req, res) => {
                 user: { $first: "$user" },
                 username: { $first: "$username" },
                 title: { $first: "$title" },
+                badge: { $first: "$badge" },
                 level: { $first: "$level" },
                 experience: { $first: "$experience" },
                 wallet: { $first: "$wallet" },
@@ -323,6 +324,7 @@ exports.getplayerdata = async (req, res) => {
                 status: { $arrayElemAt: ["$user.status", 0] },
                 username: 1,
                 title: 1,
+                badge: 1,
                 level: 1,
                 experience: 1,
                 mmr: { $arrayElemAt: ["$ranking.mmr", 0] },
@@ -355,13 +357,14 @@ exports.getplayerdata = async (req, res) => {
 
 
         const formattedResponse = characterData.map(temp => {
-            const { _id, username, title, level, experience, wallet, stats, inventory, companions } = temp;
+            const { _id, username, badge, title, level, experience, wallet, stats, inventory, companions } = temp;
         
             return {
                 id: _id,
                 username,
                 title,
                 level,
+                badge,
                 experience,
                 wallet,
                 stats: {

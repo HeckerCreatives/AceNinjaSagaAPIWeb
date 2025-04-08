@@ -549,15 +549,10 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
                 ).session(session);
 
                 if (inventory?.items[0]) {
-                    // Update existing item quantity by 1
-                    await CharacterInventory.findOneAndUpdate(
-                        { 
-                            owner: character._id, 
-                            'items.item': itemid 
-                        },
-                        { $inc: { 'items.$.quantity': 1 } },
-                        { session }
-                    );
+                    return res.status(400).json({
+                        message: "failed",
+                        data: "Item already exists in inventory"
+                    });
                 } else {
                     // Add new item to inventory
                     await CharacterInventory.findOneAndUpdate(

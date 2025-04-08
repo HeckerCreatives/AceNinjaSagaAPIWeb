@@ -19,8 +19,8 @@ const encrypt = async password => {
 exports.register = async (req, res) => {
     const { username, password, email } = req.body
 
-    if(username.length < 5 || username.length > 20){
-        return res.status(400).json({ message: "failed", data: "Username input must be atleast 5 characters and maximum of 20 characters."})
+    if(username.length < 4 || username.length > 15){
+        return res.status(400).json({ message: "failed", data: "Username input must be atleast 4 characters and maximum of 15 characters."})
     }
     if(password.length < 5 || password.length > 20){
         return res.status(400).json({ message: "failed", data: "Password input must be atleast 5 characters and maximum of 20 characters."})
@@ -34,9 +34,9 @@ exports.register = async (req, res) => {
     if(!usernameRegex.test(username)){
         return res.status(400).json({ message: "failed", data: "Special characters like &, %,^ are not allowed. Please input a valid username."})      
     }    
-    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    const passwordRegex = /^[a-zA-Z0-9\[\]@#]+$/;
     if(!passwordRegex.test(password)){
-        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+        return res.status(400).json({ message: "failed", data: "Only letters, numbers, and [, ], @, # characters are allowed."})      
     }
 
     const userExists = await Users.findOne({ $or: [{ username: { $regex: `^${username}$`, $options: 'i'}, email: { $regex: `^${email}$`, $options: 'i'}}]})
@@ -67,7 +67,7 @@ exports.registerstaffuser = async (req, res) => {
     }
   
     const usernameRegex = /^[a-zA-Z0-9]+$/;
-    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    const passwordRegex = /^[a-zA-Z0-9\[\]@#]+$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(!emailRegex.test(email)){
         return res.status(400).json({ message: "failed", data: "Please input a valid email."})      
@@ -76,7 +76,7 @@ exports.registerstaffuser = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Special characters like &, %,^ are not allowed. Please input a valid username."})      
     }    
     if(!passwordRegex.test(password)){
-        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+        return res.status(400).json({ message: "failed", data: "Only letters, numbers, and [, ], @, # characters are allowed."})      
     }
 
     const userExists = await Staffusers.findOne({ $or: [{ username: { $regex: `^${username}$`, $options: 'i'}, email: { $regex: `^${email}$`, $options: 'i'}}]})

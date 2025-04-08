@@ -218,9 +218,13 @@ exports.changeuserpasswordsuperadmin = async(req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input userid and password."})
     }
     
-    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    if(password.length < 6 || password.length > 15) {
+        return res.status(400).json({ message: "failed", data: "Password must be between 6 and 15 characters."})
+    }
+
+    const passwordRegex = /^[a-zA-Z0-9\[\]@#]+$/;
     if(!passwordRegex.test(password)){
-        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+        return res.status(400).json({ message: "failed", data: "Only letters, numbers, and [, ], @, # characters are allowed."})      
     }
 
 
@@ -266,9 +270,13 @@ exports.changeuserpassword = async(req, res) => {
         return res.status(400).json({ message: "failed", data: "Old password is incorrect."})
     }
 
-    const passwordRegex = /^[a-zA-Z0-9\[\]!@#*]+$/;
+    if(newpw.length < 6 || newpw.length > 15) {
+        return res.status(400).json({ message: "failed", data: "Password must be between 6 and 15 characters."})
+    }
+
+    const passwordRegex = /^[a-zA-Z0-9\[\]@#]+$/;
     if(!passwordRegex.test(newpw)){
-        return res.status(400).json({ message: "failed", data: "Special characters are not allowed. Please input a valid password."})      
+        return res.status(400).json({ message: "failed", data: "Only letters, numbers, and [, ], @, # characters are allowed."})      
     }
 
     const encryptedPassword = await encrypt(newpw)

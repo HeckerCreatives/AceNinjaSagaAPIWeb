@@ -30,8 +30,8 @@ exports.createcharacter = async (req, res) => {
             
         const usernameRegex = /^[a-zA-Z0-9]+$/;
 
-        if(username.length < 5 || username.length > 20){
-            return res.status(400).json({ message: "failed", data: "Username length should be greater than 5 and less than 20 characters."})
+        if(username.length < 4 || username.length > 15){
+            return res.status(400).json({ message: "failed", data: "Username length should be greater than 4 and less than 15 characters."})
         }
         if(!usernameRegex.test(username)){
             return res.status(400).json({ message: "failed", data: "No special characters are allowed for username"})

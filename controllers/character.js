@@ -115,7 +115,7 @@ exports.createcharacter = async (req, res) => {
         }], { session });
 
         // Create wallets
-        const walletListData = ["coins", "crystal", "emerald"];
+        const walletListData = ["coins", "crystal"];
         const walletBulkwrite = walletListData.map(walletData => ({
             insertOne: {
                 document: { owner: characterId, type: walletData, amount: "0" }

@@ -268,7 +268,7 @@ exports.sellitem = async (req, res) => {
 
             if (itemData.item.currency === "coins") {
                 coinsamount = itemData.item.price * 0.5
-            } else if(itemData.item.currency === "emerald") {
+            } else if(itemData.item.currency === "crystal") {
                 coinsamount = (itemData.item.price * 0.5) * 100
             } else {
                 return res.status(400).json({ message: "failed", data: "Invalid currency" });
@@ -669,7 +669,7 @@ exports.createItem = async (req, res) => {
         }
 
         // Validate enums
-        const validCurrencies = ["coins", "emerald", "crystal"];
+        const validCurrencies = ["coins", "crystal"];
         const validRarities = ["basic", "common", "epic", "rare", "legendary"];
         const validGenders = ["male", "female", "unisex"];
 

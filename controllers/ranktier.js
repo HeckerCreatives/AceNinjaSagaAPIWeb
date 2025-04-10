@@ -8,6 +8,12 @@ exports.createRankTier = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "All fields are required." });
         }
 
+        const existingTier = await RankTier.findOne({name: new RegExp(`^${name.trim()}$`, 'i')});
+
+        if (existingTier) {
+            return res.status(409).json({ message: "failed", data: "Rank tier with this name already exists." });
+        }
+
         let icon = req.file?.path;
 
         const newTier = await RankTier.create({ name, requiredmmr, icon });
@@ -19,6 +25,7 @@ exports.createRankTier = async (req, res) => {
         return res.status(500).json({ message: "server-error", data: "Internal server error." });
     }
 };
+
 
 exports.getAllRankTiers = async (req, res) => {
     try {
@@ -57,6 +64,11 @@ exports.updateRankTier = async (req, res) => {
         const existingTier = await RankTier.findById(id);
         if (!existingTier) {
             return res.status(404).json({ message: "failed", data: "Rank tier not found." });
+        }
+
+        const existingUpdateTier = await RankTier.findOne({name: new RegExp(`^${name.trim()}$`, 'i')});
+        if (existingUpdateTier) {
+            return res.status(409).json({ message: "failed", data: "Rank tier with this name already exists." });
         }
 
         const updatedTier = await RankTier.findByIdAndUpdate(

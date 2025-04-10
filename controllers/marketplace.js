@@ -778,7 +778,7 @@ exports.deleteItem = async (req, res) => {
 
 exports.updateItem = async (req, res) => {
     try {
-        const { itemId,name, price, currency, type, gender, description, rarity, stats } = req.body;
+        const { itemId,name, price, currency, type, inventorytype, gender, description, rarity, stats } = req.body;
 
         if (!itemId) {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
@@ -805,6 +805,7 @@ exports.updateItem = async (req, res) => {
         if (gender) market.items[itemIndex].gender = gender;
         if (description) market.items[itemIndex].description = description;
         if (rarity) market.items[itemIndex].rarity = rarity;
+        if (inventorytype) market.items[itemIndex].inventorytype = inventorytype;
         market.items[itemIndex].imageUrl = imageUrl;
 
         if (stats) {

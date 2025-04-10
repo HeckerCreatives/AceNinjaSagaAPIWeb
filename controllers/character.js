@@ -395,7 +395,7 @@ exports.getplayerdata = async (req, res) => {
                 })), 
                 
                 companions: companions
-                    .filter(c => c.isEquipped) 
+                    .filter(c => c?.isEquipped) 
                     .map(({ _id, companion, isEquipped, details }) => ({
                         id: _id,
                         companion,
@@ -590,7 +590,7 @@ exports.getinventory = async (req, res) => {
         if(Object.keys(formattedResponse.data).length === 0) {
             return res.status(200).json({
                 message: "success",
-                data: "No items found."
+                data: {}
             })
         }
 

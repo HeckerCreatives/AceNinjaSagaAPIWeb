@@ -859,7 +859,7 @@ exports.updateItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
         }
 
-        let market = await Market.findOne({ marketType: "shop" });
+        let market = await Market.findOne({ marketType: "market" });
         if (!market) {
             return res.status(404).json({ message: "failed", data: "Market not found." });
         }

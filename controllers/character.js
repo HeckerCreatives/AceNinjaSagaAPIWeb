@@ -573,6 +573,7 @@ exports.getinventory = async (req, res) => {
                             level: item.itemDetails.level,
                             price: item.itemDetails.price,
                             imageUrl: item.itemDetails.imageUrl,
+                            currency: item.itemDetails.currency,
                         } : null
                     } : null
                 };

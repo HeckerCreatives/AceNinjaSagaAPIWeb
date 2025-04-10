@@ -167,7 +167,16 @@ exports.buyitem = async (req, res) => {
             }
 
             const itemData = item.items[0];
+            // Check if item already exists in inventory
+            const inventory = await CharacterInventory.findOne(
+                { owner: characterid, 'items.item': itemid },
+                { 'items.$': 1 }
+            ).session(session);
 
+            if (inventory?.items[0]) {
+                return res.status(400).json({ message: "failed", data: "Item already exists in inventory" });
+            } 
+            
             // Check wallet balance
             const wallet = await Characterwallet.findOne({ 
                 owner: new mongoose.Types.ObjectId(characterid), 
@@ -178,7 +187,7 @@ exports.buyitem = async (req, res) => {
                 await session.abortTransaction();
                 return res.status(404).json({ message: "failed", data: "Wallet not found" });
             }
-
+            
             if (wallet.amount < itemData.price) {
                 await session.abortTransaction();
                 return res.status(400).json({ message: "failed", data: "Insufficient balance" });
@@ -192,26 +201,92 @@ exports.buyitem = async (req, res) => {
             );
 
 
-            // Check if item already exists in inventory
-            const inventory = await CharacterInventory.findOne(
-                { owner: characterid, 'items.item': itemid },
-                { 'items.$': 1 }
-            ).session(session);
+            // if item type is skill then store it in Characterskills
 
-            if (inventory?.items[0]) {
-                await CharacterInventory.findOneAndUpdate(
-                    { owner: characterid, 'items.item': itemid },
-                    { $inc: { 'items.$.quantity': 1 } },
-                    { session }
+            if (itemData.type === "skills") {
+
+                const skill = await Skill.findById(itemData.skill).session(session);
+                if (!skill) {
+                    return res.status(404).json({
+                            message: "failed",
+                            data: "Skill not found"
+                    });
+                }
+                // Get character's skill tree
+                  let skillTree = await CharacterSkillTree.findOne({ owner: characterid }).session(session)
+                  .populate('skills.skill');
+
+              if (!skillTree) {
+                  skillTree = await CharacterSkillTree.create({
+                      owner: characterid,  // Fixed: changed characterid to owner
+                      skills: []
+                  });
+              }
+
+              // Check prerequisites are maxed
+              if (skill.prerequisites && skill.prerequisites.length > 0) {
+                  const hasMaxedPrerequisites = skill.prerequisites.every(prereqId => {
+                      const prereqSkill = skillTree.skills.find(s => 
+                          s.skill._id.toString() === prereqId.toString()
+                      );
+                      return prereqSkill && prereqSkill.level >= prereqSkill.skill.maxLevel;
+                  });
+
+                  if (!hasMaxedPrerequisites) {
+                      return res.status(400).json({
+                          message: "failed",
+                          data: "Prerequisites must be at maximum level"
+                      });
+                  }
+              }
+
+              // Check if character already has this skill
+              const existingSkill = skillTree.skills.find(s => 
+                  s.skill._id.toString() === itemData.skill.toString()
+              );
+
+              if (existingSkill && existingSkill.level >= skill.maxLevel) {
+                  return res.status(400).json({
+                      message: "failed",
+                      data: "Skill already at maximum level"
+                  });
+              }
+
+                if (existingSkill) {
+                    existingSkill.level += 1;
+                } else {
+                    skillTree.skills.push({
+                        skill: itemData.skill,
+                        level: 1,
+                    });
+                    if (!skillTree.unlockedSkills.includes(itemData.skill)) {
+                        skillTree.unlockedSkills.push(itemData.skill);
+                    }
+                }
+
+                await skillTree.save({ session });
+
+            } else if (itemData.type === "crystalpacks") {
+                await Characterwallet.findOneAndUpdate(
+                    { owner: characterid, type: 'crystal' },
+                    { $inc: { amount: itemData.crystals } },
+                    { new: true, session }
+                );
+
+            } else if (itemData.type === "goldpacks") {
+                await Characterwallet.findOneAndUpdate(
+                    { owner: characterid, type: 'coins' },
+                    { $inc: { amount: itemData.coins } },
+                    { new: true, session }
                 );
             } else {
-            // Update inventory
-            await CharacterInventory.findOneAndUpdate(
-                { owner: characterid, type: itemData.type },
-                { $push: { items: { item: itemData._id } } },
+                await CharacterInventory.findOneAndUpdate(
+                    { owner: characterid, type: itemData.inventorytype },
+                    { $push: { items: { item: itemData._id } } },
                 { upsert: true, new: true, session }
             );
             }
+            
             // Commit transaction
             await session.commitTransaction();
             return res.status(200).json({ 

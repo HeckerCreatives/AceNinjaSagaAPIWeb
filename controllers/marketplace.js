@@ -22,15 +22,22 @@ exports.getMarketItems = async (req, res) => {
             },
             { $unwind: '$items' },
             {
-                $match: {
-                    $and: []
+                $lookup: {
+                    from: 'skills',
+                    localField: 'items.skill',
+                    foreignField: '_id',
+                    as: 'skill'
                 }
-            }
+            },
+            { $unwind: { path: '$skill', preserveNullAndEmptyArrays: true } }
         ];
+
+        // Initialize match conditions
+        const matchConditions = [];
 
         // Add search conditions if search parameter exists
         if (search) {
-            pipeline[2].$match.$and.push({
+            matchConditions.push({
                 $or: [
                     { 'items.type': { $regex: new RegExp(search, "i") } },
                     { 'items.rarity': { $regex: new RegExp(search, "i") } },
@@ -41,18 +48,23 @@ exports.getMarketItems = async (req, res) => {
 
         // Add type filter if specified
         if (type) {
-            pipeline[2].$match.$and.push({ 'items.type': type });
+            matchConditions.push({ 'items.type': type });
         }
 
         // Add rarity filter if specified
         if (rarity) {
-            pipeline[2].$match.$and.push({ 'items.rarity': rarity });
+            matchConditions.push({ 'items.rarity': rarity });
         }
 
-        // If no conditions were added, remove the $and operator
-        if (pipeline[2].$match.$and.length === 0) {
-            delete pipeline[2].$match.$and;
+        // Add match stage only if there are conditions
+        if (matchConditions.length > 0) {
+            pipeline.push({
+                $match: {
+                    $and: matchConditions
+                }
+            });
         }
+
         // Add pagination
         pipeline.push(
             { $skip: pageOptions.page * pageOptions.limit },
@@ -69,7 +81,29 @@ exports.getMarketItems = async (req, res) => {
                     description: '$items.description',
                     stats: '$items.stats',
                     imageUrl: '$items.imageUrl',
-                    gender: '$items.gender'
+                    gender: '$items.gender',
+                    isOpenable: '$items.isOpenable',
+                    crystals: {
+                        $cond: {
+                            if: { $eq: ['$items.type', 'crystalpacks'] },
+                            then: '$items.crystals',
+                            else: '$$REMOVE'
+                        }
+                    },
+                    coins: {
+                        $cond: {
+                            if: { $eq: ['$items.type', 'goldpacks'] },
+                            then: '$items.coins',
+                            else: '$$REMOVE'
+                        }
+                    },
+                    skill: {
+                        $cond: {
+                            if: { $eq: ['$items.type', 'skills'] },
+                            then: '$skill',
+                            else: '$$REMOVE'
+                        }
+                    }
                 }
             }
         );
@@ -619,7 +653,7 @@ exports.createItem = async (req, res) => {
     try {
         await session.startTransaction();
 
-        const {name, price, currency, type, gender, description, rarity, stats } = req.body;
+        const {name, price, currency, type, inventorytype, gender, description, rarity, stats } = req.body;
 
         // Validate required fields
         if (!name || !price || !currency || !type || !gender || !rarity) {
@@ -664,6 +698,7 @@ exports.createItem = async (req, res) => {
             price,
             currency,
             type,
+            inventorytype,
             gender,
             description: description || "N/A",
             rarity,

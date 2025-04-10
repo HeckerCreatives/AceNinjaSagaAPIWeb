@@ -26,6 +26,22 @@ exports.addFriend = async (req, res) => {
             });
         }
 
+        const hasrequest = await Friends.findOne({
+            $or: [
+                { character: characterId, friend: friendId },
+                { character: friendId, friend: characterId }
+            ],
+            status: 'pending'
+        });
+
+
+        if (hasrequest) {
+            return res.status(400).json({
+                message: "failed",
+                data: 'You already sent a friend request to this player'
+            });
+        }
+
         // Check if characters exist
         const [character, friend] = await Promise.all([
             Characterdata.findById(characterId),

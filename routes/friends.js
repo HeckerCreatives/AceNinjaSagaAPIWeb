@@ -6,15 +6,15 @@ const router = require("express").Router()
 router
 // #region PLAYER
 .get("/getfriends", protectplayer, getFriends)
-.get("/getfriendssa", protectsuperadmin, getFriendssa)
 .get("/getfriendrequests", protectplayer, getFriendRequests)
-.get("/getfriendrequestssa", protectsuperadmin, getFriendRequestssa)
 .post("/addfriend", protectplayer, addFriend)
 .post("/acceptrejectfriendrequest", protectplayer, acceptrejectFriendRequest)
 .get("/playerlist", protectplayer, playerlist)
 // #endregion
 
 // #region SUPERADMIN
+.get("/getfriendrequestssa", protectsuperadmin, getFriendRequestssa)
+.get("/getfriendssa", protectsuperadmin, getFriendssa)
 .get("/getplayerfriendssuperadmin", protectsuperadmin, getFriends)
 
 // #endregion

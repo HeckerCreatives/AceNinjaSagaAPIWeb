@@ -13,7 +13,7 @@ const router = require("express").Router()
 
 router
 .get("/getannouncement", getannouncement)
-.post("/createannouncement", protectsuperadmin, function (req, res, next){
+.post("/createannouncement", function (req, res, next){
     uploadimg(req, res, function(err){
         if(err){
             return res.status(400).send({ message: "failed", data: err.message })

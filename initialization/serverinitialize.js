@@ -232,40 +232,6 @@ exports.initialize = async () => {
 
     }
 
-        const market = await Market.find()
-        .then(data => data)
-        .catch(err => {
-            console.log(`Error finding market data: ${err}`)
-        })
-
-        if (market.length <= 0) {
-            try {
-                // Fetch all items again to ensure we have the latest data
-                const availableItems = await Item.find();
-                
-                if (!availableItems || availableItems.length === 0) {
-                    console.log("No items available to create market");
-                    return;
-                }
-    
-                // Create initial market with all available items
-                const newMarket = await Market.create({
-                    items: availableItems,
-                    marketType: "market",
-                    lastUpdated: new Date()
-                });
-
-
-                await Market.create({ marketType: "shop", items: [] });
-    
-                if (newMarket) {
-                    console.log("Market initialized successfully with", availableItems.length, "items");
-                }
-            } catch (err) {
-                console.log(`Error creating market: ${err}`);
-                return;
-            }
-        } 
         // Basic Attack Path
         const attackskilltree = await Skill.find({ category: "Basic", path: "Attack" })
         .then(data => data)
@@ -298,7 +264,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "attackdamage": 5 },
                 prerequisites: [energy._id]
             })
@@ -310,7 +276,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "attackdamage": 5 },
                 prerequisites: [attack1._id, energy._id]
             })
@@ -323,7 +289,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "attackdamage": 5 },
                 prerequisites: [attack1._id, energy._id, attack2._id]
             })
@@ -335,7 +301,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "attackdamage": 5 },
                 prerequisites: [attack1._id, energy._id, attack2._id, attack3._id]
             })
@@ -348,7 +314,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicdamage": 5 },
                 prerequisites: [energy._id]
             })
@@ -361,7 +327,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicdamage": 5 },
                 prerequisites: [energy._id, magic1._id]
             })
@@ -374,7 +340,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicdamage": 5 },
                 prerequisites: [energy._id, magic1._id, magic2._id]
             })
@@ -387,7 +353,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicdamage": 5 },
                 prerequisites: [energy._id, magic1._id, magic2._id, magic3._id]
             })
@@ -444,7 +410,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "armor": 5 },
                 prerequisites: [health._id]
             })
@@ -456,7 +422,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "armor": 5 },
                 prerequisites: [health._id, armor1._id]
             })
@@ -469,7 +435,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "armor": 5 },
                 prerequisites: [health._id, armor1._id, armor2._id]
             })
@@ -481,7 +447,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "armor": 5 },
                 prerequisites: [health._id, armor1._id, armor2._id, armor3._id]
             })
@@ -494,7 +460,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicresist": 5 },
                 prerequisites: [health._id]
             })
@@ -507,7 +473,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicresist": 5 },
                 prerequisites: [health._id, magicresist1._id]
             })
@@ -520,7 +486,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicresist": 5 },
                 prerequisites: [health._id, magicresist1._id, magicresist2._id]
             })
@@ -533,7 +499,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicresist": 5 },
                 prerequisites: [health._id, magicresist1._id, magicresist2._id, magicresist3._id]
             })
@@ -589,7 +555,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "critchance": 1 },
                 prerequisites: [speed._id]
             })
@@ -602,7 +568,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "armorpen": 1 },
                 prerequisites: [speed._id, crit1._id]
             })
@@ -615,7 +581,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "lifesteal": 1 },
                 prerequisites: [speed._id, crit1._id, armorpen._id]
             })
@@ -628,7 +594,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "critchance": 1 },
                 prerequisites: [speed._id, crit1._id, armorpen._id, lifesteal._id]
             })
@@ -641,7 +607,7 @@ exports.initialize = async () => {
                 levelRequirement: 10,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "tbd": 1 },
                 prerequisites: [speed._id]
             })
@@ -654,7 +620,7 @@ exports.initialize = async () => {
                 levelRequirement: 20,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "magicpen": 1 },
                 prerequisites: [speed._id, tbd._id]
             })
@@ -667,7 +633,7 @@ exports.initialize = async () => {
                 levelRequirement: 30,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "omnivamp": 1 },
                 prerequisites: [speed._id, tbd._id, magicpen1._id]
             })
@@ -680,7 +646,7 @@ exports.initialize = async () => {
                 levelRequirement: 40,
                 currency: "skillpoints",
                 spCost: 4,
-                maxLevel: 5,
+                maxLevel: 1,
                 effects: { "tbd": 1 },
                 prerequisites: [speed._id, tbd._id, magicpen1._id, omnivamp._id]
             })
@@ -2996,6 +2962,41 @@ exports.initialize = async () => {
             }
         }
     }
+
+    const market = await Market.find()
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding market data: ${err}`)
+    })
+
+    if (market.length <= 0) {
+        try {
+            // Fetch all items again to ensure we have the latest data
+            const availableItems = await Item.find();
+            
+            if (!availableItems || availableItems.length === 0) {
+                console.log("No items available to create market");
+                return;
+            }
+
+            // Create initial market with all available items
+            const newMarket = await Market.create({
+                items: availableItems,
+                marketType: "market",
+                lastUpdated: new Date()
+            });
+
+
+            await Market.create({ marketType: "shop", items: [] });
+
+            if (newMarket) {
+                console.log("Market initialized successfully with", availableItems.length, "items");
+            }
+        } catch (err) {
+            console.log(`Error creating market: ${err}`);
+            return;
+        }
+    } 
 
     console.log("SERVER DATA INITIALIZED")
 }

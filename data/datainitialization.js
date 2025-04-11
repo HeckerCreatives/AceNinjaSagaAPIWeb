@@ -567,6 +567,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 20,
         isOpenable: true,
+        isEquippable: false,
         crystals: 2000,
         imageUrl: "",
         description: "Best value for new players!",
@@ -580,6 +581,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 49,
         isOpenable: true,
+        isEquippable: false,
         crystals: 5000,
         imageUrl: "",
         description: "Great value crystal pack!"
@@ -593,6 +595,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 99,
         isOpenable: true,
+        isEquippable: false,
         crystals: 11000,
         imageUrl: "",
         description: "Most popular crystal pack!",
@@ -612,6 +615,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 499,
         isOpenable: true,
+        isEquippable: false,
         crystals: 60000,
         imageUrl: "",
         description: "Premium crystal value pack!",
@@ -631,6 +635,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 999,
         isOpenable: true,
+        isEquippable: false,
         crystals: 125000,
         imageUrl: "",
         description: "Ultimate crystal collection!",
@@ -650,6 +655,7 @@ exports.crystalPackData = [
         currency: "topupcredit",
         price: 4999,
         isOpenable: true,
+        isEquippable: false,
         crystals: 650000,
         imageUrl: "",
         description: "Legendary crystal bundle for serious players!",
@@ -661,7 +667,8 @@ exports.crystalPackData = [
         }
     }
 ]
-
+// #endregion
+// #region GOLD PACKS
 exports.goldPackData = [
     {
         name: "Starter Gold Pack",
@@ -681,6 +688,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
 
     },
     {
@@ -701,6 +709,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
     },
     {
         name: "Advanced Gold Pack",
@@ -720,6 +729,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
     },
     {
         name: "Elite Gold Pack",
@@ -739,6 +749,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
     },
     {
         name: "Master Gold Pack",
@@ -758,6 +769,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
     },
     {
         name: "Legendary Gold Pack",
@@ -777,6 +789,7 @@ exports.goldPackData = [
             speed: 0
         },
         isOpenable: true,
+        isEquippable: false,
     }
 ]
 // #endregion

@@ -2,6 +2,8 @@ const { default: mongoose } = require("mongoose")
 const Characterwallet = require("../models/Characterwallet")
 const { Market, CharacterInventory, Item } = require("../models/Market")
 const Characterdata = require("../models/Characterdata")
+const { Skill, CharacterSkillTree } = require("../models/Skills");
+
 
 
 exports.getMarketItems = async (req, res) => {
@@ -17,7 +19,7 @@ exports.getMarketItems = async (req, res) => {
         const pipeline = [
             {
                 $match: {
-                    marketType: markettype || { $in: ['market', 'shop'] }
+                    marketType: markettype || { $in: ['market'] }
                 }
             },
             { $unwind: '$items' },
@@ -728,12 +730,52 @@ exports.createItem = async (req, res) => {
     try {
         await session.startTransaction();
 
-        const {name, price, currency, type, inventorytype, gender, description, rarity, stats } = req.body;
+        const {name, price, currency, type, inventorytype, gender, description, rarity, stats, skill } = req.body;
 
-        // Validate required fields
-        if (!name || !price || !currency || !type || !gender || !rarity) {
-            return res.status(400).json({ message: "failed", data: "Missing required fields." });
-        }
+        if (
+            type === 'skins' &&
+            (!name || !price || !currency || !description || !rarity)
+          ) {
+            return res.status(400).json({
+              message: "failed",
+              data: "Missing required fields for skin item."
+            });
+        } else if (
+            type === 'skills' &&
+            (!name || !price || !currency || !description || !skill || !rarity)
+          ) {
+            return res.status(400).json({
+              message: "failed",
+              data: "Missing required fields for skill item."
+            });
+          } else if (
+            type === 'chests' &&
+            (!name || !price || !currency || !description || !rarity)
+          ) {
+            return res.status(400).json({
+              message: "failed",
+              data: "Missing required fields for chests item."
+            });
+          }  else if (
+            type === 'crystalpacks' &&
+            (!name || !price || !currency || !description)
+          ) {
+            return res.status(400).json({
+              message: "failed",
+              data: "Missing required fields for crystal pack item."
+            });
+          }  else if (
+            type === 'goldpacks' &&
+            (!name || !price || !currency || !description)
+          ) {
+            return res.status(400).json({
+              message: "failed",
+              data: "Missing required fields for gold pack item."
+            });
+          }
+          
+          
+          
 
         // Handle image upload
         let imageUrl = "";
@@ -744,9 +786,8 @@ exports.createItem = async (req, res) => {
         }
 
         // Validate enums
-        const validCurrencies = ["coins", "crystal"];
-        const validRarities = ["basic", "common", "epic", "rare", "legendary"];
-        const validGenders = ["male", "female", "unisex"];
+        const validCurrencies = ["coins", "crystal", "topupcredit"];
+        const validRarities = ["basic", "common", "epic", "rare", "legendary", ""];
 
         if (!validCurrencies.includes(currency)) {
             return res.status(400).json({ message: "failed", data: "Invalid currency type." });
@@ -754,9 +795,17 @@ exports.createItem = async (req, res) => {
         if (!validRarities.includes(rarity)) {
             return res.status(400).json({ message: "failed", data: "Invalid rarity type." });
         }
-        if (!validGenders.includes(gender)) {
-            return res.status(400).json({ message: "failed", data: "Invalid gender type." });
+
+        let skillId = null;
+        if (type === "skills") {
+            const skillDoc = await Skill.findOne({ category: "Deals" });
+            if (!skillDoc) {
+                await session.abortTransaction();
+                return res.status(404).json({ message: "failed", data: "Skill with category 'Deals' not found." });
+            }
+            skillId = skillDoc._id;
         }
+     
 
         // Prepare stats
         const defaultStats = {
@@ -779,6 +828,7 @@ exports.createItem = async (req, res) => {
             rarity,
             imageUrl,
             stats: itemStats,
+            skill: skillId
         };
 
         // Create in Items collection
@@ -786,7 +836,7 @@ exports.createItem = async (req, res) => {
         const createdItem = newItem[0];
 
         // Find and update Market
-        const market = await Market.findOne({ marketType: "shop" }).session(session);
+        const market = await Market.findOne({ marketType: "market" }).session(session);
         if (!market) {
             await session.abortTransaction();
             return res.status(404).json({ message: "failed", data: "Market not found." });
@@ -830,7 +880,7 @@ exports.deleteItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
         }
 
-        let market = await Market.findOne({ marketType: "shop" });
+        let market = await Market.findOne({ marketType: "market" });
         if (!market) {
             return res.status(404).json({ message: "failed", data: "Market not found." });
         }

@@ -36,7 +36,6 @@ const itemSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        required: true,
     },
     description: {
         type: String,
@@ -45,8 +44,8 @@ const itemSchema = new mongoose.Schema({
     },
     rarity: {
         type: String,
-        required: true,
-        enum: ['basic', 'common', 'rare', 'legendary']
+        // required: true,
+        enum: ['basic', 'common', 'rare', 'legendary', '']
     },
     imageUrl: {
         type: String,

@@ -10,18 +10,10 @@ exports.createannouncement = async (req, res) => {
 
     let mediaUrl = "";
 
-    if (contentType === "image") {
-        if (!req.file) {
-            return res.status(400).json({ message: "failed", data: "Please select an image first!" });
-        }
+    if (contentType === "image" && req.file) {
         mediaUrl = req.file.path;
-    } else if (contentType === "video") {
-        if (!url) {
-            return res.status(400).json({ message: "failed", data: "Please provide a video URL." });
-        }
+    } else if (contentType === "video" && url) {
         mediaUrl = url;
-    } else {
-        return res.status(400).json({ message: "failed", data: "Invalid content type. Allowed: image, video." });
     }
 
     try {

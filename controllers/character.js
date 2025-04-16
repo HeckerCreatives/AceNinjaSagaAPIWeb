@@ -10,6 +10,8 @@ const { checkcharacter } = require("../utils/character")
 const { CharacterInventory } = require("../models/Market")
 const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
 const { format } = require("date-fns/fp")
+const Users = require("../models/Users");
+
 
 exports.createcharacter = async (req, res) => {
     const session = await mongoose.startSession();
@@ -427,6 +429,44 @@ exports.getplayerdata = async (req, res) => {
 
 exports.getplayercharacters = async (req, res) => {
     const {id} = req.user
+
+    const tempdata = await Characterdata.find({owner: new mongoose.Types.ObjectId(id)})
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching character datas for user: ${id}. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later."})
+    })
+
+    const data = {}
+    let index = 0;
+    tempdata.forEach(temp => {
+        const {_id, username, gender, outfit, hair, eyes, facedetails, level, color, title, experience, badge} = temp;
+
+        data[index] = {
+            id: _id,
+            Username: username,
+            CharacterCostume: {
+                Gender: gender,
+                Outfit: outfit,
+                Hair: hair,
+                Eyes: eyes,
+                Facedetails: facedetails,
+                Color: color,
+            },
+            Title: title,
+            CurrentXP: experience,
+            Badge: badge,
+            Level: level,
+        }
+        index++;
+    })
+
+    return res.json({message: "success", data: data})
+} 
+
+exports.getplayercharactersadmin = async (req, res) => {
+    const {id} = req.query
 
     const tempdata = await Characterdata.find({owner: new mongoose.Types.ObjectId(id)})
     .then(data => data)

@@ -357,9 +357,11 @@ exports.getplayerdata = async (req, res) => {
 
 
         const formattedResponse = characterData.map(temp => {
-            const { _id, username, badge, title, level, experience, wallet, stats, inventory, companions } = temp;
+            const { user, userid,  _id, username, badge, title, level, experience, wallet, stats, inventory, companions } = temp;
         
             return {
+                userid: userid,
+                user: user,
                 id: _id,
                 username,
                 title,

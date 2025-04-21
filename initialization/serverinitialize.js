@@ -2998,5 +2998,55 @@ exports.initialize = async () => {
         }
     } 
 
+    // initialize rank tiers 
+
+    const ranktierz = [
+    {  
+        name: "Rookie",
+        requiredmmr: 0,
+        icon: ""
+    },
+    {
+        name: "Veteran",
+        requiredmmr: 1800,
+        icon: ""
+    },
+    {
+        name: "Elder",
+        requiredmmr: 3600,
+        icon: ""
+    },
+    {
+        name: "Ronin",
+        requiredmmr: 5400,
+        icon: ""
+    },
+    {
+        name: "Shogun",
+        requiredmmr: 7200,
+        icon: ""
+    },
+    {
+        name: "Ace",
+        requiredmmr: 9000,
+        icon: ""
+    }
+    ]
+
+    const ranktiers = await RankTier.find({})
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding rank tiers: ${err}`)
+    })
+
+    if (ranktiers.length <= 0) {
+        for (const rank of ranktierz) {
+            await RankTier.create(rank)
+            console.log(`Rank tier ${rank.name} created`)
+        }
+    }
+
+
+
     console.log("SERVER DATA INITIALIZED")
 }

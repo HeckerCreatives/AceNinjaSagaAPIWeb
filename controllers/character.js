@@ -1075,3 +1075,108 @@ exports.getcharacterstatssa = async (req, res) => {
         });
     }
 };
+
+exports.getcharacterstats = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { characterid } = req.query;
+
+        if(!characterid){
+            return res.status(400).json({ 
+                message: "failed", 
+                data: "Please input character ID."
+            });
+        }
+
+        const checker = await checkcharacter(id, characterid);
+
+        if (checker === "failed") {
+            return res.status(400).json({
+                message: "Unauthorized",
+                data: "You are not authorized to view this page. Please login the right account to view the page."
+            });
+        }
+
+        // Fetch base character stats
+        const characterStats = await CharacterStats.findOne({ 
+            owner: new mongoose.Types.ObjectId(characterid) 
+        });
+
+        if (!characterStats) {
+            return res.status(404).json({
+                message: "failed",
+                data: "Character stats not found"
+            });
+        }
+
+        // Fetch equipped skills and their effects
+        const characterSkills = await CharacterSkillTree.aggregate([
+            {
+                $match: {
+                    owner: new mongoose.Types.ObjectId(characterid)
+                }
+            },
+            {
+                $unwind: "$skills"
+            },
+            {
+                $lookup: {
+                    from: "skills",
+                    localField: "skills.skill",
+                    foreignField: "_id",
+                    as: "skillDetails"
+                }
+            },
+            {
+                $unwind: "$skillDetails"
+            },
+            {
+                $match: {
+                    "skillDetails.type": "Stat" // Only get stats-type skills
+                }
+            }
+        ]);
+
+
+        const totalStats = {
+            health: characterStats.health,
+            energy: characterStats.energy,
+            armor: characterStats.armor,
+            magicresist: characterStats.magicresist,
+            speed: characterStats.speed,
+            attackdamage: characterStats.attackdamage,
+            armorpen: characterStats.armorpen,
+            magicpen: characterStats.magicpen,
+            critchance: characterStats.critchance,
+            magicdamage: characterStats.magicdamage,
+            lifesteal: characterStats.lifesteal,
+            omnivamp: characterStats.omnivamp,
+            healshieldpower: characterStats.healshieldpower,
+            critdamage: characterStats.critdamage
+        };
+
+        characterSkills.forEach(skill => {
+            if (skill.skillDetails.effects) {
+                const effects = new Map(Object.entries(skill.skillDetails.effects));
+
+                effects.forEach((value, stat) => {
+                    if (totalStats.hasOwnProperty(stat)) {
+                        totalStats[stat] += value * skill.skills.level;
+                    }
+                });
+            }
+        });
+
+        return res.json({
+            message: "success",
+            data: totalStats
+        });
+
+    } catch (error) {
+        console.error('Error in getcharacterstats:', error);
+        return res.status(500).json({
+            message: "failed",
+            data: "An error occurred while fetching character stats"
+        });
+    }
+};

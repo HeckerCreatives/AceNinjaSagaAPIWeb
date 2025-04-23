@@ -1,99 +1,127 @@
-const { MonthlyLogin } = require("../models/Rewards")
+const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, UserDailySpin, UserMonthlyLogin, UserWeeklyLogin } = require("../models/Rewards")
 const { checkcharacter } = require("../utils/character")
 
+// #region  SUPERADMIN
+exports.getdailyspinsa = async (req, res) => {
 
-exports.monthlyclaimreward = async (req, res) => {
-    const { id } = req.user;
-    const { characterid, type, rewards } = req.body;
+    const { id } = req.user
 
-    if(!characterid || !type || !rewards) {
-        return res.status(400).json({ 
-            message: "failed", 
-            data: "Please input all data." 
-        });
+    const dailyspin = await DailySpin.find({}).sort({ slot: 1 })
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding dailyspin data: ${err}`)
+        return
+    })
+
+    if(!dailyspin){
+        return res.status(400).json({ message: "failed", data: "Dailyspin data not found." })
     }
 
-    const checker = await checkcharacter(id, characterid);
-    if (checker === "failed") {
-        return res.status(400).json({
-            message: "Unauthorized",
-            data: "You are not authorized to view this page. Please login the right account to view the page."
-        });
-    }
+    // sort data
 
-    // implement rewards processing logic here to be created in the future
+    const finaldata = []
 
-    try {
-        await MonthlyLogin.findOneAndUpdate(
-            { owner: characterid }, 
-            { 
-                $inc: { login: 1 },
-                isClaimed: "1", 
-                lastClaimed: Date.now() 
-            }
-        );
+    dailyspin.forEach((item) => {
+        const { _id, slot, type, amount, chance } = item
+        finaldata.push({ id: _id, slot, type, amount, chance })
+    })
 
-        // Add rest of reward processing logic here
+    return res.status(200).json({ message: "success", data: finaldata })
 
-        return res.json({
-            message: "success",
-            data: "Monthly reward claimed successfully"
-        });
-
-    } catch (error) {
-        console.error('Error claiming monthly reward:', error);
-        return res.status(500).json({
-            message: "bad-request",
-            data: "Failed to claim monthly reward"
-        });
-    }
 }
 
-exports.spinnerclaimreward = async (req, res) => {
+exports.getdailyexpspinsa = async (req, res) => {
 
-    const { id } = req.user;
-    const { characterid, rewards } = req.body;
+    const { id } = req.user
 
-    if(!characterid || !rewards) {
-        return res.status(400).json({ 
-            message: "failed", 
-            data: "Please input all data." 
-        });
+    const dailyspin = await DailyExpSpin.find({}).sort({ slot: 1 })
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding dailyexpspin data: ${err}`)
+        return
+    })
+
+    if(!dailyspin){
+        return res.status(400).json({ message: "failed", data: "Daily exp spin data not found." })
     }
 
-    const checker = await checkcharacter(id, characterid);
+    // sort data
 
-    if (checker === "failed") {
-        return res.status(400).json({
-            message: "Unauthorized",
-            data: "You are not authorized to view this page. Please login the right account to view the page."
-        });
+    const finaldata = []
+
+    dailyspin.forEach((item) => {
+        const { _id, slot, type, amount, chance } = item
+        finaldata.push({ id: _id, slot, type, amount, chance })
+    })
+
+    return res.status(200).json({ message: "success", data: finaldata })
+    
+}
+
+exports.getmonthlyloginsa = async (req, res) => {
+
+    const { id } = req.user
+
+    const monthlylogin = await MonthlyLogin.find().sort({ day: 1 })
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding monthlylogin data: ${err}`)
+        return
+    })
+
+    if(!monthlylogin){
+        return res.status(400).json({ message: "failed", data: "Monthly login data not found." })
     }
 
-    // implement rewards processing logic here to be created in the future
+    // sort data by day its like this day1, day2, day3, etc...
 
-    try {
-        await SpinnerRewards.findOneAndUpdate(
-            { owner: characterid }, 
-            { 
-                $inc: { daily: 1 },
-                isClaimed: "1", 
-                lastClaimed: Date.now() 
-            }
-        );
+    monthlylogin.sort((a, b) => {
+        const dayA = parseInt(a.day.replace("day", ""))
+        const dayB = parseInt(b.day.replace("day", ""))
 
-        // Add rest of reward processing logic here
+        return dayA - dayB
+    })
 
-        return res.json({
-            message: "success",
-            data: "Spinner reward claimed successfully"
-        });
+    const finaldata = []
 
-    } catch (error) {
-        console.error('Error claiming spinner reward:', error);
-        return res.status(500).json({
-            message: "bad-request",
-            data: "Failed to claim spinner reward"
-        });
+    monthlylogin.forEach((item) => {
+        const { _id, day, type, amount, chance } = item
+        finaldata.push({ id: _id, day, type, amount, chance })
+    })
+
+    return res.status(200).json({ message: "success", data: finaldata })
+}
+
+exports.getweeklyloginsa = async (req, res) => {
+
+    const { id } = req.user
+
+    const weeklylogin = await WeeklyLogin.find().sort({ day: 1 })
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding weekly login data: ${err}`)
+        return
+    })
+
+    if(!weeklylogin){
+        return res.status(400).json({ message: "failed", data: "Monthly login data not found." })
     }
+
+    // sort data by day its like this day1, day2, day3, etc...
+
+    weeklylogin.sort((a, b) => {
+        const dayA = parseInt(a.day.replace("day", ""))
+        const dayB = parseInt(b.day.replace("day", ""))
+
+        return dayA - dayB
+    })
+
+    const finaldata = []
+
+    weeklylogin.forEach((item) => {
+        const { _id, day, type, amount, chance } = item
+        finaldata.push({ id: _id, day, type, amount, chance })
+    })
+
+    return res.status(200).json({ message: "success", data: finaldata })
 }

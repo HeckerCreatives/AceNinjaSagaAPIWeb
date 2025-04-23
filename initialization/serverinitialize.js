@@ -12,6 +12,7 @@ const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
 const { hairData, weaponData, outfitData, crystalPackData, goldPackData } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
+const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, UserDailySpin, UserMonthlyLogin, UserWeeklyLogin } = require("../models/Rewards")
 
 exports.initialize = async () => {
 
@@ -2960,6 +2961,70 @@ exports.initialize = async () => {
 
             console.log(`Inventory list data created for character ${character.username}`);
             }
+
+            const checkmonthlylogin = await UserMonthlyLogin.findOne({ owner: character._id });
+
+            if (!checkmonthlylogin) {
+            
+                await UserMonthlyLogin.create({
+                    owner: character._id,
+                    daily: {
+                    day1: false,
+                    day2: false, 
+                    day3: false,
+                    day4: false,
+                    day5: false,
+                    day6: false,
+                    day7: false,
+                    day8: false,
+                    day9: false,
+                    day10: false,
+                    day11: false,
+                    day12: false,
+                    day13: false,
+                    day14: false,
+                    day15: false,
+                    day16: false,
+                    day17: false,
+                    day18: false,
+                    day19: false,
+                    day20: false,
+                    day21: false,
+                    day22: false,
+                    day23: false,
+                    day24: false,
+                    day25: false,
+                    day26: false,
+                    day27: false,
+                    day28: false
+                    },
+                    currentDay: "day1",
+                    lastClaimed: new Date()
+                })
+        
+                await UserWeeklyLogin.create({
+                    owner: character._id,
+                    daily: {
+                        day1: false,
+                        day2: false, 
+                        day3: false,
+                        day4: false,
+                        day5: false,
+                        day6: false,
+                        day7: false,
+                    },
+                    currentDay: "day1",
+                    lastClaimed: new Date()
+                })
+        
+                await UserDailySpin.create({
+                    owner: character._id,
+                    spin: false,
+                    expspin: false,
+                })
+
+                console.log(`Monthly login, Weekly login and Daily Spin created for character ${character.username}`);
+            }
         }
     }
 
@@ -3045,6 +3110,357 @@ exports.initialize = async () => {
             console.log(`Rank tier ${rank.name} created`)
         }
     }
+
+
+            // initialize daily spin, exp spin, weekly login, monthly login, and rewards data
+
+            const dailyexpspin = await DailyExpSpin.find()
+            if(dailyexpspin.length <= 0) {
+                const dailyExpBulkWrite = [
+                {
+                    slot: 1,
+                    type: "exp",
+                    amount: 5000,
+                    chance: 30
+                },
+                {
+                    slot: 2,
+                    type: "exp", 
+                    amount: 7500,
+                    chance: 25
+                },
+                {
+                    slot: 3,
+                    type: "exp",
+                    amount: 10000,
+                    chance: 15
+                },
+                {
+                    slot: 4,
+                    type: "exp",
+                    amount: 12500,
+                    chance: 10
+                },
+                {
+                    slot: 5,
+                    type: "exp",
+                    amount: 15000,
+                    chance: 8
+                },
+                {
+                    slot: 6,
+                    type: "exp",
+                    amount: 20000,
+                    chance: 6
+                },
+                {
+                    slot: 7,
+                    type: "exp",
+                    amount: 25000,
+                    chance: 4
+                },
+                {
+                    slot: 8,
+                    type: "exp",
+                    amount: 30000,
+                    chance: 2
+                }
+                ].map(spin => ({
+                insertOne: {
+                    document: spin
+                }
+                }));
+    
+                await DailyExpSpin.bulkWrite(dailyExpBulkWrite)
+                .catch(err => {
+                console.log(`Error saving daily spin data: ${err}`)
+                return
+                })
+    
+                console.log("Daily Exp Spin initialized")
+            }
+            const dailyspin = await DailySpin.find()
+            if(dailyspin.length <= 0) {
+                const dailySpinBulkWrite = [
+                {
+                    slot: 1,
+                    type: "coins",
+                    amount: 1000,
+                    chance: 30
+                },
+                {
+                    slot: 2,
+                    type: "coins",
+                    amount: 2000, 
+                    chance: 25
+                },
+                {
+                    slot: 3,
+                    type: "coins",
+                    amount: 3000,
+                    chance: 15
+                },
+                {
+                    slot: 4,
+                    type: "coins",
+                    amount: 4000,
+                    chance: 10
+                },
+                {
+                    slot: 5,
+                    type: "crystal",
+                    amount: 50,
+                    chance: 8
+                },
+                {
+                    slot: 6,
+                    type: "crystal",
+                    amount: 100,
+                    chance: 6
+                },
+                {
+                    slot: 7,
+                    type: "crystal", 
+                    amount: 150,
+                    chance: 4
+                },
+                {
+                    slot: 8,
+                    type: "crystal",
+                    amount: 200,
+                    chance: 2
+                }
+                ].map(spin => ({
+                insertOne: {
+                    document: spin
+                }
+                }));
+    
+                await DailySpin.bulkWrite(dailySpinBulkWrite)
+                .catch(err => {
+                console.log(`Error saving daily spin data: ${err}`)
+                return
+                })
+    
+                console.log("Daily Spin initialized")
+            }
+    
+            const weeklylogin = await WeeklyLogin.find()
+            if(weeklylogin.length <= 0) {
+                const weeklyLoginBulkWrite = [
+                {
+                    day: "day1",
+                    type: "exp",
+                    amount: 10000
+                },
+                {
+                    day: "day2", 
+                    type: "coins",
+                    amount: 5000
+                },
+                {
+                    day: "day3",
+                    type: "exp",
+                    amount: 15000
+                },
+                {
+                    day: "day4",
+                    type: "coins",
+                    amount: 7500
+                },
+                {
+                    day: "day5",
+                    type: "crystal",
+                    amount: 100
+                },
+                {
+                    day: "day6",
+                    type: "exp",
+                    amount: 20000
+                },
+                {
+                    day: "day7",
+                    type: "crystal",
+                    amount: 200
+                }
+                ].map(login => ({
+                insertOne: {
+                    document: login
+                }
+                }));
+    
+                await WeeklyLogin.bulkWrite(weeklyLoginBulkWrite)
+                .catch(err => {
+                console.log(`Error saving weekly login data: ${err}`)
+                return
+                })
+    
+                console.log("Weekly Login initialized")
+            }
+    
+            const monthlylogin = await MonthlyLogin.find()
+            if(monthlylogin.length <= 0) {
+                const monthlyLoginBulkWrite = [
+                    {
+                        day: "day1",
+                        type: "exp", 
+                        amount: 20000
+                    },
+                    {
+                        day: "day2",
+                        type: "coins",
+                        amount: 10000
+                    },
+                    {
+                        day: "day3", 
+                        type: "exp",
+                        amount: 25000
+                    },
+                    {
+                        day: "day4",
+                        type: "coins",
+                        amount: 15000
+                    },
+                    {
+                        day: "day5",
+                        type: "crystal",
+                        amount: 200
+                    },
+                    {
+                        day: "day6",
+                        type: "exp",
+                        amount: 30000
+                    },
+                    {
+                        day: "day7",
+                        type: "coins",
+                        amount: 20000
+                    },
+                    {
+                        day: "day8",
+                        type: "exp",
+                        amount: 35000
+                    },
+                    {
+                        day: "day9",
+                        type: "crystal",
+                        amount: 300
+                    },
+                    {
+                        day: "day10",
+                        type: "coins",
+                        amount: 25000
+                    },
+                    {
+                        day: "day11",
+                        type: "exp",
+                        amount: 40000
+                    },
+                    {
+                        day: "day12",
+                        type: "crystal",
+                        amount: 400
+                    },
+                    {
+                        day: "day13",
+                        type: "exp",
+                        amount: 45000
+                    },
+                    {
+                        day: "day14",
+                        type: "coins",
+                        amount: 30000
+                    },
+                    {
+                        day: "day15",
+                        type: "crystal",
+                        amount: 500
+                    },
+                    {
+                        day: "day16",
+                        type: "exp",
+                        amount: 50000
+                    },
+                    {
+                        day: "day17",
+                        type: "coins",
+                        amount: 35000
+                    },
+                    {
+                        day: "day18",
+                        type: "crystal",
+                        amount: 600
+                    },
+                    {
+                        day: "day19",
+                        type: "exp",
+                        amount: 55000
+                    },
+                    {
+                        day: "day20",
+                        type: "coins",
+                        amount: 40000
+                    },
+                    {
+                        day: "day21",
+                        type: "crystal",
+                        amount: 700
+                    },
+                    {
+                        day: "day22",
+                        type: "exp",
+                        amount: 60000
+                    },
+                    {
+                        day: "day23",
+                        type: "coins",
+                        amount: 45000
+                    },
+                    {
+                        day: "day24",
+                        type: "crystal",
+                        amount: 800
+                    },
+                    {
+                        day: "day25",
+                        type: "exp",
+                        amount: 65000
+                    },
+                    {
+                        day: "day26",
+                        type: "coins",
+                        amount: 50000
+                    },
+                    {
+                        day: "day27",
+                        type: "crystal",
+                        amount: 900
+                    },
+                    {
+                        day: "day28",
+                        type: "exp",
+                        amount: 70000
+                    },
+                ].map(login => ({
+                    insertOne: {
+                        document: login
+                    }
+                }));
+    
+                await MonthlyLogin.bulkWrite(monthlyLoginBulkWrite)
+                .catch(err => {
+                    console.log(`Error saving monthly login data: ${err}`)
+                    return
+                })
+    
+                console.log("Monthly Login initialized")
+            }
+    
+    
+
+        
+
+    
 
 
 

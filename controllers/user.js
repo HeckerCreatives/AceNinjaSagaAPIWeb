@@ -147,7 +147,12 @@ exports.userlist = async (req, res) => {
 
     const playerlistdata = await Users.aggregate(matchCondition)
 
-    const totalPlayers = await Users.countDocuments(matchCondition)
+    const countQuery = { auth: "player", ...filterMatchStage };
+    if (search) {
+        countQuery.$or = searchMatchStage.$or;
+    }
+    
+    const totalPlayers = await Users.countDocuments(countQuery)
     .then(data => data)
         .catch(err => {
             console.log(`There's a problem encountered while fetching users. Error: ${err}`)

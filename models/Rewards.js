@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 
 
-const UserMonthlyLoginSchema = new mongoose.Schema(
+const CharacterMonthlyLoginSchema = new mongoose.Schema(
     {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
@@ -137,7 +137,7 @@ const UserMonthlyLoginSchema = new mongoose.Schema(
     }
 )
 
-const UserWeeklyLoginSchema = new mongoose.Schema(
+const CharacterWeeklyLoginSchema = new mongoose.Schema(
     {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
@@ -189,7 +189,7 @@ const UserWeeklyLoginSchema = new mongoose.Schema(
     }
 )
 
-const UserDailySpinSchema = new mongoose.Schema(
+const CharacterDailySpinSchema = new mongoose.Schema(
     {
         owner: {
             type: mongoose.Schema.Types.ObjectId,
@@ -324,18 +324,18 @@ const dailyExpSpinSchema = new mongoose.Schema(
     }
 )
 
-const UserMonthlyLogin = mongoose.model("UserMonthlyLogin", UserMonthlyLoginSchema);
-const UserWeeklyLogin = mongoose.model("UserWeeklyLogin", UserWeeklyLoginSchema);
-const UserDailySpin = mongoose.model("UserDailySpin", UserDailySpinSchema);
+const CharacterMonthlyLogin = mongoose.model("CharacterMonthlyLogin", CharacterMonthlyLoginSchema);
+const CharacterWeeklyLogin = mongoose.model("CharacterWeeklyLogin", CharacterWeeklyLoginSchema);
+const CharacterDailySpin = mongoose.model("CharacterDailySpin", CharacterDailySpinSchema);
 const MonthlyLogin = mongoose.model("MonthlyLogin", MonthlyLoginSchema);
 const WeeklyLogin = mongoose.model("WeeklyLogin", WeeklyLoginSchema);
 const DailySpin = mongoose.model("DailySpin", dailySpinSchema);
 const DailyExpSpin = mongoose.model("DailyExpSpin", dailyExpSpinSchema);
 
 module.exports = {
-    UserMonthlyLogin,
-    UserWeeklyLogin,
-    UserDailySpin,
+    CharacterMonthlyLogin,
+    CharacterWeeklyLogin,
+    CharacterDailySpin,
     MonthlyLogin,
     WeeklyLogin,
     DailySpin,

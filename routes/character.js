@@ -1,4 +1,4 @@
-const { createcharacter, getplayerdata, userplayerdata, getinventory, getxplevel, getWallet, getplayercharacters, getcharactertitles, addxp, updateplayerprofile, updateplayertitle, getplayercharactersweb, getranking, getcharacterrank, getcharacterstatssa, getplayercharactersadmin } = require("../controllers/character")
+const { createcharacter, getplayerdata, userplayerdata, getinventory, getxplevel, getWallet, getplayercharacters, getcharactertitles, addxp, updateplayerprofile, updateplayertitle, getplayercharactersweb, getranking, getcharacterrank, getcharacterstatssa, getplayercharactersadmin, getcharacterchapters } = require("../controllers/character")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 
 const router = require("express").Router()
@@ -16,6 +16,7 @@ router
 .get("/getwallet", getWallet)
 .get("/getcharactertitles", protectplayer, getcharactertitles)
 .get("/getrank", protectplayer, getcharacterrank)
+.get("/getcharacterchapters", protectplayer, getcharacterchapters)
 
 .post("/createcharacter", protectplayer, createcharacter)
 .post("/addxp", protectplayer, addxp)

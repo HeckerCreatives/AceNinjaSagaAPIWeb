@@ -11,6 +11,7 @@ const { CharacterInventory } = require("../models/Market")
 const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
 const { format } = require("date-fns/fp")
 const Users = require("../models/Users");
+const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter")
 
 
 exports.createcharacter = async (req, res) => {
@@ -1180,3 +1181,51 @@ exports.getcharacterstats = async (req, res) => {
         });
     }
 };
+
+
+exports.getcharacterchapters = async (req, res) => {
+
+    const { id } = req.user
+
+    const { characterid } = req.query
+
+    if(!characterid){
+        return res.status(400).json({ message: "failed", data: "Please input character ID."})
+    }
+
+    const checker = await checkcharacter(id, characterid);
+
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this page. Please login the right account to view the page."
+        });
+    }    
+
+    const characterchapters = await CharacterChapter.find({ owner: new mongoose.Types.ObjectId(characterid)}).sort({ chapter: 1 })
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem encountered while fetching character chapters. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    const finaldata = []
+
+    characterchapters.forEach(temp => {
+        const { _id, name, completed, chapter } = temp
+
+        finaldata.push({
+            id: _id,
+            name: name,
+            completed: completed,
+            chapter: chapter
+        })
+    })
+
+    return res.status(200).json({ 
+        message: "success", 
+        data: finaldata 
+    })
+}
+

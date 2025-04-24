@@ -12,7 +12,8 @@ const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
 const { hairData, weaponData, outfitData, crystalPackData, goldPackData } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
-const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, UserDailySpin, UserMonthlyLogin, UserWeeklyLogin } = require("../models/Rewards")
+const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
+const { CharacterChapter } = require("../models/Chapter")
 
 exports.initialize = async () => {
 
@@ -2962,11 +2963,11 @@ exports.initialize = async () => {
             console.log(`Inventory list data created for character ${character.username}`);
             }
 
-            const checkmonthlylogin = await UserMonthlyLogin.findOne({ owner: character._id });
+            const checkmonthlylogin = await CharacterMonthlyLogin.findOne({ owner: character._id });
 
             if (!checkmonthlylogin) {
             
-                await UserMonthlyLogin.create({
+                await CharacterMonthlyLogin.create({
                     owner: character._id,
                     daily: {
                     day1: false,
@@ -2999,10 +3000,10 @@ exports.initialize = async () => {
                     day28: false
                     },
                     currentDay: "day1",
-                    lastClaimed: new Date()
+                    lastClaimed: new Date(Date.now() - 24*60*60*1000)
                 })
         
-                await UserWeeklyLogin.create({
+                await CharacterWeeklyLogin.create({
                     owner: character._id,
                     daily: {
                         day1: false,
@@ -3014,16 +3015,280 @@ exports.initialize = async () => {
                         day7: false,
                     },
                     currentDay: "day1",
-                    lastClaimed: new Date()
+                    lastClaimed: new Date(Date.now() - 24*60*60*1000)
                 })
         
-                await UserDailySpin.create({
+                await CharacterDailySpin.create({
                     owner: character._id,
                     spin: false,
                     expspin: false,
                 })
 
                 console.log(`Monthly login, Weekly login and Daily Spin created for character ${character.username}`);
+            }
+
+            // initialize chapter challenge per user
+
+            const checkcharacterchapter = await CharacterChapter.findOne({ owner: character._id });
+
+            if (!checkcharacterchapter) {
+                const chapterlist = [
+                    {
+                        owner: character._id,
+                        name: "chapter1challenge1",
+                        completed: false,
+                        chapter: 101
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter1challenge2",
+                        completed: false,
+                        chapter: 102
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter1challenge3",
+                        completed: false,
+                        chapter: 103
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter2challenge1",
+                        completed: false,
+                        chapter: 201
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter2challenge2",
+                        completed: false,
+                        chapter: 202
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter2challenge3",
+                        completed: false,
+                        chapter: 203
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter3challenge1",
+                        completed: false,
+                        chapter: 301
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter3challenge2",
+                        completed: false,
+                        chapter: 302
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter3challenge3",
+                        completed: false,
+                        chapter: 303
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter4challenge1",
+                        completed: false,
+                        chapter: 401
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter4challenge2",
+                        completed: false,
+                        chapter: 402
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter4challenge3",
+                        completed: false,
+                        chapter: 403
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter5challenge1",
+                        completed: false,
+                        chapter: 501
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter5challenge2",
+                        completed: false,
+                        chapter: 502
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter5challenge3",
+                        completed: false,
+                        chapter: 503
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter6challenge1",
+                        completed: false,
+                        chapter: 601
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter6challenge2",
+                        completed: false,
+                        chapter: 602
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter6challenge3",
+                        completed: false,
+                        chapter: 603
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter7challenge1",
+                        completed: false,
+                        chapter: 701
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter7challenge2",
+                        completed: false,
+                        chapter: 702
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter7challenge3",
+                        completed: false,
+                        chapter: 703
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter8challenge1",
+                        completed: false,
+                        chapter: 801
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter8challenge2",
+                        completed: false,
+                        chapter: 802
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter8challenge3",
+                        completed: false,
+                        chapter: 803
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter9challenge1",
+                        completed: false,
+                        chapter: 901
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter9challenge2",
+                        completed: false,
+                        chapter: 902
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter9challenge3",
+                        completed: false,
+                        chapter: 903
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter10challenge1",
+                        completed: false,
+                        chapter: 1001
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter10challenge2",
+                        completed: false,
+                        chapter: 1002
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter10challenge3",
+                        completed: false,
+                        chapter: 1003
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter11challenge1",
+                        completed: false,
+                        chapter: 1101
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter11challenge2",
+                        completed: false,
+                        chapter: 1102
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter11challenge3",
+                        completed: false,
+                        chapter: 1103
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter12challenge1",
+                        completed: false,
+                        chapter: 1201
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter12challenge2",
+                        completed: false,
+                        chapter: 1202
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter12challenge3",
+                        completed: false,
+                        chapter: 1203
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter13challenge1",
+                        completed: false,
+                        chapter: 1301
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter13challenge2",
+                        completed: false,
+                        chapter: 1302
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter13challenge3",
+                        completed: false,
+                        chapter: 1303
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter14challenge1",
+                        completed: false,
+                        chapter: 1401
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter14challenge2",
+                        completed: false,
+                        chapter: 1402
+                    },
+                    {
+                        owner: character._id,
+                        name: "chapter14challenge3",
+                        completed: false,
+                        chapter: 1403
+                    },
+                ]
+
+                await CharacterChapter.insertMany(chapterlist)
+                console.log(`Chapter challenge created for character ${character.username}`);
             }
         }
     }

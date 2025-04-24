@@ -1,4 +1,4 @@
-const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, UserDailySpin, UserMonthlyLogin, UserWeeklyLogin } = require("../models/Rewards")
+const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin } = require("../models/Rewards")
 const { checkcharacter } = require("../utils/character")
 
 // #region  SUPERADMIN
@@ -119,8 +119,8 @@ exports.getweeklyloginsa = async (req, res) => {
     const finaldata = []
 
     weeklylogin.forEach((item) => {
-        const { _id, day, type, amount, chance } = item
-        finaldata.push({ id: _id, day, type, amount, chance })
+        const { _id, day, type, amount } = item
+        finaldata.push({ id: _id, day, type, amount })
     })
 
     return res.status(200).json({ message: "success", data: finaldata })

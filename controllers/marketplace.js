@@ -3,6 +3,7 @@ const Characterwallet = require("../models/Characterwallet")
 const { Market, CharacterInventory, Item } = require("../models/Market")
 const Characterdata = require("../models/Characterdata")
 const { Skill, CharacterSkillTree } = require("../models/Skills");
+const { checkmaintenance } = require("../utils/maintenance");
 
 
 
@@ -12,6 +13,15 @@ exports.getMarketItems = async (req, res) => {
     const pageOptions = {
         page: parseInt(page, 10) || 0,
         limit: parseInt(limit, 10) || 10
+    }
+
+    const maintenance = await checkmaintenance(markettype || "market")
+
+    if (maintenance === "failed") {
+        return res.status(400).json({
+            message: "failed",
+            data: "The market is currently under maintenance. Please try again later."
+        });
     }
 
     try {

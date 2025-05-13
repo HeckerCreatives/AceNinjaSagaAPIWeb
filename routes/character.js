@@ -17,7 +17,7 @@ router
 .get("/getcharactertitles", protectplayer, getcharactertitles)
 .get("/getrank", protectplayer, getcharacterrank)
 .get("/getcharacterchapters", protectplayer, getcharacterchapters)
-.get("/getcharacterstats", protectsuperadmin, getcharacterstats)
+.get("/getcharacterstats", protectplayer, getcharacterstats)
 
 .post("/createcharacter", protectplayer, createcharacter)
 .post("/addxp", protectplayer, addxp)

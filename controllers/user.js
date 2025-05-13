@@ -430,8 +430,10 @@ exports.registrationGraph = async (req, res) => {
         })
     } else if(filter === 'yearly') {
 
-        const releasedYear = 2025
-        const currentYear = new Date().getFullYear();
+        const releasedYear = 2024
+        // const currentYear = new Date().getFullYear();
+        const currentYear = 2028;
+
 
         for(let year = releasedYear; year <= currentYear; year++){
             const matchingEntry = data.find(entry => entry._id.year === parseInt(year, 10));

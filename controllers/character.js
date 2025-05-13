@@ -7,12 +7,13 @@ const Rankings = require("../models/Ranking")
 const { CharacterSkillTree } = require("../models/Skills")
 const { Battlepass } = require("../models/Battlepass")
 const { checkcharacter } = require("../utils/character")
-const { CharacterInventory } = require("../models/Market")
+const { CharacterInventory, Item } = require("../models/Market")
 const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
 const { format } = require("date-fns/fp")
 const Users = require("../models/Users");
 const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter")
 const RankTier = require("../models/RankTier");
+const { Companion, CharacterCompanion } = require("../models/Companion")
 
 
 
@@ -181,247 +182,100 @@ exports.createcharacter = async (req, res) => {
 exports.getplayerdata = async (req, res) => {
     const { characterid } = req.query;
 
-    if(!characterid){
-        return res.status(400).json({ 
-            message: "failed", 
+    if (!characterid) {
+        return res.status(400).json({
+            message: "failed",
             data: "Please input character ID."
         });
     }
 
-    const matchCondition = [
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(characterid) 
-            }
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "owner",
-                foreignField: "_id",
-                as: "user"
-            }
-        },
-        {
-            $lookup: {
-                from: "characterwallets",  
-                localField: "_id",          
-                foreignField: "owner",
-                as: "wallet"      
-            }
-        },
-        {
-            $lookup: {
-                from: "characterinventories",             
-                localField: "_id",       
-                foreignField: "owner",       
-                as: "inventory"
-            }
-        },
-        {
-            $unwind: {
-                path: "$inventory",
-                preserveNullAndEmptyArrays: true
-            }
-        },
-        {
-            $lookup: {
-                from: "items",
-                localField: "inventory.items.item",
-                foreignField: "_id",
-                as: "itemDetails"
-            }
-        },
-        {
-            $lookup: {
-                from: "characterstats",
-                localField: "_id",
-                foreignField: "owner",
-                as: "stats"
-            }
-        },
-        {
-            $lookup: {
-                from: "rankings",
-                localField: "_id",
-                foreignField: "owner",
-                as: "ranking"
-            }
-        },
-        { $unwind: { path: "$stats", preserveNullAndEmptyArrays: true } },
-        {
-            $lookup: {
-                from: "charactercompanions",
-                localField: "_id",
-                foreignField: "owner",
-                as: "companions"
-            }
-        },
-        {
-            $lookup: {
-                from: "companions",
-                localField: "companions.companion",
-                foreignField: "_id",
-                as: "companionsdeets"
-            }
-        },
-        { $unwind: { path: "$companions", preserveNullAndEmptyArrays: true } },
-        { $unwind: { path: "$companionsdeets", preserveNullAndEmptyArrays: true } },
-
-        {
-            $group: {
-                _id: "$_id",
-                user: { $first: "$user" },
-                username: { $first: "$username" },
-                title: { $first: "$title" },
-                badge: { $first: "$badge" },
-                level: { $first: "$level" },
-                experience: { $first: "$experience" },
-                wallet: { $first: "$wallet" },
-                stats: { $first: "$stats" },
-                ranking: { $first: "$ranking" },
-                companions: { 
-                    $push: {
-                        $cond: [
-                            { $ifNull: ["$companions", false] },
-                            {
-                                _id: "$companions._id",
-                                companion: "$companions.companion",
-                                isEquipped: "$companions.isEquipped",
-                                details: "$companionsdeets"
-                            },
-                            null
-                        ]
-                    }
-                },
-                inventory: {
-                    $push: {
-                        type: "$inventory.type",
-                        items: {
-                            $map: {
-                                input: "$inventory.items",
-                                as: "item",
-                                in: {
-                                    item: "$$item.item",
-                                    quantity: "$$item.quantity",
-                                    isEquipped: "$$item.isEquipped",
-                                    acquiredAt: "$$item.acquiredAt",
-                                    details: {
-                                        $arrayElemAt: [{
-                                            $filter: {
-                                                input: "$itemDetails",
-                                                as: "detail",
-                                                cond: { $eq: ["$$detail._id", "$$item.item"] }
-                                            }
-                                        }, 0]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        {
-            $project: {
-                userid: { $arrayElemAt: ["$user._id", 0] },
-                user: { $arrayElemAt: ["$user.username", 0] },
-                status: { $arrayElemAt: ["$user.status", 0] },
-                username: 1,
-                title: 1,
-                badge: 1,
-                level: 1,
-                experience: 1,
-                mmr: { $arrayElemAt: ["$ranking.mmr", 0] },
-                wallet: {
-                    $map: {
-                        input: "$wallet",
-                        as: "w",
-                        in: {
-                            type: "$$w.type",
-                            amount: "$$w.amount"
-                        }
-                    }
-                },
-                inventory: 1,
-                stats: "$stats",
-                companions: 1,
-            }
-        }
-    ];
-
     try {
-        const characterData = await Characterdata.aggregate(matchCondition);
-        
-        if (!characterData || characterData.length === 0) {
+        // Fetch character data
+        const character = await Characterdata.findById(characterid).lean();
+        if (!character) {
             return res.status(404).json({
                 message: "failed",
                 data: "Character not found"
             });
         }
 
+        // Fetch user data
+        const user = await Users.findById(character.owner).lean();
 
-        const formattedResponse = characterData.map(temp => {
-            const { user, userid,  _id, username, badge, title, level, experience, wallet, stats, inventory, companions } = temp;
-        
-            return {
-                userid: userid,
-                user: user,
-                id: _id,
-                username,
-                title,
-                level,
-                badge,
-                experience,
-                wallet,
-                stats: {
-                    health: stats.health,
-                    energy: stats.energy,
-                    armor: stats.armor,
-                    magicresist: stats.magicresist,
-                    speed: stats.speed,
-                    attackdamage: stats.attackdamage,
-                    armorpen: stats.armorpen,
-                    magicpen: stats.magicpen,
-                    critchance: stats.critchance,
-                    magicdamage: stats.magicdamage,
-                    lifesteal: stats.lifesteal,
-                    omnivamp: stats.omnivamp,
-                    healshieldpower: stats.healshieldpower,
-                    critdamage: stats.critdamage,
-                },
-                inventory: inventory.map(({ type, items }) => ({
-                    type,
-                    items: items.map(i => ({
-                        id: i.item,
-                        quantity: i.quantity,
-                        isEquipped: i.isEquipped,
-                        acquiredAt: i.acquiredAt,
-                        details: i.details
-                    }))
-                })), 
-                
-                companions: companions
-                    .filter(c => c?.isEquipped) 
-                    .map(({ _id, companion, isEquipped, details }) => ({
-                        id: _id,
-                        companion,
-                        isEquipped,
-                        companionname: details.name,
-                        levelrequirement: details.levelrequirement,
-                        activedescription: details.activedescription,
-                        activeeffects: details.activeeffects,
-                        passivedescription: details.passivedescription,
-                        passiveeffects: details.passiveeffects,
-                    })), 
-            };
+        // Fetch wallet data
+        const wallet = await Characterwallet.find({ owner: characterid }).lean();
+
+        // Fetch stats data
+        const stats = await CharacterStats.findOne({ owner: characterid }).lean();
+
+        // Fetch ranking data
+        const ranking = await Rankings.findOne({ owner: characterid }).lean();
+
+        // Fetch inventory data
+        const inventoryData = await CharacterInventory.find({ owner: characterid }).lean();
+
+        // Initialize inventory with predefined structure
+        const inventory = inventoryData.map(entry => ({
+            type: entry.type,
+            items: []
+        }));
+
+        // Map inventory data to predefined structure
+        inventoryData.forEach(inventoryEntry => {
+            const predefinedEntry = inventory.find(entry => entry.type === inventoryEntry.type);
+            if (predefinedEntry) {
+            predefinedEntry.items = inventoryEntry.items || [];
+            }
         });
-        
+
+        // Fetch companions data
+        const companionData = await CharacterCompanion.findOne({ owner: characterid, isEquipped: true }).lean();
+        const companionDetails = companionData ? await Companion.findById(companionData.companion).lean() : null;
+        const companions = companionData ? [{
+            ...companionData,
+            details: companionDetails || null
+        }] : [];
+
+
+        // Format response
+        const response = {
+            userid: user?._id,
+            user: user?.username,
+            id: character._id,
+            username: character.username,
+            title: character.title,
+            level: character.level,
+            badge: character.badge,
+            experience: character.experience,
+            wallet: wallet.map(w => ({ type: w.type, amount: w.amount })),
+            stats: stats || {},
+            inventory: inventory.map(({ type, items }) => ({
+            type,
+            items: items.map(({ item, quantity, isEquipped, acquiredAt, details }) => ({
+                id: item,
+                quantity,
+                isEquipped,
+                acquiredAt,
+                details
+            }))
+            })),
+            companions: companions.map(({ _id, companion, isEquipped, details }) => ({
+            id: _id,
+            companion,
+            isEquipped,
+            companionname: details?.name,
+            levelrequirement: details?.levelrequirement,
+            activedescription: details?.activedescription,
+            activeeffects: details?.activeeffects,
+            passivedescription: details?.passivedescription,
+            passiveeffects: details?.passiveeffects
+            }))
+        };
+
         return res.status(200).json({
             message: "success",
-            data: formattedResponse[0] 
+            data: response
         });
-        
 
     } catch (error) {
         console.error('Error in getplayerdata:', error);

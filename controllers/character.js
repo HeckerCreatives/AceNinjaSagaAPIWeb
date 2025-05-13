@@ -12,6 +12,8 @@ const { MonthlyLogin, SpinnerRewards } = require("../models/Rewards")
 const { format } = require("date-fns/fp")
 const Users = require("../models/Users");
 const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter")
+const RankTier = require("../models/RankTier");
+
 
 
 exports.createcharacter = async (req, res) => {
@@ -671,6 +673,42 @@ exports.getranking = async (req, res) => {
 
 }
 
+// exports.getcharacterrank = async (req, res) => {
+//     const { characterid } = req.query;
+
+//     if (!characterid) {
+//         return res.status(400).json({ message: "failed", data: "Please input characterId" });
+//     }
+
+//     try {
+//         const rankingData = await Rankings.findOne(
+//             { owner: new mongoose.Types.ObjectId(characterid) }
+//         ).populate("rank");
+
+//         if (!rankingData) {
+//             return res.status(404).json({ message: "not-found", data: "Character rank not found" });
+//         }
+
+//         console.log(rankingData)
+
+//         return res.status(200).json({
+//             message: "success",
+//             data: {
+//                 mmr: rankingData.mmr,
+//                 rankTier: rankingData.rank?.name || "Unranked",
+//                 icon: rankingData.rank?.icon || null
+//             }
+//         });
+//     } catch (err) {
+//         console.error(`Error fetching ranking: ${err}`);
+//         return res.status(500).json({
+//             message: "server-error",
+//             data: "There's a problem with the server. Please try again later."
+//         });
+//     }
+// };
+
+
 exports.getcharacterrank = async (req, res) => {
     const { characterid } = req.query;
 
@@ -681,22 +719,24 @@ exports.getcharacterrank = async (req, res) => {
     try {
         const rankingData = await Rankings.findOne(
             { owner: new mongoose.Types.ObjectId(characterid) }
-        ).populate("rank");
+        );
 
         if (!rankingData) {
             return res.status(404).json({ message: "not-found", data: "Character rank not found" });
         }
 
-        console.log(rankingData)
+        const rankTiers = await RankTier.find({}).sort({ requiredmmr: -1 });
 
-        return res.status(200).json({
-            message: "success",
-            data: {
-                mmr: rankingData.mmr,
-                rankTier: rankingData.rank?.name || "Unranked",
-                icon: rankingData.rank?.icon || null
-            }
-        });
+        const matchedTier = rankTiers.find(tier => rankingData.mmr >= tier.requiredmmr);
+
+        const response = {
+            mmr: rankingData.mmr,
+            rankTier: matchedTier ? matchedTier.name : "Unranked",
+            icon: matchedTier ? matchedTier.icon : null
+        };
+
+        return res.status(200).json({ message: "success", data: response });
+
     } catch (err) {
         console.error(`Error fetching ranking: ${err}`);
         return res.status(500).json({

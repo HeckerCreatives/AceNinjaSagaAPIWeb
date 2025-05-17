@@ -75,6 +75,8 @@ exports.createcharacter = async (req, res) => {
             itemindex
         }], { session });
 
+        console.log("char data")
+
         const characterId = data[0]._id;
 
         // Create character stats
@@ -95,12 +97,16 @@ exports.createcharacter = async (req, res) => {
             healshieldpower: 0,
             critdamage: 0,
         }], { session });
+        
+        console.log("char stats")
 
         // Create character titles
         await Charactertitle.create([{ 
             owner: characterId, 
             items: [{ itemid: "" }]
         }], { session });
+        
+        console.log("char title")
 
         const getranktier = await RankTier.findOne({ name: "Rookie" })
         const currentseason = await Season.findOne({ isActive: "active" })
@@ -111,6 +117,8 @@ exports.createcharacter = async (req, res) => {
             ranktier: getranktier._id, 
             season: currentseason._id
         }], { session });
+        
+        console.log("char rankings")
 
         // Create skill tree
         await CharacterSkillTree.create([{ 
@@ -119,6 +127,8 @@ exports.createcharacter = async (req, res) => {
             skills: [], 
             unlockedSkills: [] 
         }], { session });
+        
+        console.log("char skill tree")
 
         // Create wallets
         const walletListData = ["coins", "crystal"];
@@ -129,6 +139,9 @@ exports.createcharacter = async (req, res) => {
         }));
         await Characterwallet.bulkWrite(walletBulkwrite, { session });
 
+        
+        console.log("char wallets")
+
         // Create inventory
         const inventoryListData = ["weapon", "outfit", "hair", "face", "eyes", "skincolor", "skins"];
         const inventoryBulkWrite = inventoryListData.map(inventoryData => ({
@@ -137,15 +150,19 @@ exports.createcharacter = async (req, res) => {
             }
         }));
         await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
+        
+        console.log("char inventory")
 
 
-            await Battlepass.create([{
-                owner: id,
-                season: currentseason._id,
-                level: 1,
-                xp: 0,
-                rewards: []
-            }], { session })
+        // await Battlepass.create([{
+        //     owner: id,
+        //     season: currentseason._id,
+        //     level: 1,
+        //     xp: 0,
+        //     rewards: []
+        // }], { session })
+
+        //  BATTLE PASS DOES NOT EXIST
 
         await MonthlyLogin.create([{
             owner: characterId,
@@ -155,14 +172,17 @@ exports.createcharacter = async (req, res) => {
             isClaimed: "0",
             lastClaimed: new Date()
         }], { session });
+        
+        console.log("char data")
 
-        await SpinnerRewards.create([{
-            owner: characterId,
-            daily: 0,
-            isClaimed: "0",
-            lastClaimed: new Date()
-        }], { session });
+        // await SpinnerRewards.create([{
+        //     owner: characterId,
+        //     daily: 0,
+        //     isClaimed: "0",
+        //     lastClaimed: new Date()
+        // }], { session });
 
+        //  SPINNER REWARDS DOES NOT EXIST
 
 
         await session.commitTransaction();

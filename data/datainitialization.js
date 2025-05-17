@@ -363,6 +363,108 @@ exports.outfitData = [
         },
         imageUrl: ""
     },
+    {
+        name: "Female Basic Attire 1",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Attire 2",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Attire 3",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Attire 4",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Attire 5",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Attire 6",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "basic",
+        gender: "female",
+        price: 5000,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
 ]
 // #endregion
 // #region HAIR

@@ -1,4 +1,4 @@
-const { createcode, getcodes, claimcode, deletecode, updatecode, redeemanalytics } = require('../controllers/redeemcode');
+const { createcode, getcodes, claimcode, deletecode, updatecode, redeemanalytics, getredeemedcodeshistory } = require('../controllers/redeemcode');
 const { protectsuperadmin } = require('../middleware/middleware');
 
 const router = require('express').Router();
@@ -10,5 +10,5 @@ router
  .post("/updatecode", protectsuperadmin, updatecode)
  .post("/claimcode", claimcode)
  .get("/redeemcodeanalytics", protectsuperadmin, redeemanalytics)
-
+ .get("/getredeemedcodeshistory", protectsuperadmin, getredeemedcodeshistory)
 module.exports = router;

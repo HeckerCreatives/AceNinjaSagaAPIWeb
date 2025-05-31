@@ -1,11 +1,15 @@
 const router = require("express").Router()
-const { getbattlepass, addexperience, claimreward, getbattlepasssa } = require("../controllers/battlepass")
+const { getbattlepass, editbattlepassrewards, editbattlepassdetails, editbattlepassmissions, getbattlepassclaimhistory, getcharacterbattlepassclaimhistory } = require("../controllers/battlepass")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 
 router
- .get("/getbattlepass", protectplayer, getbattlepass)
- .get("/getbattlepasssa", protectsuperadmin, getbattlepasssa)
-.post("/addexperience", protectplayer, addexperience)
-.post("/claimreward", protectplayer, claimreward)
-
+ .get("/getbattlepass", protectsuperadmin, getbattlepass)
+ .get("/getbattlepassclaimhistory", protectsuperadmin, getbattlepassclaimhistory)
+ .get("/getbattlepassclaimhistory/:id", protectsuperadmin, getbattlepassclaimhistory)
+ .post("/editbattlepassrewards", protectsuperadmin, editbattlepassrewards)
+ .post("/editbattlepassdetails", protectsuperadmin, editbattlepassdetails)
+ .post("/editbattlepassmissions", protectsuperadmin, editbattlepassmissions)
+ 
+ 
+ .get("/getcharacterbattlepassclaimhistory", protectplayer, getcharacterbattlepassclaimhistory)
 module.exports = router

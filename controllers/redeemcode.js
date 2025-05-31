@@ -245,3 +245,55 @@ exports.redeemanalytics = async (req, res) => {
 
     return res.status(200).json({ message: "success", data: finaldata })
 }
+
+exports.getredeemedcodeshistory = async (req, res) => {
+
+    const { id, username } = req.user
+    const { page, limit } = req.query
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10
+    }
+
+    const redeemedCodes = await CodesRedeemed.find()
+    .populate("code")
+    .populate("owner", "username")
+    .sort({ createdAt: -1 })
+    .skip(pageOptions.page * pageOptions.limit)
+    .limit(pageOptions.limit)
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    const totalList = await CodesRedeemed.countDocuments()
+    .then(data => data)
+    .catch(err => {
+        console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
+
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
+    })
+
+    const totalPages = Math.ceil(totalList / pageOptions.limit)
+    if(redeemedCodes.length === 0) {
+        return res.status(200).json({ message: "success", data: [], totalpages: totalPages })
+    }
+
+    const finaldata = []
+
+    redeemedCodes.forEach(data => {
+        const { owner, code, createdAt } = data
+
+        finaldata.push({
+            id: data._id,
+            username: owner.username,
+            code: code.code,
+            redeemedAt: createdAt,
+            rewards: code.rewards,
+        })
+    })
+
+    return res.status(200).json({ message: "success", data: finaldata })
+}

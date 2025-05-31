@@ -61,17 +61,18 @@ exports.getcodes = async (req, res) => {
 
     const finaldata = []
 
-    codes.forEach(data => {
+    const redeemedCounts = await Promise.all(
+        codes.map(code => 
+            CodesRedeemed.countDocuments({ code: code.id })
+            .catch(err => {
+                console.log(`There's a problem encountered while fetching redeem codes. Error: ${err}`)
+                return 0;
+            })
+        )
+    );
+
+    codes.forEach((data, index) => {
         const { id, code, status, expiration, rewards} = data
-
-        // check how many times it has been redeemed
-
-        const redeemedCount = CodesRedeemed.countDocuments({ code: id })
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while fetching redeem codes. Error: ${err}`)
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
-        })
 
         finaldata.push({
             id: id,
@@ -79,7 +80,7 @@ exports.getcodes = async (req, res) => {
             status: status,
             expiration: expiration,
             rewards: rewards,
-            redeemedCount: redeemedCount || 0
+            redeemedCount: redeemedCounts[index] || 0
         })
     })
 

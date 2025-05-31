@@ -277,7 +277,7 @@ exports.getredeemedcodeshistory = async (req, res) => {
     })
 
     const totalPages = Math.ceil(totalList / pageOptions.limit)
-    if(redeemedCodes.length === 0) {
+    if(redeemedCodes.length > 0) {
         return res.status(200).json({ message: "success", data: [], totalpages: totalPages })
     }
 
@@ -289,7 +289,7 @@ exports.getredeemedcodeshistory = async (req, res) => {
         finaldata.push({
             id: data._id,
             username: owner.username,
-            code: code.code,
+            code: code?.code || null,
             redeemedAt: createdAt,
             rewards: code.rewards,
         })

@@ -3025,62 +3025,38 @@ exports.initialize = async () => {
 
             if (!checkmonthlylogin) {
             
+                const daysArray = [];
+                for (let i = 1; i <= 28; i++) {
+                    daysArray.push({ day: i, loggedIn: false, missed: false, claimed: false });
+                }
+
                 await CharacterMonthlyLogin.create({
                     owner: character._id,
-                    daily: {
-                    day1: false,
-                    day2: false, 
-                    day3: false,
-                    day4: false,
-                    day5: false,
-                    day6: false,
-                    day7: false,
-                    day8: false,
-                    day9: false,
-                    day10: false,
-                    day11: false,
-                    day12: false,
-                    day13: false,
-                    day14: false,
-                    day15: false,
-                    day16: false,
-                    day17: false,
-                    day18: false,
-                    day19: false,
-                    day20: false,
-                    day21: false,
-                    day22: false,
-                    day23: false,
-                    day24: false,
-                    day25: false,
-                    day26: false,
-                    day27: false,
-                    day28: false
-                    },
-                    currentDay: "day1",
-                    lastClaimed: new Date(Date.now() - 24*60*60*1000)
-                })
+                    days: daysArray,
+                    totalLoggedIn: 0,
+                    lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000)
+                });
+
+                // await CharacterWeeklyLogin.create({
+                //     owner: character._id,
+                //     daily: {
+                //         day1: false,
+                //         day2: false, 
+                //         day3: false,
+                //         day4: false,
+                //         day5: false,
+                //         day6: false,
+                //         day7: false,
+                //     },
+                //     currentDay: "day1",
+                //     lastClaimed: new Date(Date.now() - 24*60*60*1000)
+                // })
         
-                await CharacterWeeklyLogin.create({
-                    owner: character._id,
-                    daily: {
-                        day1: false,
-                        day2: false, 
-                        day3: false,
-                        day4: false,
-                        day5: false,
-                        day6: false,
-                        day7: false,
-                    },
-                    currentDay: "day1",
-                    lastClaimed: new Date(Date.now() - 24*60*60*1000)
-                })
-        
-                await CharacterDailySpin.create({
-                    owner: character._id,
-                    spin: false,
-                    expspin: false,
-                })
+                // await CharacterDailySpin.create({
+                //     owner: character._id,
+                //     spin: false,
+                //     expspin: false,
+                // })
 
                 console.log(`Monthly login, Weekly login and Daily Spin created for character ${character.username}`);
             }
@@ -3630,139 +3606,29 @@ exports.initialize = async () => {
                         amount: 20000
                     },
                     {
-                        day: "day2",
-                        type: "coins",
-                        amount: 10000
-                    },
-                    {
-                        day: "day3", 
-                        type: "exp",
-                        amount: 25000
-                    },
-                    {
-                        day: "day4",
-                        type: "coins",
-                        amount: 15000
-                    },
-                    {
                         day: "day5",
-                        type: "crystal",
-                        amount: 200
-                    },
-                    {
-                        day: "day6",
-                        type: "exp",
-                        amount: 30000
-                    },
-                    {
-                        day: "day7",
-                        type: "coins",
-                        amount: 20000
-                    },
-                    {
-                        day: "day8",
-                        type: "exp",
-                        amount: 35000
-                    },
-                    {
-                        day: "day9",
-                        type: "crystal",
-                        amount: 300
-                    },
-                    {
-                        day: "day10",
-                        type: "coins",
-                        amount: 25000
-                    },
-                    {
-                        day: "day11",
-                        type: "exp",
-                        amount: 40000
-                    },
-                    {
-                        day: "day12",
-                        type: "crystal",
-                        amount: 400
-                    },
-                    {
-                        day: "day13",
-                        type: "exp",
-                        amount: 45000
-                    },
-                    {
-                        day: "day14",
-                        type: "coins",
-                        amount: 30000
-                    },
-                    {
-                        day: "day15",
                         type: "crystal",
                         amount: 500
                     },
                     {
-                        day: "day16",
-                        type: "exp",
+                        day: "day10",
+                        type: "coins",
                         amount: 50000
                     },
                     {
-                        day: "day17",
-                        type: "coins",
-                        amount: 35000
-                    },
-                    {
-                        day: "day18",
+                        day: "day15",
                         type: "crystal",
-                        amount: 600
-                    },
-                    {
-                        day: "day19",
-                        type: "exp",
-                        amount: 55000
+                        amount: 100
                     },
                     {
                         day: "day20",
                         type: "coins",
-                        amount: 40000
-                    },
-                    {
-                        day: "day21",
-                        type: "crystal",
-                        amount: 700
-                    },
-                    {
-                        day: "day22",
-                        type: "exp",
-                        amount: 60000
-                    },
-                    {
-                        day: "day23",
-                        type: "coins",
-                        amount: 45000
-                    },
-                    {
-                        day: "day24",
-                        type: "crystal",
-                        amount: 800
+                        amount: 100000
                     },
                     {
                         day: "day25",
                         type: "exp",
-                        amount: 65000
-                    },
-                    {
-                        day: "day26",
-                        type: "coins",
                         amount: 50000
-                    },
-                    {
-                        day: "day27",
-                        type: "crystal",
-                        amount: 900
-                    },
-                    {
-                        day: "day28",
-                        type: "exp",
-                        amount: 70000
                     },
                 ].map(login => ({
                     insertOne: {

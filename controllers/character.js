@@ -140,7 +140,6 @@ exports.createcharacter = async (req, res) => {
         await Characterwallet.bulkWrite(walletBulkwrite, { session });
 
         
-        console.log("char wallets")
 
         // Create inventory
         const inventoryListData = ["weapon", "outfit", "hair", "face", "eyes", "skincolor", "skins"];
@@ -151,7 +150,6 @@ exports.createcharacter = async (req, res) => {
         }));
         await CharacterInventory.bulkWrite(inventoryBulkWrite, { session });
         
-        console.log("char inventory")
 
 
         // await Battlepass.create([{
@@ -164,16 +162,18 @@ exports.createcharacter = async (req, res) => {
 
         //  BATTLE PASS DOES NOT EXIST
 
-        await MonthlyLogin.create([{
-            owner: characterId,
-            month: new Date().getMonth().toString(), 
-            year: new Date().getFullYear().toString(), 
-            login: 0,
-            isClaimed: "0",
-            lastClaimed: new Date()
-        }], { session });
-        
-        console.log("char data")
+                const daysArray = [];
+                for (let i = 1; i <= 28; i++) {
+                    daysArray.push({ day: i, loggedIn: false, missed: false, claimed: false });
+                }
+
+                await MonthlyLogin.create([{
+                    owner: characterId,
+                    days: daysArray,
+                    totalLoggedIn: 0,
+                    lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000) 
+                }], { session });
+
 
         // await SpinnerRewards.create([{
         //     owner: characterId,

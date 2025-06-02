@@ -13,6 +13,7 @@ exports.getbattlepass = async (req, res) => {
     }
 
     const battlepassdata = await BattlepassSeason.find({})
+        .populate('grandreward', 'type name rarity description')
         .skip((pageOptions.page - 1) * pageOptions.limit)
         .limit(pageOptions.limit)
         .sort({ createdAt: -1 })
@@ -45,6 +46,12 @@ exports.getbattlepass = async (req, res) => {
         freeMissions: bp.freeMissions,
         premiumMissions: bp.premiumMissions,
         tiers: bp.tiers,
+        grandreward: {
+            name: bp.grandreward.name,
+            type: bp.grandreward.type,
+            rarity: bp.grandreward.rarity,
+            description: bp.grandreward.description
+        },
         createdAt: bp.createdAt,
         updatedAt: bp.updatedAt
     }));

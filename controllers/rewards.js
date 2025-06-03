@@ -145,7 +145,7 @@ exports.editdailyspin = async (req, res) => {
     if(!type || !amount || !chance){
         return res.status(400).json({ message: "failed", data: "Please input all fields." })
     }
-    if(type !== "coin" && type !== "exp" && type !== "crystal"){
+    if(type !== "coins" && type !== "exp" && type !== "crystal"){
         return res.status(400).json({ message: "failed", data: "Type must be coin, crystal or exp." })
     }
 

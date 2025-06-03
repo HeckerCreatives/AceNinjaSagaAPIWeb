@@ -47,10 +47,10 @@ exports.getbattlepass = async (req, res) => {
         premiumMissions: bp.premiumMissions,
         tiers: bp.tiers,
         grandreward: {
-            name: bp.grandreward.name,
-            type: bp.grandreward.type,
-            rarity: bp.grandreward.rarity,
-            description: bp.grandreward.description
+            name: bp.grandreward?.name || "No Grand Reward",
+            type: bp.grandreward?.type || "none",
+            rarity: bp.grandreward?.rarity || "none",
+            description: bp.grandreward?.description || "No description available"
         },
         createdAt: bp.createdAt,
         updatedAt: bp.updatedAt

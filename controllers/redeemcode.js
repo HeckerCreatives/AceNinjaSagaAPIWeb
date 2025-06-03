@@ -13,6 +13,13 @@ exports.createcode = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
+    // check if code already exists
+    const existingCode = await Redeemcode.findOne({ code: { $regex: new RegExp('^' + code + '$', 'i') } })
+
+
+    if(existingCode) {
+        return res.status(400).json({ message: "failed", data: "Code already exists"})
+    }
     await Redeemcode.create({ code, status, expiration: expiry, rewards })
     .then(data => data)
     .catch(err => {
@@ -74,10 +81,11 @@ exports.getcodes = async (req, res) => {
     codes.forEach((data, index) => {
         const { id, code, status, expiration, rewards} = data
 
+        const isExpired = new Date(expiration) < new Date();
         finaldata.push({
             id: id,
             code: code,
-            status: status,
+            status: isExpired ? 'expired' : status,
             expiration: expiration,
             rewards: rewards,
             redeemedCount: redeemedCounts[index] || 0
@@ -268,17 +276,17 @@ exports.getredeemedcodeshistory = async (req, res) => {
 
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
     })
-
+    
     const totalList = await CodesRedeemed.countDocuments()
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
-
+        
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
     })
-
+    
     const totalPages = Math.ceil(totalList / pageOptions.limit)
-    if(redeemedCodes.length > 0) {
+    if(redeemedCodes.length < 0) {
         return res.status(200).json({ message: "success", data: [], totalpages: totalPages })
     }
 

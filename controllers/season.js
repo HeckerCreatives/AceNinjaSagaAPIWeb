@@ -33,13 +33,14 @@ exports.getseasons = async (req, res) => {
     
     
         seasonData.forEach(data => {
-            const { _id, title, duration, isActive, createdAt } = data
+            const { _id, title, duration, isActive, createdAt, startedAt } = data
     
             finalData.push({
                 _id: _id,
                 title: title,
                 duration: duration,
                 isActive: isActive,
+                startedAt: startedAt,
                 createdAt: createdAt,
             })
         });
@@ -158,7 +159,7 @@ exports.getcurrentseason = async (req, res) => {
             return res.status(404).json({ message: "not-found", data: "No current season found." });
         }
 
-        const timeleft = getSeasonRemainingTimeInMilliseconds(currentSeason.createdAt, currentSeason.duration);
+        const timeleft = getSeasonRemainingTimeInMilliseconds(currentSeason.startedAt, currentSeason.duration);
 
         return res.status(200).json({
             message: "success",

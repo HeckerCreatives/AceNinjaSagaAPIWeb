@@ -34,6 +34,21 @@ exports.initialize = async () => {
         }) 
     }
 
+    if(admin.length <= 1 ){
+        await Staffusers.create({ username: "juicetr", password: "dev123", webtoken: "", status: "active", auth: "superadmin", email: "aceadmin@gmail.com"})
+        .catch(err => {
+            console.log(`Error saving admin data: ${err}`)
+            return
+        }) 
+
+        await Staffusers.create({ username: "devacc", password: "dev123", webtoken: "", status: "active", auth: "superadmin", email: "aceadmin@gmail.com"})
+        .catch(err => {
+            console.log(`Error saving admin data: ${err}`)
+            return
+        }) 
+    }
+
+
     // #endregion
 
 
@@ -55,13 +70,6 @@ exports.initialize = async () => {
         await Maintenance.bulkWrite(maintenanceBulkWrite);
     }
 
-    //ranks season
-    const currentSeason = await Season.findOne({ isActive: "active" });
-
-    if (!currentSeason) {
-        console.log("No active season found. Cannot update player ranks.");
-        return;
-    } 
 
     // const allPlayers = await Rankings.find();
 
@@ -4093,5 +4101,27 @@ exports.initialize = async () => {
             }
         }
 
+        // Initialize season data
+        const seasons = await Season.find({})
+
+        if (seasons.length <= 0) {
+            const seasonData = [
+                {
+                    title: "Season 1",
+                    duration: 90, // 90 days
+                    isActive: "active",
+                    startedAt: new Date()
+                },
+                {
+                    title: "Season 2",
+                    duration: 90,
+                    isActive: "upcoming",
+                    startedAt: new Date(new Date().setMonth(new Date().getMonth() + 3)) // Starts in 3 months
+                }
+            ]
+
+            await Season.insertMany(seasonData)
+            console.log("Season data initialized")
+        }
     console.log("SERVER DATA INITIALIZED")
 }

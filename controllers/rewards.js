@@ -142,7 +142,7 @@ exports.editdailyspin = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Dailyspin data not found." })
     }
 
-    if(!type || !amount || !chance){
+    if(!type || !amount){
         return res.status(400).json({ message: "failed", data: "Please input all fields." })
     }
     if(type !== "coins" && type !== "exp" && type !== "crystal"){
@@ -287,7 +287,7 @@ exports.editweeklylogin = async (req, res) => {
     const { id } = req.user
     const { day, type, amount } = req.body
 
-    const weeklylogin = await WeeklyLogin.findOne({ day })
+    const weeklylogin = await WeeklyLogin.findOne({ day: `day${day}` })
     .then(data => data)
     .catch(err => {
         console.log(`Error finding weeklylogin data: ${err}`)
@@ -309,12 +309,11 @@ exports.editweeklylogin = async (req, res) => {
     if(amount < 0){
         return res.status(400).json({ message: "failed", data: "Amount must be greater than 0." })
     }
-
-    if(!day.match(/^day[1-7]$/)){
-        return res.status(400).json({ message: "failed", data: "Invalid day format. Should be between day1 and day7." })
+    if(day < 1 || day > 7){
+        return res.status(400).json({ message: "failed", data: "Day must be between 1 and 7." })
     }
 
-    await WeeklyLogin.updateOne({ day }, { type, amount })
+    await WeeklyLogin.updateOne({ day: `day${day}` }, { type, amount })
     .then(data => data)
     .catch(err => {
         console.log(`Error updating weeklylogin data: ${err}`)

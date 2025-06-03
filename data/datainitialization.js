@@ -4,7 +4,7 @@ const { default: mongoose } = require("mongoose")
 // #region WEAPONS
 exports.weaponData = [
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495d6"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495bc"),
         name: "Basic Sword",
         type: "weapon",
         inventorytype: "weapon",

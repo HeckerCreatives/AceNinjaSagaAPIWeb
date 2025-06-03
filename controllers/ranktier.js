@@ -66,7 +66,7 @@ exports.updateRankTier = async (req, res) => {
             return res.status(404).json({ message: "failed", data: "Rank tier not found." });
         }
 
-        const existingUpdateTier = await RankTier.findOne({name: new RegExp(`^${name.trim()}$`, 'i')});
+        const existingUpdateTier = await RankTier.findOne({name: new RegExp(`^${name.trim()}$`, 'i'), _id: { $ne: id }});
         if (existingUpdateTier) {
             return res.status(409).json({ message: "failed", data: "Rank tier with this name already exists." });
         }

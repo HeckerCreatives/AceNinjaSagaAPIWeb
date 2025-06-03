@@ -308,5 +308,5 @@ exports.getredeemedcodeshistory = async (req, res) => {
         })
     })
 
-    return res.status(200).json({ message: "success", data: finaldata })
+    return res.status(200).json({ message: "success", data: finaldata, totalpages: totalPages})
 }

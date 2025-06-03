@@ -44,7 +44,11 @@ exports.getcodes = async (req, res) => {
     }
 
     if(status) {
-        query = { status }
+        if(status === 'expired') {
+            query = { expiration: { $lt: new Date() } }
+        } else {
+            query = { status, expiration: { $gte: new Date() } }
+        }
     }
 
     const codes = await Redeemcode.find(query)

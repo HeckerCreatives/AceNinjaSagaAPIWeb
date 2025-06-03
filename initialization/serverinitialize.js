@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -119,93 +119,7 @@ exports.initialize = async () => {
 
     if (companions.length === 0) {
         
-        const companions = [
-            {
-                name: "Viper",
-                levelrequirement: 5,
-                price: 100000,
-                currency: "coins",
-                passivedescription: "Grant player immunity to poison effect. Each turn player recovers 50 health and energy.",
-                activedescription: "Reduce opponents max. health by 10% and stun them for 1 turn. Can only be used once in combat.",
-                passiveeffects: new Map([
-                    ['health', 50],
-                    ['energy', 50],
-                    ['poisonimmunity', 100]
-                ]),
-                activeeffects: new Map([
-                    ['maxhealthreduce', 10],
-                    ['stun', 1]
-                ]),
-            },
-            {
-                name: "Terra",
-                levelrequirement: 15,
-                price: 100000,
-                currency: "coins",
-                passivedescription: "Grant player 20 armor and magic resist.",
-                activedescription: "Heal player for 30% max health. Can only be used once in combat.",
-                passiveeffects: new Map([
-                    ['armor', 20],
-                    ['magicresist', 20]
-                ]),
-                activeeffects: new Map([
-                    ['healpercentage', 30]
-                ]),
-            },
-            {
-                name: "Gale",
-                levelrequirement: 25,
-                price: 100000,
-                currency: "coins",
-                passivedescription: "Grant player 10% critical chance and 15% bonus critical damage.",
-                activedescription: "Deal 1000 damage to all the enemies. This skill can not be blocked or dodged. Can be used only once in combat.",
-                passiveeffects: new Map([
-                    ['critchance', 10],
-                    ['critdamage', 15]
-                ]),
-                activeeffects: new Map([
-                    ['damage', 1000],
-                    ['cannotdodge', 100],
-                    ['cannotblock', 100],
-                    ['targetall', 100]
-                ]),
-            },
-            {
-                name: "Shade",
-                levelrequirement: 35,
-                price: 100000,
-                currency: "coins",
-                passivedescription: "Grant player 150 additional damage when above 50% max. health, and 150 damage reduction when below 50% max. health.",
-                activedescription: "Remove all negative effects from the player and recover 500 energy.",
-                passiveeffects: new Map([
-                    ['conditionaldamage', 150],
-                    ['healththreshold', 50],
-                    ['damagereduction', 150]
-                ]),
-                activeeffects: new Map([
-                    ['cleanse', 100],
-                    ['energy', 500]
-                ]),
-            },
-            {
-                name: "Blaze",
-                levelrequirement: 45,
-                price: 100000,
-                currency: "coins",
-                passivedescription: "Grant player bonus 10 speed. Player's every damage attack reduces 2% max. health from the target.",
-                activedescription: "Give player immunity to negative effects for 3 turns.",
-                passiveeffects: new Map([
-                    ['speed', 10],
-                    ['maxhealthreduction', 2]
-                ]),
-                activeeffects: new Map([
-                    ['immunity', 100],
-                    ['immunityturns', 3]
-                ]),
-            }
-        ];
-
-        await Companion.insertMany(companions);
+        await Companion.insertMany(companiondata);
 
         console.log("Default companions added successfully");
     }
@@ -2999,7 +2913,141 @@ exports.initialize = async () => {
     }
 
 
-    const allCharacters = await CharacterData.find({});
+    const market = await Market.find()
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding market data: ${err}`)
+    })
+
+    if (market.length <= 0) {
+        try {
+            // Fetch all items again to ensure we have the latest data
+            const availableItems = await Item.find();
+            
+            if (!availableItems || availableItems.length === 0) {
+                console.log("No items available to create market");
+                return;
+            }
+
+            // Create initial market with all available items
+            const newMarket = await Market.create({
+                items: availableItems,
+                marketType: "market",
+                lastUpdated: new Date()
+            });
+
+
+            await Market.create({ marketType: "shop", items: [] });
+
+            if (newMarket) {
+                console.log("Market initialized successfully with", availableItems.length, "items");
+            }
+        } catch (err) {
+            console.log(`Error creating market: ${err}`);
+            return;
+        }
+    } 
+
+    const ranktiers = await RankTier.find({})
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding rank tiers: ${err}`)
+    })
+
+    if (ranktiers.length <= 0) {
+        for (const rank of ranktierdata) {
+            await RankTier.create(rank)
+            console.log(`Rank tier ${rank.name} created`)
+        }
+    }
+
+
+            // initialize daily spin, exp spin, weekly login, monthly login, and rewards data
+
+            const dailyexpspin = await DailyExpSpin.find()
+            if(dailyexpspin.length <= 0) {
+                const dailyExpBulkWrite = dailyexpdata.map(spin => ({
+                insertOne: {
+                    document: spin
+                }
+                }));
+    
+                await DailyExpSpin.bulkWrite(dailyExpBulkWrite)
+                .catch(err => {
+                console.log(`Error saving daily spin data: ${err}`)
+                return
+                })
+    
+                console.log("Daily Exp Spin initialized")
+            }
+            const dailyspin = await DailySpin.find()
+            if(dailyspin.length <= 0) {
+                const dailySpinBulkWrite = dailyspindata.map(spin => ({
+                insertOne: {
+                    document: spin
+                }
+                }));
+    
+                await DailySpin.bulkWrite(dailySpinBulkWrite)
+                .catch(err => {
+                console.log(`Error saving daily spin data: ${err}`)
+                return
+                })
+    
+                console.log("Daily Spin initialized")
+            }
+    
+            const weeklylogin = await WeeklyLogin.find()
+            if(weeklylogin.length <= 0) {
+                const weeklyLoginBulkWrite = weeklylogindata.map(login => ({
+                insertOne: {
+                    document: login
+                }
+                }));
+    
+                await WeeklyLogin.bulkWrite(weeklyLoginBulkWrite)
+                .catch(err => {
+                console.log(`Error saving weekly login data: ${err}`)
+                return
+                })
+    
+                console.log("Weekly Login initialized")
+            }
+    
+            const monthlylogin = await MonthlyLogin.find()
+            if(monthlylogin.length <= 0) {
+                const monthlyLoginBulkWrite = monthlylogindata.map(login => ({
+                    insertOne: {
+                        document: login
+                    }
+                }));
+    
+                await MonthlyLogin.bulkWrite(monthlyLoginBulkWrite)
+                .catch(err => {
+                    console.log(`Error saving monthly login data: ${err}`)
+                    return
+                })
+    
+                console.log("Monthly Login initialized")
+            }
+    
+    
+
+        
+
+        // initialize battlepass data
+
+        const battlepass = await BattlepassSeason.find({})
+
+        if (battlepass.length <= 0) {
+            
+            await BattlepassSeason.insertMany(battlepassData)
+            console.log("Battlepass data initialized")
+        }
+
+
+        // #region INITIALIZE FOR EXISTING PLAYERS
+        const allCharacters = await CharacterData.find({});
 
 
     if (allCharacters.length > 0) {
@@ -3074,959 +3122,18 @@ exports.initialize = async () => {
             const checkcharacterchapter = await CharacterChapter.findOne({ owner: character._id });
 
             if (!checkcharacterchapter) {
-                const chapterlist = [
-                    {
-                        owner: character._id,
-                        name: "chapter1challenge1",
-                        completed: false,
-                        chapter: 101
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter1challenge2",
-                        completed: false,
-                        chapter: 102
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter1challenge3",
-                        completed: false,
-                        chapter: 103
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter2challenge1",
-                        completed: false,
-                        chapter: 201
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter2challenge2",
-                        completed: false,
-                        chapter: 202
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter2challenge3",
-                        completed: false,
-                        chapter: 203
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter3challenge1",
-                        completed: false,
-                        chapter: 301
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter3challenge2",
-                        completed: false,
-                        chapter: 302
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter3challenge3",
-                        completed: false,
-                        chapter: 303
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter4challenge1",
-                        completed: false,
-                        chapter: 401
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter4challenge2",
-                        completed: false,
-                        chapter: 402
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter4challenge3",
-                        completed: false,
-                        chapter: 403
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter5challenge1",
-                        completed: false,
-                        chapter: 501
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter5challenge2",
-                        completed: false,
-                        chapter: 502
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter5challenge3",
-                        completed: false,
-                        chapter: 503
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter6challenge1",
-                        completed: false,
-                        chapter: 601
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter6challenge2",
-                        completed: false,
-                        chapter: 602
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter6challenge3",
-                        completed: false,
-                        chapter: 603
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter7challenge1",
-                        completed: false,
-                        chapter: 701
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter7challenge2",
-                        completed: false,
-                        chapter: 702
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter7challenge3",
-                        completed: false,
-                        chapter: 703
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter8challenge1",
-                        completed: false,
-                        chapter: 801
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter8challenge2",
-                        completed: false,
-                        chapter: 802
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter8challenge3",
-                        completed: false,
-                        chapter: 803
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter9challenge1",
-                        completed: false,
-                        chapter: 901
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter9challenge2",
-                        completed: false,
-                        chapter: 902
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter9challenge3",
-                        completed: false,
-                        chapter: 903
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter10challenge1",
-                        completed: false,
-                        chapter: 1001
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter10challenge2",
-                        completed: false,
-                        chapter: 1002
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter10challenge3",
-                        completed: false,
-                        chapter: 1003
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter11challenge1",
-                        completed: false,
-                        chapter: 1101
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter11challenge2",
-                        completed: false,
-                        chapter: 1102
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter11challenge3",
-                        completed: false,
-                        chapter: 1103
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter12challenge1",
-                        completed: false,
-                        chapter: 1201
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter12challenge2",
-                        completed: false,
-                        chapter: 1202
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter12challenge3",
-                        completed: false,
-                        chapter: 1203
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter13challenge1",
-                        completed: false,
-                        chapter: 1301
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter13challenge2",
-                        completed: false,
-                        chapter: 1302
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter13challenge3",
-                        completed: false,
-                        chapter: 1303
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter14challenge1",
-                        completed: false,
-                        chapter: 1401
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter14challenge2",
-                        completed: false,
-                        chapter: 1402
-                    },
-                    {
-                        owner: character._id,
-                        name: "chapter14challenge3",
-                        completed: false,
-                        chapter: 1403
-                    },
-                ]
+                const chapterlist = chapterlistdata.map(chapter => ({
+                    owner: character._id,
+                    name: chapter.name, 
+                    completed: chapter.completed,
+                    chapter: chapter.chapter
+                }));
 
                 await CharacterChapter.insertMany(chapterlist)
                 console.log(`Chapter challenge created for character ${character.username}`);
             }
         }
     }
-
-    const market = await Market.find()
-    .then(data => data)
-    .catch(err => {
-        console.log(`Error finding market data: ${err}`)
-    })
-
-    if (market.length <= 0) {
-        try {
-            // Fetch all items again to ensure we have the latest data
-            const availableItems = await Item.find();
-            
-            if (!availableItems || availableItems.length === 0) {
-                console.log("No items available to create market");
-                return;
-            }
-
-            // Create initial market with all available items
-            const newMarket = await Market.create({
-                items: availableItems,
-                marketType: "market",
-                lastUpdated: new Date()
-            });
-
-
-            await Market.create({ marketType: "shop", items: [] });
-
-            if (newMarket) {
-                console.log("Market initialized successfully with", availableItems.length, "items");
-            }
-        } catch (err) {
-            console.log(`Error creating market: ${err}`);
-            return;
-        }
-    } 
-
-    // initialize rank tiers 
-
-    const ranktierz = [
-    {  
-        name: "Rookie",
-        requiredmmr: 0,
-        icon: ""
-    },
-    {
-        name: "Veteran",
-        requiredmmr: 1800,
-        icon: ""
-    },
-    {
-        name: "Elder",
-        requiredmmr: 3600,
-        icon: ""
-    },
-    {
-        name: "Ronin",
-        requiredmmr: 5400,
-        icon: ""
-    },
-    {
-        name: "Shogun",
-        requiredmmr: 7200,
-        icon: ""
-    },
-    {
-        name: "Ace",
-        requiredmmr: 9000,
-        icon: ""
-    }
-    ]
-
-    const ranktiers = await RankTier.find({})
-    .then(data => data)
-    .catch(err => {
-        console.log(`Error finding rank tiers: ${err}`)
-    })
-
-    if (ranktiers.length <= 0) {
-        for (const rank of ranktierz) {
-            await RankTier.create(rank)
-            console.log(`Rank tier ${rank.name} created`)
-        }
-    }
-
-
-            // initialize daily spin, exp spin, weekly login, monthly login, and rewards data
-
-            const dailyexpspin = await DailyExpSpin.find()
-            if(dailyexpspin.length <= 0) {
-                const dailyExpBulkWrite = [
-                {
-                    slot: 1,
-                    type: "exp",
-                    amount: 5000,
-                    chance: 30
-                },
-                {
-                    slot: 2,
-                    type: "exp", 
-                    amount: 7500,
-                    chance: 25
-                },
-                {
-                    slot: 3,
-                    type: "exp",
-                    amount: 10000,
-                    chance: 15
-                },
-                {
-                    slot: 4,
-                    type: "exp",
-                    amount: 12500,
-                    chance: 10
-                },
-                {
-                    slot: 5,
-                    type: "exp",
-                    amount: 15000,
-                    chance: 8
-                },
-                {
-                    slot: 6,
-                    type: "exp",
-                    amount: 20000,
-                    chance: 6
-                },
-                {
-                    slot: 7,
-                    type: "exp",
-                    amount: 25000,
-                    chance: 4
-                },
-                {
-                    slot: 8,
-                    type: "exp",
-                    amount: 30000,
-                    chance: 2
-                }
-                ].map(spin => ({
-                insertOne: {
-                    document: spin
-                }
-                }));
-    
-                await DailyExpSpin.bulkWrite(dailyExpBulkWrite)
-                .catch(err => {
-                console.log(`Error saving daily spin data: ${err}`)
-                return
-                })
-    
-                console.log("Daily Exp Spin initialized")
-            }
-            const dailyspin = await DailySpin.find()
-            if(dailyspin.length <= 0) {
-                const dailySpinBulkWrite = [
-                {
-                    slot: 1,
-                    type: "coins",
-                    amount: 1000,
-                    chance: 30
-                },
-                {
-                    slot: 2,
-                    type: "coins",
-                    amount: 2000, 
-                    chance: 25
-                },
-                {
-                    slot: 3,
-                    type: "coins",
-                    amount: 3000,
-                    chance: 15
-                },
-                {
-                    slot: 4,
-                    type: "coins",
-                    amount: 4000,
-                    chance: 10
-                },
-                {
-                    slot: 5,
-                    type: "crystal",
-                    amount: 50,
-                    chance: 8
-                },
-                {
-                    slot: 6,
-                    type: "crystal",
-                    amount: 100,
-                    chance: 6
-                },
-                {
-                    slot: 7,
-                    type: "crystal", 
-                    amount: 150,
-                    chance: 4
-                },
-                {
-                    slot: 8,
-                    type: "crystal",
-                    amount: 200,
-                    chance: 2
-                }
-                ].map(spin => ({
-                insertOne: {
-                    document: spin
-                }
-                }));
-    
-                await DailySpin.bulkWrite(dailySpinBulkWrite)
-                .catch(err => {
-                console.log(`Error saving daily spin data: ${err}`)
-                return
-                })
-    
-                console.log("Daily Spin initialized")
-            }
-    
-            const weeklylogin = await WeeklyLogin.find()
-            if(weeklylogin.length <= 0) {
-                const weeklyLoginBulkWrite = [
-                {
-                    day: "day1",
-                    type: "exp",
-                    amount: 10000
-                },
-                {
-                    day: "day2", 
-                    type: "coins",
-                    amount: 5000
-                },
-                {
-                    day: "day3",
-                    type: "exp",
-                    amount: 15000
-                },
-                {
-                    day: "day4",
-                    type: "coins",
-                    amount: 7500
-                },
-                {
-                    day: "day5",
-                    type: "crystal",
-                    amount: 100
-                },
-                {
-                    day: "day6",
-                    type: "exp",
-                    amount: 20000
-                },
-                {
-                    day: "day7",
-                    type: "crystal",
-                    amount: 200
-                }
-                ].map(login => ({
-                insertOne: {
-                    document: login
-                }
-                }));
-    
-                await WeeklyLogin.bulkWrite(weeklyLoginBulkWrite)
-                .catch(err => {
-                console.log(`Error saving weekly login data: ${err}`)
-                return
-                })
-    
-                console.log("Weekly Login initialized")
-            }
-    
-            const monthlylogin = await MonthlyLogin.find()
-            if(monthlylogin.length <= 0) {
-                const monthlyLoginBulkWrite = [
-                    {
-                        day: "day1",
-                        type: "exp", 
-                        amount: 20000
-                    },
-                    {
-                        day: "day5",
-                        type: "crystal",
-                        amount: 500
-                    },
-                    {
-                        day: "day10",
-                        type: "coins",
-                        amount: 50000
-                    },
-                    {
-                        day: "day15",
-                        type: "crystal",
-                        amount: 100
-                    },
-                    {
-                        day: "day20",
-                        type: "coins",
-                        amount: 100000
-                    },
-                    {
-                        day: "day25",
-                        type: "exp",
-                        amount: 50000
-                    },
-                ].map(login => ({
-                    insertOne: {
-                        document: login
-                    }
-                }));
-    
-                await MonthlyLogin.bulkWrite(monthlyLoginBulkWrite)
-                .catch(err => {
-                    console.log(`Error saving monthly login data: ${err}`)
-                    return
-                })
-    
-                console.log("Monthly Login initialized")
-            }
-    
-    
-
-        
-
-        // initialize battlepass data
-
-        const battlepass = await BattlepassSeason.find({})
-
-        if (battlepass.length <= 0) {
-            
-            const battlepassData = [
-            {
-                seasonName: "Battlepass Season 1", 
-                tierCount: 50,
-                premiumCost: 1000,
-                currency: "crystal",
-                status: "active",
-                freeMissions: [
-                {
-                    missionName: "Win 3 PvP Matches",
-                    description: "Win 3 matches in PvP mode.",
-                    xpReward: 500,
-                    requirements: { wins: 3 },
-                    daily: false
-                },
-                {
-                    missionName: "Complete 5 Daily Quests",
-                    description: "Complete 5 daily quests.",
-                    xpReward: 700,
-                    requirements: { dailyQuests: 5 },
-                    daily: false
-                },
-                {
-                    missionName: "Defeat 10 Enemies",
-                    description: "Defeat 10 enemies in any mode.",
-                    xpReward: 300,
-                    requirements: { enemiesDefeated: 10 },
-                    daily: true
-                }
-                ],
-                premiumMissions: [
-                {
-                    missionName: "Win 10 PvP Matches",
-                    description: "Win 10 matches in PvP mode.", 
-                    xpReward: 1000,
-                    requirements: { wins: 10 },
-                    daily: false
-                },
-                {
-                    missionName: "Spend 500 Crystals",
-                    description: "Spend 500 crystals in the shop.",
-                    xpReward: 1200,
-                    requirements: { crystalsSpent: 500 },
-                    daily: false
-                },
-                {
-                    missionName: "Complete 3 Raids",
-                    description: "Complete 3 raid battles.",
-                    xpReward: 800,
-                    requirements: { raidsCompleted: 3 },
-                    daily: true
-                }
-                ],
-                tiers: [
-                    {
-                        tierNumber: 1,
-                        freeReward: { type: "coins", amount: 500 },
-                        premiumReward: { type: "coins", amount: 1000 },
-                        xpRequired: 1000
-                    },
-                    {
-                        tierNumber: 2, 
-                        freeReward: { type: "exp", amount: 1000 },
-                        premiumReward: { type: "exp", amount: 2000 },
-                        xpRequired: 2000
-                    },
-                    {
-                        tierNumber: 3,
-                        freeReward: { type: "crystal", amount: 25 },
-                        premiumReward: { type: "crystal", amount: 50 },
-                        xpRequired: 3000
-                    },
-                    {
-                        tierNumber: 4,
-                        freeReward: { type: "coins", amount: 1000 },
-                        premiumReward: { type: "coins", amount: 2000 },
-                        xpRequired: 4000
-                    },
-                    {
-                        tierNumber: 5,
-                        freeReward: { type: "exp", amount: 1500 },
-                        premiumReward: { type: "exp", amount: 3000 },
-                        xpRequired: 5000
-                    },
-                    {
-                        tierNumber: 6,
-                        freeReward: { type: "crystal", amount: 35 },
-                        premiumReward: { type: "crystal", amount: 70 },
-                        xpRequired: 6000
-                    },
-                    {
-                        tierNumber: 7,
-                        freeReward: { type: "coins", amount: 1500 },
-                        premiumReward: { type: "coins", amount: 3000 },
-                        xpRequired: 7000
-                    },
-                    {
-                        tierNumber: 8,
-                        freeReward: { type: "exp", amount: 2000 },
-                        premiumReward: { type: "exp", amount: 4000 },
-                        xpRequired: 8000
-                    },
-                    {
-                        tierNumber: 9,
-                        freeReward: { type: "crystal", amount: 50 },
-                        premiumReward: { type: "crystal", amount: 100 },
-                        xpRequired: 9000
-                    },
-                    {
-                        tierNumber: 10,
-                        freeReward: { type: "coins", amount: 2000 },
-                        premiumReward: { type: "coins", amount: 4000 },
-                        xpRequired: 10000
-                    },
-                    {
-                        tierNumber: 11,
-                        freeReward: { type: "exp", amount: 2500 },
-                        premiumReward: { type: "exp", amount: 5000 },
-                        xpRequired: 11000
-                    },
-                    {
-                        tierNumber: 12,
-                        freeReward: { type: "crystal", amount: 60 },
-                        premiumReward: { type: "crystal", amount: 120 },
-                        xpRequired: 12000
-                    },
-                    {
-                        tierNumber: 13,
-                        freeReward: { type: "coins", amount: 2500 },
-                        premiumReward: { type: "coins", amount: 5000 },
-                        xpRequired: 13000
-                    },
-                    {
-                        tierNumber: 14,
-                        freeReward: { type: "exp", amount: 3000 },
-                        premiumReward: { type: "exp", amount: 6000 },
-                        xpRequired: 14000
-                    },
-                    {
-                        tierNumber: 15,
-                        freeReward: { type: "crystal", amount: 75 },
-                        premiumReward: { type: "crystal", amount: 150 },
-                        xpRequired: 15000
-                    },
-                    {
-                        tierNumber: 16,
-                        freeReward: { type: "coins", amount: 3000 },
-                        premiumReward: { type: "coins", amount: 6000 },
-                        xpRequired: 16000
-                    },
-                    {
-                        tierNumber: 17,
-                        freeReward: { type: "exp", amount: 3500 },
-                        premiumReward: { type: "exp", amount: 7000 },
-                        xpRequired: 17000
-                    },
-                    {
-                        tierNumber: 18,
-                        freeReward: { type: "crystal", amount: 85 },
-                        premiumReward: { type: "crystal", amount: 170 },
-                        xpRequired: 18000
-                    },
-                    {
-                        tierNumber: 19,
-                        freeReward: { type: "coins", amount: 3500 },
-                        premiumReward: { type: "coins", amount: 7000 },
-                        xpRequired: 19000
-                    },
-                    {
-                        tierNumber: 20,
-                        freeReward: { type: "exp", amount: 4000 },
-                        premiumReward: { type: "exp", amount: 8000 },
-                        xpRequired: 20000
-                    },
-                    {
-                        tierNumber: 21,
-                        freeReward: { type: "crystal", amount: 100 },
-                        premiumReward: { type: "crystal", amount: 200 },
-                        xpRequired: 21000
-                    },
-                    {
-                        tierNumber: 22,
-                        freeReward: { type: "coins", amount: 4000 },
-                        premiumReward: { type: "coins", amount: 8000 },
-                        xpRequired: 22000
-                    },
-                    {
-                        tierNumber: 23,
-                        freeReward: { type: "exp", amount: 4500 },
-                        premiumReward: { type: "exp", amount: 9000 },
-                        xpRequired: 23000
-                    },
-                    {
-                        tierNumber: 24,
-                        freeReward: { type: "crystal", amount: 110 },
-                        premiumReward: { type: "crystal", amount: 220 },
-                        xpRequired: 24000
-                    },
-                    {
-                        tierNumber: 25,
-                        freeReward: { type: "coins", amount: 4500 },
-                        premiumReward: { type: "coins", amount: 9000 },
-                        xpRequired: 25000
-                    },
-                    {
-                        tierNumber: 26,
-                        freeReward: { type: "exp", amount: 5000 },
-                        premiumReward: { type: "exp", amount: 10000 },
-                        xpRequired: 26000
-                    },
-                    {
-                        tierNumber: 27,
-                        freeReward: { type: "crystal", amount: 125 },
-                        premiumReward: { type: "crystal", amount: 250 },
-                        xpRequired: 27000
-                    },
-                    {
-                        tierNumber: 28,
-                        freeReward: { type: "coins", amount: 5000 },
-                        premiumReward: { type: "coins", amount: 10000 },
-                        xpRequired: 28000
-                    },
-                    {
-                        tierNumber: 29,
-                        freeReward: { type: "exp", amount: 5500 },
-                        premiumReward: { type: "exp", amount: 11000 },
-                        xpRequired: 29000
-                    },
-                    {
-                        tierNumber: 30,
-                        freeReward: { type: "crystal", amount: 135 },
-                        premiumReward: { type: "crystal", amount: 270 },
-                        xpRequired: 30000
-                    },
-                    {
-                        tierNumber: 31,
-                        freeReward: { type: "coins", amount: 5500 },
-                        premiumReward: { type: "coins", amount: 11000 },
-                        xpRequired: 31000
-                    },
-                    {
-                        tierNumber: 32,
-                        freeReward: { type: "exp", amount: 6000 },
-                        premiumReward: { type: "exp", amount: 12000 },
-                        xpRequired: 32000
-                    },
-                    {
-                        tierNumber: 33,
-                        freeReward: { type: "crystal", amount: 150 },
-                        premiumReward: { type: "crystal", amount: 300 },
-                        xpRequired: 33000
-                    },
-                    {
-                        tierNumber: 34,
-                        freeReward: { type: "coins", amount: 6000 },
-                        premiumReward: { type: "coins", amount: 12000 },
-                        xpRequired: 34000
-                    },
-                    {
-                        tierNumber: 35,
-                        freeReward: { type: "exp", amount: 6500 },
-                        premiumReward: { type: "exp", amount: 13000 },
-                        xpRequired: 35000
-                    },
-                    {
-                        tierNumber: 36,
-                        freeReward: { type: "crystal", amount: 160 },
-                        premiumReward: { type: "crystal", amount: 320 },
-                        xpRequired: 36000
-                    },
-                    {
-                        tierNumber: 37,
-                        freeReward: { type: "coins", amount: 6500 },
-                        premiumReward: { type: "coins", amount: 13000 },
-                        xpRequired: 37000
-                    },
-                    {
-                        tierNumber: 38,
-                        freeReward: { type: "exp", amount: 7000 },
-                        premiumReward: { type: "exp", amount: 14000 },
-                        xpRequired: 38000
-                    },
-                    {
-                        tierNumber: 39,
-                        freeReward: { type: "crystal", amount: 175 },
-                        premiumReward: { type: "crystal", amount: 350 },
-                        xpRequired: 39000
-                    },
-                    {
-                        tierNumber: 40,
-                        freeReward: { type: "coins", amount: 7000 },
-                        premiumReward: { type: "coins", amount: 14000 },
-                        xpRequired: 40000
-                    },
-                    {
-                        tierNumber: 41,
-                        freeReward: { type: "exp", amount: 7500 },
-                        premiumReward: { type: "exp", amount: 15000 },
-                        xpRequired: 41000
-                    },
-                    {
-                        tierNumber: 42,
-                        freeReward: { type: "crystal", amount: 185 },
-                        premiumReward: { type: "crystal", amount: 370 },
-                        xpRequired: 42000
-                    },
-                    {
-                        tierNumber: 43,
-                        freeReward: { type: "coins", amount: 7500 },
-                        premiumReward: { type: "coins", amount: 15000 },
-                        xpRequired: 43000
-                    },
-                    {
-                        tierNumber: 44,
-                        freeReward: { type: "exp", amount: 8000 },
-                        premiumReward: { type: "exp", amount: 16000 },
-                        xpRequired: 44000
-                    },
-                    {
-                        tierNumber: 45,
-                        freeReward: { type: "crystal", amount: 200 },
-                        premiumReward: { type: "crystal", amount: 400 },
-                        xpRequired: 45000
-                    },
-                    {
-                        tierNumber: 46,
-                        freeReward: { type: "coins", amount: 8000 },
-                        premiumReward: { type: "coins", amount: 16000 },
-                        xpRequired: 46000
-                    },
-                    {
-                        tierNumber: 47,
-                        freeReward: { type: "exp", amount: 8500 },
-                        premiumReward: { type: "exp", amount: 17000 },
-                        xpRequired: 47000
-                    },
-                    {
-                        tierNumber: 48,
-                        freeReward: { type: "crystal", amount: 210 },
-                        premiumReward: { type: "crystal", amount: 420 },
-                        xpRequired: 48000
-                    },
-                    {
-                        tierNumber: 49,
-                        freeReward: { type: "coins", amount: 8500 },
-                        premiumReward: { type: "coins", amount: 17000 },
-                        xpRequired: 49000
-                    },
-                    {
-                        tierNumber: 50,
-                        freeReward: { type: "crystal", amount: 250 },
-                        premiumReward: { type: "crystal", amount: 500 },
-                        xpRequired: 50000
-                    }
-                ],
-                startDate: new Date(),
-                // end date 2 months from now
-                endDate: new Date(new Date().setMonth(new Date().getMonth() + 2)),            
-            }
-            ]
-
-            await BattlepassSeason.insertMany(battlepassData)
-            console.log("Battlepass data initialized")
-        }
 
 
         // Initialize battlepass progress and missions for each user
@@ -4105,21 +3212,6 @@ exports.initialize = async () => {
         const seasons = await Season.find({})
 
         if (seasons.length <= 0) {
-            const seasonData = [
-                {
-                    title: "Season 1",
-                    duration: 90, // 90 days
-                    isActive: "active",
-                    startedAt: new Date()
-                },
-                {
-                    title: "Season 2",
-                    duration: 90,
-                    isActive: "upcoming",
-                    startedAt: new Date(new Date().setMonth(new Date().getMonth() + 3)) // Starts in 3 months
-                }
-            ]
-
             await Season.insertMany(seasonData)
             console.log("Season data initialized")
         }

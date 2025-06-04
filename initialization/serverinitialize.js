@@ -3093,26 +3093,26 @@ exports.initialize = async () => {
                     lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000)
                 });
 
-                // await CharacterWeeklyLogin.create({
-                //     owner: character._id,
-                //     daily: {
-                //         day1: false,
-                //         day2: false, 
-                //         day3: false,
-                //         day4: false,
-                //         day5: false,
-                //         day6: false,
-                //         day7: false,
-                //     },
-                //     currentDay: "day1",
-                //     lastClaimed: new Date(Date.now() - 24*60*60*1000)
-                // })
+                await CharacterWeeklyLogin.create({
+                    owner: character._id,
+                    daily: {
+                        day1: false,
+                        day2: false, 
+                        day3: false,
+                        day4: false,
+                        day5: false,
+                        day6: false,
+                        day7: false,
+                    },
+                    currentDay: "day1",
+                    lastClaimed: new Date(Date.now() - 24*60*60*1000)
+                })
         
-                // await CharacterDailySpin.create({
-                //     owner: character._id,
-                //     spin: false,
-                //     expspin: false,
-                // })
+                await CharacterDailySpin.create({
+                    owner: character._id,
+                    spin: false,
+                    expspin: false,
+                })
 
                 console.log(`Monthly login, Weekly login and Daily Spin created for character ${character.username}`);
             }
@@ -3140,20 +3140,20 @@ exports.initialize = async () => {
         for (const character of allCharacters) {
             // Initialize battlepass progress
             const battlepassProgress = await BattlepassProgress.find({ owner: character._id })
-            if (battlepassProgress.length <= 0) {
-            await BattlepassProgress.create({
-                owner: character._id,
-                season: battlepass[0]._id, 
-                currentTier: 1,
-                currentXP: 0,
-                hasPremium: false,
-                claimedRewards: []
-            })
-            console.log(`Battlepass progress created for character ${character.username}`)
-            }
-
+            
             // Initialize missions for the user
             if (battlepass && battlepass[0]) {
+                if (battlepassProgress.length <= 0) {
+                await BattlepassProgress.create({
+                    owner: character._id,
+                    season: battlepass[0]._id, 
+                    currentTier: 1,
+                    currentXP: 0,
+                    hasPremium: false,
+                    claimedRewards: []
+                })
+                console.log(`Battlepass progress created for character ${character.username}`)
+                }
             // Initialize free missions
             for (const mission of battlepass[0].freeMissions) {
                 await BattlepassMissionProgress.findOneAndUpdate(
@@ -3165,7 +3165,7 @@ exports.initialize = async () => {
                 },
                 {
                     $setOnInsert: {
-                    missionId: new mongoose.Types.ObjectId(),
+                    missionId: new mongoose.Types.ObjectId(mission._id),
                     progress: 0,
                     isCompleted: false,
                     isLocked: false,
@@ -3191,7 +3191,7 @@ exports.initialize = async () => {
                 },
                 {
                     $setOnInsert: {
-                    missionId: new mongoose.Types.ObjectId(),
+                    missionId: new mongoose.Types.ObjectId(mission._id),
                     progress: 0,
                     isCompleted: false,
                     isLocked: true, // Premium missions start locked

@@ -918,7 +918,6 @@ exports.goldPackData = [
     }
 ]
 // #endregion
-
 // #region COMPANION
  exports.companiondata = [
             {
@@ -1011,7 +1010,6 @@ exports.goldPackData = [
             }
         ];       
 // #endregion
-
 // #region RANKTIER
 exports.ranktierdata = [
     {  
@@ -1046,9 +1044,7 @@ exports.ranktierdata = [
     }
     ]
 // #endregion
-
 // #region REWARDS
-
 exports.dailyexpdata = [
                 {
                     slot: 1,
@@ -1220,61 +1216,159 @@ exports.monthlylogindata = [
                     },
                 ]
 // #endregion
-
 // #region BATTLEPASS
 
             const battlepassData = [
             {
-                seasonName: "Battlepass Season 1", 
+                title: "Battlepass Season 1", 
+                season: 1,
                 tierCount: 50,
                 premiumCost: 1000,
                 currency: "crystal",
                 status: "active",
                 freeMissions: [
-                {
-                    missionName: "Win 3 PvP Matches",
-                    description: "Win 3 matches in PvP mode.",
-                    xpReward: 500,
-                    requirements: { wins: 3 },
-                    daily: false
-                },
-                {
-                    missionName: "Complete 5 Daily Quests",
-                    description: "Complete 5 daily quests.",
-                    xpReward: 700,
-                    requirements: { dailyQuests: 5 },
-                    daily: false
-                },
-                {
-                    missionName: "Defeat 10 Enemies",
-                    description: "Defeat 10 enemies in any mode.",
-                    xpReward: 300,
-                    requirements: { enemiesDefeated: 10 },
-                    daily: true
-                }
+                    {
+                        missionName: "Win 1 PvP Match",
+                        description: "Win 1 match in PvP mode.",
+                        xpReward: 200,
+                        requirements: { pvpwins: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Defeat 5 Enemies",
+                        description: "Defeat 5 enemies in any mode.",
+                        xpReward: 200,
+                        requirements: { enemiesdefeated: 5 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Complete 2 Daily Quests",
+                        description: "Complete 2 daily quests.",
+                        xpReward: 250,
+                        requirements: { dailyquests: 2 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Use Skills 10 Times",
+                        description: "Use any skill 10 times in battle.",
+                        xpReward: 200,
+                        requirements: { skillsused: 10 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Deal 5,000 Total Damage",
+                        description: "Deal a total of 5,000 damage in battles.",
+                        xpReward: 250,
+                        requirements: { totaldamage: 5000 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Participate in 1 PvP Match",
+                        description: "Join 1 PvP match.",
+                        xpReward: 150,
+                        requirements: { pvpparticipated: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Participate in 1 Raid Battle",
+                        description: "Join 1 raid battle.",
+                        xpReward: 200,
+                        requirements: { raidparticipated: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Spin the Daily Spin",
+                        description: "Spin the daily spin once.",
+                        xpReward: 100,
+                        requirements: { dailyspin: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Claim Daily Login Reward",
+                        description: "Claim your daily login reward.",
+                        xpReward: 100,
+                        requirements: { dailyloginclaimed: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Challenge a Story Chapter",
+                        description: "Complete any story chapter challenge.",
+                        xpReward: 200,
+                        requirements: { storychapters: 1 },
+                        daily: true,
+                    }
                 ],
                 premiumMissions: [
-                {
-                    missionName: "Win 10 PvP Matches",
-                    description: "Win 10 matches in PvP mode.", 
-                    xpReward: 1000,
-                    requirements: { wins: 10 },
-                    daily: false
-                },
-                {
-                    missionName: "Spend 500 Crystals",
-                    description: "Spend 500 crystals in the shop.",
-                    xpReward: 1200,
-                    requirements: { crystalsSpent: 500 },
-                    daily: false
-                },
-                {
-                    missionName: "Complete 3 Raids",
-                    description: "Complete 3 raid battles.",
-                    xpReward: 800,
-                    requirements: { raidsCompleted: 3 },
-                    daily: true
-                }
+                    {
+                        missionName: "Win 3 PvP Matches",
+                        description: "Win 3 matches in PvP mode.",
+                        xpReward: 400,
+                        requirements: { pvpwins: 3 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Defeat 15 Enemies",
+                        description: "Defeat 15 enemies in any mode.",
+                        xpReward: 400,
+                        requirements: { enemiesdefeated: 15 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Complete 5 Daily Quests",
+                        description: "Complete 5 daily quests.",
+                        xpReward: 500,
+                        requirements: { dailyquests: 5 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Use Skills 25 Times",
+                        description: "Use any skill 25 times in battle.",
+                        xpReward: 400,
+                        requirements: { skillsused: 25 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Deal 15,000 Total Damage",
+                        description: "Deal a total of 15,000 damage in battles.",
+                        xpReward: 500,
+                        requirements: { totaldamage: 15000 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Participate in 3 PvP Matches",
+                        description: "Join 3 PvP matches.",
+                        xpReward: 300,
+                        requirements: { pvpparticipated: 3 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Participate in 2 Raid Battles",
+                        description: "Join 2 raid battles.",
+                        xpReward: 400,
+                        requirements: { raidparticipated: 2 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Spin the Daily Spin Twice",
+                        description: "Spin the daily spin two times.",
+                        xpReward: 200,
+                        requirements: { dailyspin: 2 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Add a Friend",
+                        description: "Add a new friend today.",
+                        xpReward: 300,
+                        requirements: { friendsadded: 1 },
+                        daily: true,
+                    },
+                    {
+                        missionName: "Heal Yourself 3,000 HP",
+                        description: "Heal yourself for a total of 3,000 HP.",
+                        xpReward: 400,
+                        requirements: { selfheal: 3000 },
+                        daily: true,
+                    }
                 ],
                 tiers: [
                     {

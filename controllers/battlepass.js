@@ -37,7 +37,8 @@ exports.getbattlepass = async (req, res) => {
 
     const finalData = battlepassdata.map(bp => ({
         id: bp._id,
-        seasonName: bp.seasonName,
+        title: bp.title,
+        season: bp.season,
         startDate: bp.startDate,
         endDate: bp.endDate,
         status: bp.status,
@@ -127,10 +128,11 @@ exports.editbattlepassrewards = async (req, res) => {
 
 exports.editbattlepassdetails = async (req, res) => {
     const { id } = req.user;
-    const { bpid, seasonName, startDate, endDate, status, tierCount, premiumCost, grandreward } = req.body;
+    const { bpid, season, title, startDate, endDate, status, tierCount, premiumCost, grandreward } = req.body;
 
     const updateData = {};
-    if (seasonName) updateData.seasonName = seasonName;
+    if (season) updateData.season = season;
+    if (title) updateData.title = title;
     if (startDate) updateData.startDate = new Date(startDate);
     if (endDate) updateData.endDate = new Date(endDate);
     if (status) updateData.status = status;
@@ -230,7 +232,7 @@ exports.getbattlepassclaimhistory = async (req, res) => {
         .limit(pageOptions.limit)
         .sort({ createdAt: -1 })
         .populate('owner', 'username level')
-        .populate('season', 'seasonName')
+        .populate('season', 'title')
         .then(data => data)
         .catch(err => {
             console.error(`Error fetching battlepass claim history: ${err}`);
@@ -258,7 +260,7 @@ exports.getbattlepassclaimhistory = async (req, res) => {
         },
         season: {
             id: bp.season._id,
-            seasonName: bp.season.seasonName
+            title: bp.season.title
         },
         tier: bp.tier,
         claimedrewards: {
@@ -304,7 +306,7 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         .limit(pageOptions.limit)
         .sort({ createdAt: -1 })
         .populate('owner', 'username level')
-        .populate('season', 'seasonName')
+        .populate('season', 'title')
         .then(data => data)
         .catch(err => {
             console.error(`Error fetching battlepass claim history: ${err}`);
@@ -332,7 +334,7 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         },
         season: {
             id: bp.season._id,
-            seasonName: bp.season.seasonName
+            title: bp.season.title
         },
         tier: bp.tier,
         claimedrewards: {

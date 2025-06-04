@@ -306,7 +306,7 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         .limit(pageOptions.limit)
         .sort({ createdAt: -1 })
         .populate('owner', 'username level')
-        .populate('season', 'title')
+        .populate('season', 'seasonName')
         .then(data => data)
         .catch(err => {
             console.error(`Error fetching battlepass claim history: ${err}`);
@@ -334,7 +334,7 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         },
         season: {
             id: bp.season._id,
-            title: bp.season.title
+            seasonName: bp.season.seasonName
         },
         tier: bp.tier,
         claimedrewards: {

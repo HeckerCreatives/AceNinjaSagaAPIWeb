@@ -16,6 +16,7 @@ const routers = app => {
     app.use("/patchnote", require("./patchnote"))
     app.use("/payin", require("./payin"))
     app.use("/pvp", require('./pvp'));
+    app.use("/quest", require('./quest'));
     app.use("/ranking", require("./ranking"))
     app.use("/ranktier", require('./ranktier'));
     app.use("/redeemcode", require("./redeemcode"))

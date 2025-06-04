@@ -10,11 +10,12 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
 const { BattlepassSeason, BattlepassProgress, BattlepassMissionProgress } = require("../models/Battlepass")
+const { QuestDetails, QuestProgress } = require("../models/Quest")
 
 exports.initialize = async () => {
 
@@ -3206,6 +3207,24 @@ exports.initialize = async () => {
                 );
             }
             }
+
+        const searchquest = await QuestDetails.find().lean()
+
+        const questProgress = await QuestProgress.find({ owner: character._id });
+
+        if (questProgress.length <= 0) {
+            for (const mission of searchquest) {
+                await QuestProgress.create({
+                    owner: character._id,
+                    quest: new mongoose.Types.ObjectId(mission._id),
+                    progress: 0,
+                    isCompleted: false,
+                    daily: mission.daily,
+                    lastUpdated: new Date()
+                });
+            }
+            console.log(`Quest progress created for character ${character.username}`)
+            }
         }
 
         // Initialize season data
@@ -3215,5 +3234,13 @@ exports.initialize = async () => {
             await Season.insertMany(seasonData)
             console.log("Season data initialized")
         }
+
+        const quest = await QuestDetails.find({})
+        if (quest.length <= 0) {
+            await QuestDetails.insertMany(questmissionsdata)
+            console.log("Quest data initialized")
+        }
+
+
     console.log("SERVER DATA INITIALIZED")
 }

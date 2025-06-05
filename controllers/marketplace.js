@@ -637,7 +637,6 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
             });
         }
 
-        console.log(character)
 
         // Process each item
         const results = [];
@@ -679,7 +678,7 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
                     await CharacterInventory.findOneAndUpdate(
                         { 
                             owner: character._id, 
-                            type: itemData.type 
+                            type: itemData.inventorytype 
                         },
                         { 
                             $push: { 

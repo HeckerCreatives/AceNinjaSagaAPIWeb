@@ -39,7 +39,7 @@ exports.getbattlepass = async (req, res) => {
 
     //get grandreward items
 
-    const grandrewarditems = await Market.find({ marketType: "grandreward" })
+    const grandrewarditems = await Market.find({})
         .populate('items')
         .then(data => data)
         .catch(err => {

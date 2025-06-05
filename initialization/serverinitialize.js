@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, battlepassgrandrewards } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -3048,30 +3048,7 @@ exports.initialize = async () => {
 
 
 
-        // initalize battlepass grand rewards
 
-        // check if grand reward market exists
-        const grandRewardMarket = await Market.findOne({ marketType: "grandreward" });
-        if (!grandRewardMarket) {
-            // create the items then put it inside market
-
-            const createGrandRewardItems = await Item.insertMany(battlepassgrandrewards)
-            .then(data => data)
-            .catch(err => {
-                console.log(`Error creating grand reward items: ${err}`)
-            });
-
-            if (createGrandRewardItems && createGrandRewardItems.length > 0) {
-                // create the market with the items
-                await Market.create({
-                    marketType: "grandreward",
-                    items: createGrandRewardItems,
-                    lastUpdated: new Date()
-                });
-                console.log("Grand reward market initialized with items");
-            }
-
-        }
 
 
         // #region INITIALIZE FOR EXISTING PLAYERS

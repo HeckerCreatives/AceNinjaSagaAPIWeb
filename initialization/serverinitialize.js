@@ -3047,10 +3047,6 @@ exports.initialize = async () => {
                 console.log("Monthly Login initialized")
             }
     
-    
-
-        
-
         // initialize battlepass data
 
         const battlepass = await BattlepassSeason.find({})
@@ -3060,10 +3056,6 @@ exports.initialize = async () => {
             await BattlepassSeason.insertMany(battlepassData)
             console.log("Battlepass data initialized")
         }
-
-
-
-
 
 
         // #region INITIALIZE FOR EXISTING PLAYERS

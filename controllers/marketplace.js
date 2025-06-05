@@ -24,12 +24,21 @@ exports.getMarketItems = async (req, res) => {
         });
     }
 
+    const query = {
+
+    }
+
+    if (markettype) {
+        query.marketType = markettype;
+    } 
+
+
     try {
         // Build pipeline stages
         const pipeline = [
             {
                 $match: {
-                    marketType: markettype || { $in: ['market'] }
+                    ...query
                 }
             },
             { $unwind: '$items' },
@@ -129,6 +138,7 @@ exports.getMarketItems = async (req, res) => {
         countPipeline.push({ $count: 'total' });
         const totalItems = await Market.aggregate(countPipeline);
 
+        console.log(items.length, totalItems)
         // Format response
         const formattedResponse = {
             data: items.reduce((acc, item, index) => {

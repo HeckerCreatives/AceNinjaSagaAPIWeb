@@ -331,7 +331,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Fashion Attire 04",
+        name: "Male Fashion Attire 4",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -348,7 +348,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Fashion Attire 05",
+        name: "Male Fashion Attire 5",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -365,7 +365,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Fashion Attire 06",
+        name: "Male Fashion Attire 6",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -382,7 +382,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Fashion Attire 07",
+        name: "Male Fashion Attire 7",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -433,7 +433,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Drip Attire 03",
+        name: "Male Drip Attire 3",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -450,7 +450,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Drip Attire 04",
+        name: "Male Drip Attire 4",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -467,7 +467,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Drip Attire 05",
+        name: "Male Drip Attire 5",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -484,7 +484,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Drip Attire 06",
+        name: "Male Drip Attire 6",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -501,7 +501,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 01",
+        name: "Male Epic Attire 1",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -518,7 +518,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 02",
+        name: "Male Epic Attire 2",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -535,7 +535,7 @@ exports.outfitData = [
         imageUrl: ""
     },
         {
-        name: "Male Epic Attire 03",
+        name: "Male Epic Attire 3",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -552,7 +552,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 04",
+        name: "Male Epic Attire 4",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -569,7 +569,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 05",
+        name: "Male Epic Attire 5",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -586,7 +586,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 06",
+        name: "Male Epic Attire 6",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -762,7 +762,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Female Fashion Attire 04",
+        name: "Female Fashion Attire 4",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -779,7 +779,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Female Fashion Attire 05",
+        name: "Female Fashion Attire 5",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -796,7 +796,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Female Fashion Attire 06",
+        name: "Female Fashion Attire 6",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -813,12 +813,29 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Female Fashion Attire 07",
+        name: "Female Fashion Attire 7",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
         gender: "female",
         price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Warrior Princess",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
         currency: "crystal",
         description: "N/A",
         stats: {
@@ -830,11 +847,96 @@ exports.outfitData = [
         imageUrl: ""
     },
         {
-        name: "Male Epic Attire 01",
+        name: "Moonlight Cloak",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Attire 3",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Attire 4",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Attire 5",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Attire 6",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+        {
+        name: "Female Epic Attire 1",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -847,11 +949,11 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 02",
+        name: "Female Epic Attire 2",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -864,11 +966,11 @@ exports.outfitData = [
         imageUrl: ""
     },
         {
-        name: "Male Epic Attire 03",
+        name: "Female Epic Attire 3",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -881,11 +983,11 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 04",
+        name: "Female Epic Attire 4",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -898,11 +1000,11 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 05",
+        name: "Female Epic Attire 5",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -915,11 +1017,11 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
-        name: "Male Epic Attire 06",
+        name: "Female Epic Attire 6",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
-        gender: "male",
+        gender: "female",
         price: 1000,
         currency: "crystal",
         description: "N/A",
@@ -936,7 +1038,7 @@ exports.outfitData = [
 // #region HAIR
 exports.hairData = [
     {
-        name: "Basic Ninja Hairstyle 1",
+        name: "Male Basic Ninja Hairstyle 1",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -953,7 +1055,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        name: "Basic Ninja Hairstyle 2",
+        name: "Male Basic Ninja Hairstyle 2",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -970,7 +1072,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        name: "Basic Ninja Hairstyle 3",
+        name: "Male Basic Ninja Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -987,7 +1089,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        name: "Basic Ninja Hairstyle 4",
+        name: "Male Basic Ninja Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -1004,7 +1106,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        name: "Basic Ninja Hairstyle 5",
+        name: "Male Basic Ninja Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -1021,7 +1123,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        name: "Basic Ninja Hairstyle 6",
+        name: "Male Basic Ninja Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
         rarity: "basic",
@@ -1089,6 +1191,74 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        name: "Male Fashion Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Hairstyle 7",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
         name: "Uke Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1112,6 +1282,584 @@ exports.hairData = [
         rarity: "rare",
         gender: "male",
         price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Hairstyle 3",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "male",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "male",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "male",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "male",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 1",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 2",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 3",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 1",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 2",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 3",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Basic Ninja Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "basic",
+        gender: "female",
+        price: 2500,
+        currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Silken Hairstyle",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Shinobi Hairstyle",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Nightshade Hairstyle",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Warrior Hairstyle",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Moonlight Hairstyle",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Hairstyle 3",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Drip Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "rare",
+        gender: "female",
+        price: 250,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 1",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 2",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 3",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 4",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 5",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Epic Hairstyle 6",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "female",
+        price: 500,
         currency: "crystal",
         description: "N/A",
         stats: {

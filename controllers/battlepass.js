@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const { BattlepassSeason, BattlepassHistory, BattlepassProgress } = require("../models/Battlepass");
 const { checkcharacter } = require("../utils/character");
-const { Market } = require("../models/Market");
+const { Market, Item } = require("../models/Market");
 
 
 exports.getbattlepass = async (req, res) => {
@@ -39,16 +39,9 @@ exports.getbattlepass = async (req, res) => {
 
     //get grandreward items
 
-    const grandrewarditems = await Market.find({})
-        .populate('items')
-        .then(data => data)
-        .catch(err => {
-            console.error(`Error fetching grandreward items: ${err}`);
-            return res.status(500).json({ message: "error", data: "There was an error fetching grandreward items. Please try again later." });
-        });
+    const grandrewarditems = await Item.find({ currency: { $ne: "coins"}})
 
-    const finaldata1 = grandrewarditems.map(item => ({
-        items: item.items.map(i => ({
+    const finaldata1 = grandrewarditems.map(i => ({
             id: i._id,
             name: i.name,
             type: i.type,
@@ -60,8 +53,7 @@ exports.getbattlepass = async (req, res) => {
             crystals: i.crystals,
             coins: i.coins,
             stats: i.stats,
-        })),
-    }));
+        }))
 
     const finalData = battlepassdata.map(bp => ({
         id: bp._id,
@@ -89,7 +81,7 @@ exports.getbattlepass = async (req, res) => {
     return res.status(200).json({
         message: "success",
         data: finalData,
-        grandrewarditems: finaldata1[0].items,
+        grandrewarditems: finaldata1,
         totalPages: totalPages,
         currentPage: pageOptions.page,
         totalCount: totalCount

@@ -1960,3 +1960,98 @@ const questmissionsdata = [
 ]
 
 exports.questmissionsdata = questmissionsdata;
+
+
+// this are items like outfit, weapon, crystal.
+exports.battlepassgrandrewards = [
+    {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Celestial Katana",
+        type: "weapon",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 0,
+        currency: "none",
+        description: "A blade forged from stardust. Grants +80 damage, +20 speed, and reflects 5% of all damage taken.",
+        stats: {
+            level: 5,
+            damage: 80,
+            defense: 0,
+            speed: 20
+        },
+        isEquippable: true,
+        isOpenable: false,
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Phoenix Cloak",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 0,
+        currency: "none",
+        description: "A legendary cloak that revives the wearer once per battle with 50% health.",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isEquippable: true,
+        isOpenable: false,
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Eclipse Hair",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 0,
+        currency: "none",
+        description: "Hair imbued with the power of the eclipse.",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isEquippable: true,
+        isOpenable: false,
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Infinity Crystal Pack",
+        type: "crystalpacks",
+        inventorytype: "crystalpacks",
+        rarity: "legendary",
+        gender: "unisex",
+        currency: "none",
+        price: 0,
+        isOpenable: true,
+        isEquippable: false,
+        crystals: 800,
+        imageUrl: "",
+        description: "A legendary crystal pack containing 800 crystals."
+    },
+    {
+        _id: new mongoose.Types.ObjectId(),
+        name: "Infinity Gold Pack",
+        type: "goldpacks",
+        inventorytype: "goldpacks",
+        rarity: "legendary",
+        gender: "unisex",
+        currency: "none",
+        price: 0,
+        coins: 1000000,
+        imageUrl: "",
+        description: "A legendary gold pack containing 1,000,000 coins.",
+        isOpenable: true,
+        isEquippable: false
+    }
+];

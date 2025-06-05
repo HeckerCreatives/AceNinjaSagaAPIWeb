@@ -6,7 +6,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495bc"),
         name: "Basic Sword",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "basic",
         gender: "unisex",
@@ -24,7 +24,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495bd"),
         name: "Lizard",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "basic",
         gender: "unisex",
@@ -42,7 +42,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495be"),
         name: "War Hammer",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "common",
         gender: "unisex",
@@ -58,27 +58,9 @@ exports.weaponData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495bf"),
-        name: "Katana",
-        type: "weapon",
-        inventorytype: "weapon",
-        rarity: "legendary",
-        gender: "unisex",
-        price: 100,
-        currency: "crystal",
-        description: "Increase Max health by 300 and all damage by 150 points.",
-        stats: {
-            level: 14,
-            damage: 120,
-            defense: 0,
-            speed: 0
-        },
-        imageUrl: ""
-    },
-    {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c0"),
         name: "Water Sword",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "common",
         gender: "unisex",
@@ -96,7 +78,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c1"),
         name: "Ice Shuriken",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "legendary",
         gender: "unisex",
@@ -114,7 +96,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c2"),
         name: "Dragonglass",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "common",
         gender: "unisex",
@@ -132,7 +114,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c3"),
         name: "Scar",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "rare",
         gender: "unisex",
@@ -150,7 +132,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c4"),
         name: "Torch",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "rare",
         gender: "unisex",
@@ -168,7 +150,7 @@ exports.weaponData = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c5"),
         name: "Moonstone",
-        type: "weapon",
+        type: "skins",
         inventorytype: "weapon",
         rarity: "rare",
         gender: "unisex",
@@ -184,6 +166,8 @@ exports.weaponData = [
         imageUrl: ""
     }
 ]
+
+
 // #endregion
 // #region OUTFITS
 exports.outfitData = [
@@ -347,6 +331,74 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        name: "Male Fashion Attire 04",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Attire 05",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Attire 06",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Fashion Attire 07",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "male",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
         name: "Uke",
         type: "skins",
         inventorytype: "outfit",
@@ -370,6 +422,176 @@ exports.outfitData = [
         rarity: "rare",
         gender: "male",
         price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Attire 03",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Attire 04",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Attire 05",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Drip Attire 06",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "rare",
+        gender: "male",
+        price: 500,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 01",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 02",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+        {
+        name: "Male Epic Attire 03",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 04",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 05",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 06",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
         currency: "crystal",
         description: "N/A",
         stats: {
@@ -479,6 +701,227 @@ exports.outfitData = [
         gender: "female",
         price: 5000,
         currency: "coins",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Silken Shroud",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Shinobi Suit",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Nightshade Armor",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Attire 04",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Attire 05",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Attire 06",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Female Fashion Attire 07",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+        {
+        name: "Male Epic Attire 01",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 02",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+        {
+        name: "Male Epic Attire 03",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 04",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 05",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        name: "Male Epic Attire 06",
+        type: "skins",
+        inventorytype: "outfit",
+        rarity: "legendary",
+        gender: "male",
+        price: 1000,
+        currency: "crystal",
         description: "N/A",
         stats: {
             level: 1,

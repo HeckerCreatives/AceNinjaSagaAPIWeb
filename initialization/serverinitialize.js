@@ -2930,19 +2930,34 @@ exports.initialize = async () => {
                 return;
             }
 
-            // Create initial market with all available items
-            const newMarket = await Market.create({
-                items: availableItems,
+
+            const marketitems = availableItems.filter(item => item.currency === "coins");
+            const storeitems = availableItems.filter(item => item.currency !== "coins");
+
+            await Market.create({
+                items: marketitems,
                 marketType: "market",
                 lastUpdated: new Date()
+            })
+            .catch(err => {
+                console.log(`Error creating market: ${err}`);
+                return;
             });
 
 
-            await Market.create({ marketType: "shop", items: [] });
+            await Market.create({ 
+                marketType: "store",
+                items: storeitems,
+                lastUpdated: new Date()
+            })
+            .catch(err => {
+                console.log(`Error creating store: ${err}`);
+                return;
+            });
 
-            if (newMarket) {
-                console.log("Market initialized successfully with", availableItems.length, "items");
-            }
+            console.log("Market and store created successfully");
+
+    
         } catch (err) {
             console.log(`Error creating market: ${err}`);
             return;

@@ -889,14 +889,14 @@ exports.deleteItem = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Item ID is required." });
         }
 
-        let market = await Market.findOne({ marketType: "market" });
+        let market = await Market.findOne({ marketType: "store" });
         if (!market) {
-            return res.status(404).json({ message: "failed", data: "Market not found." });
+            return res.status(404).json({ message: "failed", data: "Store not found." });
         }
 
         const itemIndex = market.items.findIndex(item => item._id.toString() === itemId);
         if (itemIndex === -1) {
-            return res.status(404).json({ message: "failed", data: "Item not found in Market." });
+            return res.status(404).json({ message: "failed", data: "Item not found in Store." });
         }
 
         market.items.splice(itemIndex, 1);
@@ -957,4 +957,106 @@ exports.updateItem = async (req, res) => {
 };
 
 
+exports.getstoreitemlist = async (req, res) => {
+
+    // get market items and items first then filter out the items that are in the market and also check the currency it should be not equal to coins
+    const marketitems = await Market.findOne({ marketType: "store" })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching store items. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+
+    const items = await Item.find({ currency: { $ne: "coins" } })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+
+    // Filter out items that are already in the market
+    const filteredItems = items.filter(item => {
+        return !marketitems.items.some(marketItem => marketItem._id.toString() === item._id.toString());
+    });
+
+    if(!filteredItems || filteredItems.length === 0) {
+        return res.status(404).json({ message: "failed", data: "All available items are in the store." });
+    }
+    const finalData = []
+
+    filteredItems.forEach(item => {
+        finalData.push({
+            itemid: item._id,
+            name: item.name,
+        })
+    })
+
+    return res.status(200).json({
+        message: "success",
+        data: finalData
+    })
+}
+
+exports.addstoreitems = async (req, res) => {
+
+    const { itemid, price } = req.body;
+
+    if (!itemid || !price) {
+        return res.status(400).json({ message: "failed", data: "Please provide item ID and price." });
+    }
+
+    // Start session for transaction
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
+
+        // Find item in Items collection
+        const item = await Item.findById(itemid).session(session);
+        if (!item) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "failed", data: "Item not found." });
+        }
+
+        // Check if item already exists in Market
+        const market = await Market.findOne({ marketType: "store" }).session(session);
+        if (!market) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "failed", data: "Store not found." });
+        }
+
+        const existingItemIndex = market.items.findIndex(marketItem => marketItem._id.toString() === itemid);
+        if (existingItemIndex !== -1) {
+            await session.abortTransaction();
+            return res.status(400).json({ message: "failed", data: "Item already exists in the store." });
+        }
+
+        // check currency if its equal to coins
+        if (item.currency === "coins") {
+            await session.abortTransaction();
+            return res.status(400).json({ message: "failed", data: "Item currency must be coins." });
+        }
+
+        item.price = price; // Update price if provided
+        // Add item to Market
+
+        market.items.push(item.toObject());
+
+        await market.save({ session });
+        await item.save({ session });
+        await session.commitTransaction();
+        return res.status(200).json({ 
+            message: "success"
+        });
+
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(`Error adding item to store: ${err}`);
+        return res.status(500).json({ message: "server-error", data: "There's a problem with the server." });
+    }
+    finally {
+        session.endSession();
+    }
+}
 

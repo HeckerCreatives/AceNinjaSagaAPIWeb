@@ -76,6 +76,7 @@ exports.getbattlepass = async (req, res) => {
         premiumMissions: bp.premiumMissions,
         tiers: bp.tiers,
         grandreward: {
+            _id: bp.grandreward?._id || "No Grand Reward",
             name: bp.grandreward?.name || "No Grand Reward",
             type: bp.grandreward?.type || "none",
             rarity: bp.grandreward?.rarity || "none",

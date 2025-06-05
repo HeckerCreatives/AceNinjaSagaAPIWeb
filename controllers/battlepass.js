@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { BattlepassSeason, BattlepassHistory } = require("../models/Battlepass");
+const { BattlepassSeason, BattlepassHistory, BattlepassProgress } = require("../models/Battlepass");
 const { checkcharacter } = require("../utils/character")
 
 
@@ -351,5 +351,67 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         totalPages: totalPages,
         currentPage: pageOptions.page,
         totalCount: totalCount
+    });
+}
+
+exports.checkuserbattlepass = async (req, res) => {
+    const { id } = req.user;
+    const { characterid } = req.query;
+
+    if (!characterid || !mongoose.Types.ObjectId.isValid(characterid)) {
+        return res.status(400).json({ message: "failed", data: "Please provide a valid character ID." });
+    }
+
+    const checker = await checkcharacter(id, characterid);
+
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this page. Please login the right account to view the page."
+        });
+    }
+
+    const battlepass = await BattlepassProgress.findOne({ owner: characterid })
+        .catch(err => {
+            console.error(`Error fetching battlepass progress: ${err}`);
+            return res.status(500).json({ message: "error", data: "There was an error fetching the battlepass progress. Please try again later." });
+        });
+
+    if (!battlepass) {
+        return res.status(404).json({ message: "not-found", data: "Battlepass progress not found for this character." });
+    }
+
+    return res.status(200).json({
+        message: "success",
+        data: {
+            hasPremium: battlepass.hasPremium
+        }
+    });
+}
+
+
+exports.checkuserbattlepasssa = async (req, res) => {
+    const { id } = req.user;
+    const { characterid } = req.query;
+
+    if (!characterid || !mongoose.Types.ObjectId.isValid(characterid)) {
+        return res.status(400).json({ message: "failed", data: "Please provide a valid character ID." });
+    }
+
+    const battlepass = await BattlepassProgress.findOne({ owner: characterid })
+        .catch(err => {
+            console.error(`Error fetching battlepass progress: ${err}`);
+            return res.status(500).json({ message: "error", data: "There was an error fetching the battlepass progress. Please try again later." });
+        });
+
+    if (!battlepass) {
+        return res.status(404).json({ message: "not-found", data: "Battlepass progress not found for this character." });
+    }
+
+    return res.status(200).json({
+        message: "success",
+        data: {
+            hasPremium: battlepass.hasPremium
+        }
     });
 }

@@ -3157,6 +3157,8 @@ exports.initialize = async () => {
                 }
             // Initialize free missions
             for (const mission of battlepass[0].freeMissions) {
+                    const requirementType = Object.keys(mission.requirements)[0];
+
                 await BattlepassMissionProgress.findOneAndUpdate(
                 {
                     owner: character._id,
@@ -3167,6 +3169,7 @@ exports.initialize = async () => {
                 {
                     $setOnInsert: {
                     missionId: new mongoose.Types.ObjectId(mission._id),
+                    requirementtype: requirementType,
                     progress: 0,
                     isCompleted: false,
                     isLocked: false,
@@ -3183,6 +3186,8 @@ exports.initialize = async () => {
 
             // Initialize premium missions
             for (const mission of battlepass[0].premiumMissions) {
+                const requirementType = Object.keys(mission.requirements)[0];
+
                 await BattlepassMissionProgress.findOneAndUpdate(
                 {
                     owner: character._id,
@@ -3193,6 +3198,7 @@ exports.initialize = async () => {
                 {
                     $setOnInsert: {
                     missionId: new mongoose.Types.ObjectId(mission._id),
+                    requirementtype: requirementType,
                     progress: 0,
                     isCompleted: false,
                     isLocked: true, // Premium missions start locked
@@ -3214,10 +3220,13 @@ exports.initialize = async () => {
 
         if (questProgress.length <= 0) {
             for (const mission of searchquest) {
+                const requirementType = Object.keys(mission.requirements)[0];
+
                 await QuestProgress.create({
                     owner: character._id,
                     quest: new mongoose.Types.ObjectId(mission._id),
                     progress: 0,
+                    requirementtype: requirementType,
                     isCompleted: false,
                     daily: mission.daily,
                     lastUpdated: new Date()

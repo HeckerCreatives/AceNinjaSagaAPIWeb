@@ -1242,8 +1242,8 @@ exports.monthlylogindata = [
                         daily: true,
                     },
                     {
-                        missionName: "Complete Daily Quests",
-                        description: "Complete daily quests.",
+                        missionName: "Claim Daily Quests",
+                        description: "Claim daily quests.",
                         xpReward: 250,
                         requirements: { dailyquests: 2 },
                         daily: true,
@@ -1272,8 +1272,8 @@ exports.monthlylogindata = [
                         daily: true,
                     },
                     {
-                        missionName: "Complete Daily Quests",
-                        description: "Complete daily quests.",
+                        missionName: "Claim Daily Quests",
+                        description: "Claim daily quests.",
                         xpReward: 500,
                         requirements: { dailyquests: 5 },
                         daily: true,
@@ -1307,7 +1307,294 @@ exports.monthlylogindata = [
                         premiumReward: { type: "coins", amount: 1000 },
                         xpRequired: 1000
                     },
-                    // ... rest of tiers remain unchanged ...
+                    {
+                        tierNumber: 2, 
+                        freeReward: { type: "exp", amount: 1000 },
+                        premiumReward: { type: "exp", amount: 2000 },
+                        xpRequired: 2000
+                    },
+                    {
+                        tierNumber: 3,
+                        freeReward: { type: "crystal", amount: 25 },
+                        premiumReward: { type: "crystal", amount: 50 },
+                        xpRequired: 3000
+                    },
+                    {
+                        tierNumber: 4,
+                        freeReward: { type: "coins", amount: 1000 },
+                        premiumReward: { type: "coins", amount: 2000 },
+                        xpRequired: 4000
+                    },
+                    {
+                        tierNumber: 5,
+                        freeReward: { type: "exp", amount: 1500 },
+                        premiumReward: { type: "exp", amount: 3000 },
+                        xpRequired: 5000
+                    },
+                    {
+                        tierNumber: 6,
+                        freeReward: { type: "crystal", amount: 35 },
+                        premiumReward: { type: "crystal", amount: 70 },
+                        xpRequired: 6000
+                    },
+                    {
+                        tierNumber: 7,
+                        freeReward: { type: "coins", amount: 1500 },
+                        premiumReward: { type: "coins", amount: 3000 },
+                        xpRequired: 7000
+                    },
+                    {
+                        tierNumber: 8,
+                        freeReward: { type: "exp", amount: 2000 },
+                        premiumReward: { type: "exp", amount: 4000 },
+                        xpRequired: 8000
+                    },
+                    {
+                        tierNumber: 9,
+                        freeReward: { type: "crystal", amount: 50 },
+                        premiumReward: { type: "crystal", amount: 100 },
+                        xpRequired: 9000
+                    },
+                    {
+                        tierNumber: 10,
+                        freeReward: { type: "coins", amount: 2000 },
+                        premiumReward: { type: "coins", amount: 4000 },
+                        xpRequired: 10000
+                    },
+                    {
+                        tierNumber: 11,
+                        freeReward: { type: "exp", amount: 2500 },
+                        premiumReward: { type: "exp", amount: 5000 },
+                        xpRequired: 11000
+                    },
+                    {
+                        tierNumber: 12,
+                        freeReward: { type: "crystal", amount: 60 },
+                        premiumReward: { type: "crystal", amount: 120 },
+                        xpRequired: 12000
+                    },
+                    {
+                        tierNumber: 13,
+                        freeReward: { type: "coins", amount: 2500 },
+                        premiumReward: { type: "coins", amount: 5000 },
+                        xpRequired: 13000
+                    },
+                    {
+                        tierNumber: 14,
+                        freeReward: { type: "exp", amount: 3000 },
+                        premiumReward: { type: "exp", amount: 6000 },
+                        xpRequired: 14000
+                    },
+                    {
+                        tierNumber: 15,
+                        freeReward: { type: "crystal", amount: 75 },
+                        premiumReward: { type: "crystal", amount: 150 },
+                        xpRequired: 15000
+                    },
+                    {
+                        tierNumber: 16,
+                        freeReward: { type: "coins", amount: 3000 },
+                        premiumReward: { type: "coins", amount: 6000 },
+                        xpRequired: 16000
+                    },
+                    {
+                        tierNumber: 17,
+                        freeReward: { type: "exp", amount: 3500 },
+                        premiumReward: { type: "exp", amount: 7000 },
+                        xpRequired: 17000
+                    },
+                    {
+                        tierNumber: 18,
+                        freeReward: { type: "crystal", amount: 85 },
+                        premiumReward: { type: "crystal", amount: 170 },
+                        xpRequired: 18000
+                    },
+                    {
+                        tierNumber: 19,
+                        freeReward: { type: "coins", amount: 3500 },
+                        premiumReward: { type: "coins", amount: 7000 },
+                        xpRequired: 19000
+                    },
+                    {
+                        tierNumber: 20,
+                        freeReward: { type: "exp", amount: 4000 },
+                        premiumReward: { type: "exp", amount: 8000 },
+                        xpRequired: 20000
+                    },
+                    {
+                        tierNumber: 21,
+                        freeReward: { type: "crystal", amount: 100 },
+                        premiumReward: { type: "crystal", amount: 200 },
+                        xpRequired: 21000
+                    },
+                    {
+                        tierNumber: 22,
+                        freeReward: { type: "coins", amount: 4000 },
+                        premiumReward: { type: "coins", amount: 8000 },
+                        xpRequired: 22000
+                    },
+                    {
+                        tierNumber: 23,
+                        freeReward: { type: "exp", amount: 4500 },
+                        premiumReward: { type: "exp", amount: 9000 },
+                        xpRequired: 23000
+                    },
+                    {
+                        tierNumber: 24,
+                        freeReward: { type: "crystal", amount: 110 },
+                        premiumReward: { type: "crystal", amount: 220 },
+                        xpRequired: 24000
+                    },
+                    {
+                        tierNumber: 25,
+                        freeReward: { type: "coins", amount: 4500 },
+                        premiumReward: { type: "coins", amount: 9000 },
+                        xpRequired: 25000
+                    },
+                    {
+                        tierNumber: 26,
+                        freeReward: { type: "exp", amount: 5000 },
+                        premiumReward: { type: "exp", amount: 10000 },
+                        xpRequired: 26000
+                    },
+                    {
+                        tierNumber: 27,
+                        freeReward: { type: "crystal", amount: 125 },
+                        premiumReward: { type: "crystal", amount: 250 },
+                        xpRequired: 27000
+                    },
+                    {
+                        tierNumber: 28,
+                        freeReward: { type: "coins", amount: 5000 },
+                        premiumReward: { type: "coins", amount: 10000 },
+                        xpRequired: 28000
+                    },
+                    {
+                        tierNumber: 29,
+                        freeReward: { type: "exp", amount: 5500 },
+                        premiumReward: { type: "exp", amount: 11000 },
+                        xpRequired: 29000
+                    },
+                    {
+                        tierNumber: 30,
+                        freeReward: { type: "crystal", amount: 135 },
+                        premiumReward: { type: "crystal", amount: 270 },
+                        xpRequired: 30000
+                    },
+                    {
+                        tierNumber: 31,
+                        freeReward: { type: "coins", amount: 5500 },
+                        premiumReward: { type: "coins", amount: 11000 },
+                        xpRequired: 31000
+                    },
+                    {
+                        tierNumber: 32,
+                        freeReward: { type: "exp", amount: 6000 },
+                        premiumReward: { type: "exp", amount: 12000 },
+                        xpRequired: 32000
+                    },
+                    {
+                        tierNumber: 33,
+                        freeReward: { type: "crystal", amount: 150 },
+                        premiumReward: { type: "crystal", amount: 300 },
+                        xpRequired: 33000
+                    },
+                    {
+                        tierNumber: 34,
+                        freeReward: { type: "coins", amount: 6000 },
+                        premiumReward: { type: "coins", amount: 12000 },
+                        xpRequired: 34000
+                    },
+                    {
+                        tierNumber: 35,
+                        freeReward: { type: "exp", amount: 6500 },
+                        premiumReward: { type: "exp", amount: 13000 },
+                        xpRequired: 35000
+                    },
+                    {
+                        tierNumber: 36,
+                        freeReward: { type: "crystal", amount: 160 },
+                        premiumReward: { type: "crystal", amount: 320 },
+                        xpRequired: 36000
+                    },
+                    {
+                        tierNumber: 37,
+                        freeReward: { type: "coins", amount: 6500 },
+                        premiumReward: { type: "coins", amount: 13000 },
+                        xpRequired: 37000
+                    },
+                    {
+                        tierNumber: 38,
+                        freeReward: { type: "exp", amount: 7000 },
+                        premiumReward: { type: "exp", amount: 14000 },
+                        xpRequired: 38000
+                    },
+                    {
+                        tierNumber: 39,
+                        freeReward: { type: "crystal", amount: 175 },
+                        premiumReward: { type: "crystal", amount: 350 },
+                        xpRequired: 39000
+                    },
+                    {
+                        tierNumber: 40,
+                        freeReward: { type: "coins", amount: 7000 },
+                        premiumReward: { type: "coins", amount: 14000 },
+                        xpRequired: 40000
+                    },
+                    {
+                        tierNumber: 41,
+                        freeReward: { type: "exp", amount: 7500 },
+                        premiumReward: { type: "exp", amount: 15000 },
+                        xpRequired: 41000
+                    },
+                    {
+                        tierNumber: 42,
+                        freeReward: { type: "crystal", amount: 185 },
+                        premiumReward: { type: "crystal", amount: 370 },
+                        xpRequired: 42000
+                    },
+                    {
+                        tierNumber: 43,
+                        freeReward: { type: "coins", amount: 7500 },
+                        premiumReward: { type: "coins", amount: 15000 },
+                        xpRequired: 43000
+                    },
+                    {
+                        tierNumber: 44,
+                        freeReward: { type: "exp", amount: 8000 },
+                        premiumReward: { type: "exp", amount: 16000 },
+                        xpRequired: 44000
+                    },
+                    {
+                        tierNumber: 45,
+                        freeReward: { type: "crystal", amount: 200 },
+                        premiumReward: { type: "crystal", amount: 400 },
+                        xpRequired: 45000
+                    },
+                    {
+                        tierNumber: 46,
+                        freeReward: { type: "coins", amount: 8000 },
+                        premiumReward: { type: "coins", amount: 16000 },
+                        xpRequired: 46000
+                    },
+                    {
+                        tierNumber: 47,
+                        freeReward: { type: "exp", amount: 8500 },
+                        premiumReward: { type: "exp", amount: 17000 },
+                        xpRequired: 47000
+                    },
+                    {
+                        tierNumber: 48,
+                        freeReward: { type: "crystal", amount: 210 },
+                        premiumReward: { type: "crystal", amount: 420 },
+                        xpRequired: 48000
+                    },
+                    {
+                        tierNumber: 49,
+                        freeReward: { type: "coins", amount: 8500 },
+                        premiumReward: { type: "coins", amount: 17000 },
+                        xpRequired: 49000
+                    },
                     {
                         tierNumber: 50,
                         freeReward: { type: "crystal", amount: 250 },

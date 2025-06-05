@@ -13,6 +13,6 @@ router
  
  
  .get("/getcharacterbattlepassclaimhistory", protectplayer, getcharacterbattlepassclaimhistory)
- .get("/checkuserbattlepass", protectsuperadmin, checkuserbattlepass)
+ .get("/checkuserbattlepass", protectplayer, checkuserbattlepass)
 
 module.exports = router

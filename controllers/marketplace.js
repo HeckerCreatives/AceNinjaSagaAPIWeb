@@ -1069,3 +1069,49 @@ exports.addstoreitems = async (req, res) => {
     }
 }
 
+exports.getallitems = async (req, res) => {
+    const { page = 1, limit = 10 } = req.query;
+    const pageOptions = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10)
+    };
+
+    const data = await Item.find({})
+        .skip((pageOptions.page - 1) * pageOptions.limit)
+        .limit(pageOptions.limit)
+        .sort({ createdAt: -1 })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+    if (!data || data.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No items found." });
+    }
+
+    const totalItems = await Item.countDocuments({});
+
+    const totalPages = Math.ceil(totalItems / pageOptions.limit);
+
+    const response = {
+        items: data.map(item => ({
+            itemid: item._id,
+            name: item.name,
+            price: item.price,
+            currency: item.currency,
+            type: item.type,
+            inventorytype: item.inventorytype,
+        })),
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: pageOptions.page,
+            itemsPerPage: pageOptions.limit
+        }
+    };
+    return res.status(200).json({
+        message: "success",
+        data: response
+    });
+}

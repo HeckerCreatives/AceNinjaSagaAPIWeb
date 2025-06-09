@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose")
-const News = require("../models/News")
+const { News, ItemNews } = require("../models/News")
 
 
 // exports.creatnews = async (req, res) => {
@@ -229,3 +229,94 @@ exports.deletenews = async (req, res) => {
 
     return res.status(200).json({ message: "success"})
 }
+
+exports.createitemnews = async (req, res) => {
+    const { title, itemid, itemtype } = req.body;
+
+    if (!title || !itemid || !itemtype) {
+        return res.status(400).json({ message: "failed", data: "Please provide title, item ID, and item type." });
+    }
+
+    try {
+        await ItemNews.create({ title, item: itemid, itemtype });
+        return res.status(200).json({ message: "success" });
+    } catch (err) {
+        console.error(`Error creating news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
+    }
+};
+
+exports.getitemnews = async (req, res) => {
+    const { page, limit } = req.query;
+
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10
+    };
+
+    try {
+        const ItemNewsData = await ItemNews.find()
+            .skip(pageOptions.page * pageOptions.limit)
+            .limit(pageOptions.limit)
+            .populate("item");
+
+        const totalItemNews = await ItemNews.countDocuments();
+
+        const finalData = ItemNewsData.map(data => ({
+            id: data._id,
+            title: data.title,
+            item: data.item,
+            itemtype: data.itemtype
+        }));
+
+        return res.status(200).json({ message: "success", data: finalData, totalPages: Math.ceil(totalItemNews / pageOptions.limit) });
+    } catch (err) {
+        console.error(`Error fetching item news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please try again later." });
+    }
+};
+
+exports.deleteitemnews = async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: "failed", data: "Please input Item News ID." });
+    }
+
+    try {
+        await ItemNews.findByIdAndDelete(new mongoose.Types.ObjectId(id));
+        return res.status(200).json({ message: "success" });
+    } catch (err) {
+        console.error(`Error deleting item news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please try again later." });
+    }
+};
+
+exports.edititemnews = async (req, res) => {
+    const { id, title, itemid, itemtype } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: "failed", data: "Item News ID is required." });
+    }
+
+    try {
+        const existingItemNews = await ItemNews.findOne({ _id: id });
+        if (!existingItemNews) {
+            return res.status(404).json({ message: "failed", data: "Item News not found." });
+        }
+
+        await ItemNews.updateOne(
+            { _id: id },
+            {
+                title: title || existingItemNews.title,
+                item: itemid || existingItemNews.item,
+                itemtype: itemtype || existingItemNews.itemtype
+            }
+        );
+
+        return res.status(200).json({ message: "success" });
+    } catch (err) {
+        console.error(`Error updating item news: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "Server error. Please contact support." });
+    }
+};

@@ -138,7 +138,6 @@ exports.getMarketItems = async (req, res) => {
         countPipeline.push({ $count: 'total' });
         const totalItems = await Market.aggregate(countPipeline);
 
-        console.log(items.length, totalItems)
         // Format response
         const formattedResponse = {
             data: items.reduce((acc, item, index) => {

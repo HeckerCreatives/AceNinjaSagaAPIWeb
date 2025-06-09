@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { createnews, getnews, editnews, deletenews } = require("../controllers/news")
+const { createnews, getnews, editnews, deletenews, getitemnews, createitemnews, edititemnews, deleteitemnews } = require("../controllers/news")
 const { protectsuperadmin } = require("../middleware/middleware")
 
 const upload = require("../middleware/uploadpics")
@@ -27,5 +27,10 @@ router
     })
  }, editnews)
 .post("/deletenews", protectsuperadmin, deletenews)
+
+.get("/getitemnews", protectsuperadmin, getitemnews)
+.post("/createitemnews", protectsuperadmin, createitemnews)
+.post("/edititemnews", protectsuperadmin, edititemnews)
+.post("/deleteitemnews", protectsuperadmin, deleteitemnews)
 
 module.exports = router

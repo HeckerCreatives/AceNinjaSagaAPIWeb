@@ -1,7 +1,7 @@
 // const { createTransaction, completeTransaction, monitorTransaction, getusertransactions } = require("../controllers/Transaction")
 // const { createorder, completeorder } = require("../controllers/Transaction")
-const { gettopupmarketcredits, completeorder } = require("../controllers/Transaction")
-const { protectplayer } = require("../middleware/middleware")
+const { gettopupmarketcredits, completeorder, gettopuphistory, gettopuphistorysa } = require("../controllers/Transaction")
+const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 const router = require("express").Router()
 
 router
@@ -13,5 +13,7 @@ router
 //  .get("/getusertransaction", getusertransactions)
 .get("/gettopupmarketcredits", protectplayer, gettopupmarketcredits)
  .post("/completeorder", protectplayer, completeorder)
+ .get("/gettopuphistory", protectplayer, gettopuphistory)
+ .get("/gettopuphistory", protectsuperadmin, gettopuphistorysa)
 
 module.exports = router

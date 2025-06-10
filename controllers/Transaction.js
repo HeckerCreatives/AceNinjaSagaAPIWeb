@@ -452,3 +452,123 @@ exports.completeorder = async (req, res) => {
     });
 
 }
+
+exports.gettopuphistory = async (req, res) => {
+    const { id } = req.user;
+    const { characterid, page, limit } = req.query;
+
+    const pageOptions = {
+        page: parseInt(page) || 1, // Default to page 1 if not provided
+        limit: parseInt(limit) || 10 // Default to 10 items per page if not provided
+    }
+    if (!id || !characterid) {
+        return res.status(400).json({ message: "failed", data: "Unauthorized! Please login to the right account." });
+    }
+
+    const checker = await checkcharacter(id, characterid);
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this page. Please login the right account to view the page."
+        });
+    }
+
+    const transactions = await Transaction.find({ owner: characterid })
+        .sort({ createdAt: -1 }) // Sort by date descending
+        .skip((pageOptions.page - 1) * pageOptions.limit) // Skip items for pagination
+        .limit(pageOptions.limit) // Limit the number of items per page
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching topup history for character: ${characterid}. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+        });
+
+    if (!transactions || transactions.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No transactions found for this character." });
+    }
+
+    const totalTransactions = await Transaction.countDocuments({ owner: characterid })
+        .then(count => count)
+        .catch(err => {
+            console.log(`There's a problem encountered while counting transactions for character: ${characterid}. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+        });
+
+    const formattedTransactions = transactions.map(transaction => ({
+        id: transaction._id,
+        transactionId: transaction.transactionid,
+        amount: transaction.amount,
+        method: transaction.method,
+        currency: transaction.currency,
+        status: transaction.status,
+        items: transaction.items,
+        date: transaction.createdAt
+    }));
+
+
+    return res.status(200).json({ 
+        message: "success", data: 
+        formattedTransactions, 
+        pagination: {
+            currentPage: pageOptions.page,
+            totalPages: Math.ceil(totalTransactions / pageOptions.limit),
+            totalItems: totalTransactions
+        } 
+    });
+}
+
+exports.gettopuphistorysa = async (req, res) => {
+    const { id } = req.user;
+    const { characterid, page, limit } = req.query;
+
+    const pageOptions = {
+        page: parseInt(page) || 1, // Default to page 1 if not provided
+        limit: parseInt(limit) || 10 // Default to 10 items per page if not provided
+    }
+    if (!id || !characterid) {
+        return res.status(400).json({ message: "failed", data: "Unauthorized! Please login to the right account." });
+    }
+
+    const transactions = await Transaction.find({ owner: characterid })
+        .sort({ createdAt: -1 }) // Sort by date descending
+        .skip((pageOptions.page - 1) * pageOptions.limit) // Skip items for pagination
+        .limit(pageOptions.limit) // Limit the number of items per page
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching topup history for character: ${characterid}. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+        });
+
+    if (!transactions || transactions.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No transactions found for this character." });
+    }
+
+    const totalTransactions = await Transaction.countDocuments({ owner: characterid })
+        .then(count => count)
+        .catch(err => {
+            console.log(`There's a problem encountered while counting transactions for character: ${characterid}. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+        });
+
+    const formattedTransactions = transactions.map(transaction => ({
+        id: transaction._id,
+        transactionId: transaction.transactionid,
+        amount: transaction.amount,
+        method: transaction.method,
+        currency: transaction.currency,
+        status: transaction.status,
+        items: transaction.items,
+        date: transaction.createdAt
+    }));
+
+
+    return res.status(200).json({ 
+        message: "success", data: 
+        formattedTransactions, 
+        pagination: {
+            currentPage: pageOptions.page,
+            totalPages: Math.ceil(totalTransactions / pageOptions.limit),
+            totalItems: totalTransactions
+        } 
+    });
+}

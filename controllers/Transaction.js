@@ -348,19 +348,13 @@ exports.gettopupmarketcredits = async (req, res) => {
             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
         });
 
-    // First transaction check for first topup bonus
-    const hasFirstTopup = gettransactions.some(transaction => 
-        transaction.status === 'completed' && 
-        transaction.items.some(item => {
-            const matchingTopupItem = gettopupitems.find(topupItem => 
-                topupItem._id.toString() === item.itemId
-            );
-            return matchingTopupItem && matchingTopupItem.type === 'topupcredit';
-        })
-    );
 
     const data = {
         topupitems: gettopupitems.map(item => {
+            // has first topup if there are no transactions for this character
+
+            const hasFirstTopup = gettransactions.some(transaction => transaction.item.toString() === item._id.toString() && transaction.status === "completed");
+
             const baseCredits = item.topupcredit;
             const bonusCredits = !hasFirstTopup ? Math.floor(baseCredits * 0.2) : 0; // 20% bonus for first topup
             return {
@@ -416,6 +410,7 @@ exports.completeorder = async (req, res) => {
         owner: characterid,
         transactionid: orderdata.id,
         amount: orderdata.purchase_units[0].amount.value,
+        item: itemid,
         method: "PayPal",
         currency: orderdata.purchase_units[0].amount.currency_code,
         status: "completed",

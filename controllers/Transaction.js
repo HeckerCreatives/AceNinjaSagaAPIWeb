@@ -381,7 +381,7 @@ exports.gettopupmarketcredits = async (req, res) => {
 exports.completeorder = async (req, res) => {
 
     const { id, username } = req.user;
-    const { orderdata, characterid, itemid } = req.body;
+    const { orderdata, characterid, itemid, bonusEligible } = req.body;
     if (!id || !characterid || !itemid) {
         return res.status(400).json({ message: "failed", data: "Missing required information." });
     }
@@ -404,16 +404,9 @@ exports.completeorder = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Item not found." });
     }
 
-    const checkifhasbonus = await Transaction.findOne({ item: itemid, owner: characterid, status: "completed" })
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while checking if user has bonus. Error: ${err}`);
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
-        });
-
     let topupCredits = itemdata.topupcredit;
     
-    if (!checkifhasbonus) {
+    if (bonusEligible) {
         topupCredits = Math.floor(topupCredits * 1.2); // 20% bonus for first topup
     }
 

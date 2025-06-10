@@ -107,6 +107,7 @@ exports.getnews = async (req, res) => {
     }
 
     const NewsData = await News.find()
+    .sort({ createdAt: -1 }) // Sort by creation date, most recent first
     .skip(pageOptions.page * pageOptions.limit)
     .limit(pageOptions.limit)
     .then(data => data)
@@ -256,6 +257,7 @@ exports.getitemnews = async (req, res) => {
 
     try {
         const ItemNewsData = await ItemNews.find()
+            .sort({ createdAt: -1 }) // Sort by creation date, most recent first
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
             .populate("item");

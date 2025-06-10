@@ -2109,6 +2109,128 @@ exports.goldPackData = [
     }
 ]
 // #endregion
+exports.topupcreditdata = [
+    {
+        name: "Starter Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit",
+        rarity: "basic", 
+        gender: "unisex",
+        price: 20,
+        currency: "usd",
+        topupcredit: 20,
+        imageUrl: "",
+        description: "Best value for new players!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    },
+    {
+        name: "Basic Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit", 
+        rarity: "common",
+        gender: "unisex",
+        price: 49,
+        currency: "usd",
+        topupcredit: 49,
+        imageUrl: "",
+        description: "Great value credit pack!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    },
+    {
+        name: "Advanced Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit",
+        rarity: "common",
+        gender: "unisex", 
+        price: 99,
+        currency: "usd",
+        topupcredit: 99,
+        imageUrl: "",
+        description: "Most popular credit pack!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    },
+    {
+        name: "Elite Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit",
+        rarity: "rare",
+        gender: "unisex",
+        price: 499,
+        currency: "usd",
+        topupcredit: 499,
+        imageUrl: "",
+        description: "Premium credit value pack!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    },
+    {
+        name: "Master Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit",
+        rarity: "rare",
+        gender: "unisex",
+        price: 999,
+        currency: "usd",
+        topupcredit: 999,
+        imageUrl: "",
+        description: "Ultimate credit collection!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    },
+    {
+        name: "Legendary Credit Pack",
+        type: "topupcredit",
+        inventorytype: "topupcredit",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 4999,
+        currency: "usd",
+        topupcredit: 4999,
+        imageUrl: "",
+        description: "Legendary credit bundle for serious players!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: false,
+        isEquippable: false
+    }
+]
 // #region COMPANION
  exports.companiondata = [
             {

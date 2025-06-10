@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -142,7 +142,8 @@ exports.initialize = async () => {
             ...weaponData,
             ...outfitData,
             ...crystalPackData,
-            ...goldPackData
+            ...goldPackData,
+            ...topupcreditdata
         ]
 
         const itemBulkWrite = itemData.map(item => ({

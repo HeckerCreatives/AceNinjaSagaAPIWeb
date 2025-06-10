@@ -2,14 +2,26 @@ const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema(
   {
-    transactionId: { // paypal transactionid
+    transactionid: { // paypal transactionid
       type: String,
       required: true,
       unique: true, 
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Users', 
+      ref: 'Characterdata', 
+    },
+    item: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Items', // Reference to the Items collection
+    },
+    name: {
+      type: String,
+      required: true, // Name of the item being purchased
+    },
+    email: {
+      type: String,
+      required: true, // Email of the user making the transaction
     },
     amount: {
       type: Number,

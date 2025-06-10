@@ -14,6 +14,6 @@ router
 .get("/gettopupmarketcredits", protectplayer, gettopupmarketcredits)
  .post("/completeorder", protectplayer, completeorder)
  .get("/gettopuphistory", protectplayer, gettopuphistory)
- .get("/gettopuphistory", protectsuperadmin, gettopuphistorysa)
+ .get("/gettopuphistorysa", protectsuperadmin, gettopuphistorysa)
 
 module.exports = router

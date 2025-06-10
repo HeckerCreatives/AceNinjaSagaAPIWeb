@@ -458,7 +458,7 @@ exports.gettopuphistory = async (req, res) => {
     const { characterid, page, limit } = req.query;
 
     const pageOptions = {
-        page: parseInt(page) || 1, // Default to page 1 if not provided
+        page: parseInt(page) || 0, // Default to page 1 if not provided
         limit: parseInt(limit) || 10 // Default to 10 items per page if not provided
     }
     if (!id || !characterid) {
@@ -475,7 +475,7 @@ exports.gettopuphistory = async (req, res) => {
 
     const transactions = await Transaction.find({ owner: characterid })
         .sort({ createdAt: -1 }) // Sort by date descending
-        .skip((pageOptions.page - 1) * pageOptions.limit) // Skip items for pagination
+        .skip(pageOptions.page  * pageOptions.limit) // Skip items for pagination
         .limit(pageOptions.limit) // Limit the number of items per page
         .then(data => data)
         .catch(err => {
@@ -522,7 +522,7 @@ exports.gettopuphistorysa = async (req, res) => {
     const { characterid, page, limit } = req.query;
 
     const pageOptions = {
-        page: parseInt(page) || 1, // Default to page 1 if not provided
+        page: parseInt(page) || 0, // Default to page 1 if not provided
         limit: parseInt(limit) || 10 // Default to 10 items per page if not provided
     }
     if (!id || !characterid) {
@@ -531,7 +531,7 @@ exports.gettopuphistorysa = async (req, res) => {
 
     const transactions = await Transaction.find({ owner: characterid })
         .sort({ createdAt: -1 }) // Sort by date descending
-        .skip((pageOptions.page - 1) * pageOptions.limit) // Skip items for pagination
+        .skip(pageOptions.page * pageOptions.limit) // Skip items for pagination
         .limit(pageOptions.limit) // Limit the number of items per page
         .then(data => data)
         .catch(err => {

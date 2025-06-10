@@ -170,6 +170,8 @@ exports.sendtopupplayer = async (req, res) => {
         const analyticsResult = await addanalytics(
             player._id.toString(),
             addpayin.data._id.toString(),
+            "topup",
+            "payin",
             type,
             `Add balance to user ${playerusername} with a value of ${amount} processed by ${username}`,
             amount,

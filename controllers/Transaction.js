@@ -567,3 +567,111 @@ exports.gettopuphistorysa = async (req, res) => {
         } 
     });
 }
+
+exports.getcharactertopuphistorysa = async (req, res) => {
+    const { id } = req.user;
+    const { page, limit, search } = req.query;
+
+    const pageOptions = {
+        page: parseInt(page) || 0, // Default to page 1 if not provided
+        limit: parseInt(limit) || 10 // Default to 10 items per page if not provided
+    }
+    if (!id) {
+        return res.status(400).json({ message: "failed", data: "Unauthorized! Please login to the right account." });
+    }
+
+    const transactions = await Transaction.aggregate([
+        {
+            $lookup: {
+                from: "characterdatas", // Use the correct collection name
+                localField: "owner",
+                foreignField: "_id",
+                as: "character"
+            }
+        },
+        { $unwind: "$character" },
+        {
+            $match: search ? {
+                $or: [
+                    { "character.username": { $regex: search, $options: "i" } },
+                    { "transactionid": { $regex: search, $options: "i" } }
+                ]
+            } : {}
+        },
+        { $sort: { createdAt: -1 } },
+        { $skip: pageOptions.page * pageOptions.limit },
+        { $limit: pageOptions.limit },
+        {
+            $project: {
+                _id: 1,
+                transactionid: 1,
+                amount: 1,
+                method: 1,
+                currency: 1,
+                status: 1,
+                items: 1,
+                createdAt: 1,
+                character: {
+                    username: "$character.username",
+                    _id: "$character._id"
+                }
+            }
+        }
+    ]).catch(err => {
+        console.log(`Error fetching transactions: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+    });
+
+    const totalTransactions = await Transaction.aggregate([
+        {
+            $lookup: {
+                from: "characterdatas", // Use the correct collection name
+                localField: "owner",
+                foreignField: "_id",
+                as: "character"
+            }
+        },
+        { $unwind: "$character" },
+        {
+            $match: search ? {
+                $or: [
+                    { "character.username": { $regex: search, $options: "i" } },
+                    { "transactionid": { $regex: search, $options: "i" } }
+                ]
+            } : {}
+        },
+        { $count: "total" }
+    ]).then(result => (result[0] ? result[0].total : 0))
+    .catch(err => {
+        console.log(`Error counting transactions: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
+    });
+
+    if (!transactions || transactions.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No transactions found!" });
+    }
+    
+    const formattedTransactions = transactions.map(transaction => ({
+        id: transaction._id,
+        transactionId: transaction.transactionid,
+        amount: transaction.amount,
+        characterid: transaction.character._id,
+        characterusername: transaction.character.username,
+        method: transaction.method,
+        currency: transaction.currency,
+        status: transaction.status,
+        items: transaction.items,
+        date: transaction.createdAt
+    }));
+
+
+    return res.status(200).json({ 
+        message: "success", data: 
+        formattedTransactions, 
+        pagination: {
+            currentPage: pageOptions.page,
+            totalPages: Math.ceil(totalTransactions / pageOptions.limit),
+            totalItems: totalTransactions
+        } 
+    });
+}

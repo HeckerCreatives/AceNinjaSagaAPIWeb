@@ -66,7 +66,8 @@ exports.getcodes = async (req, res) => {
     }
 
     const codes = await Redeemcode.find(query)
-    .populate("itemrewards", "name ")
+    .sort({ createdAt: -1 })
+    .populate("itemrewards")
     .skip(pageOptions.page * pageOptions.limit)
     .limit(pageOptions.limit)
     .then(data => data)
@@ -107,7 +108,7 @@ exports.getcodes = async (req, res) => {
             status: isExpired ? 'expired' : status,
             expiration: expiration,
             rewards: rewards,
-            itemrewards: data.itemrewards ? data.itemrewards.map(item => item.name).join(", ") : null,
+            itemrewards: data.itemrewards || [],
             redeemedCount: redeemedCounts[index] || 0
         })
     })
@@ -176,7 +177,7 @@ exports.claimcode = async (req, res) => {
 
 exports.updatecode = async (req, res) => {
     try {
-        const { id, code, status, expiry, rewards } = req.body;
+        const { id, code, status, expiry, rewards, itemrewards } = req.body;
 
         if (!id) {
             return res.status(400).json({ 
@@ -191,7 +192,17 @@ exports.updatecode = async (req, res) => {
         if (status !== undefined && status !== "") updateObj.status = status;
         if (expiry !== undefined && expiry !== "") updateObj.expiration = expiry;
         if (rewards !== undefined && rewards !== "") updateObj.rewards = rewards;
-
+        if (itemrewards !== undefined && itemrewards.length > 0) {
+            // Check if itemrewards are valid items
+            const itemcheck = await Item.find({ _id: { $in: itemrewards.map(id => new mongoose.Types.ObjectId(id)) } });
+            if (itemcheck.length !== itemrewards.length) {
+                return res.status(400).json({ 
+                    message: "failed", 
+                    data: "Invalid item rewards provided" 
+                });
+            }
+            updateObj.itemrewards = itemrewards;
+        }
         // Check if there are fields to update
         if (Object.keys(updateObj).length === 0) {
             return res.status(400).json({

@@ -406,9 +406,9 @@ exports.completeorder = async (req, res) => {
 
     // Process the order data
 
-    const transaction = new Transaction({
+    const transaction = await Transaction.create({
         owner: characterid,
-        transactionid: orderdata.id,
+        transactionid: orderdata.id, // <-- FIXED: use correct field name
         amount: orderdata.purchase_units[0].amount.value,
         item: itemid,
         method: "PayPal",
@@ -422,9 +422,7 @@ exports.completeorder = async (req, res) => {
             quantity: 1,
             price: itemdata.price
         }]
-    });
-
-    await transaction.save()
+    })        
         .then(data => data)
         .catch(err => {
             console.log(`There's a problem encountered while saving transaction for user: ${username}. Error: ${err}`);

@@ -5,7 +5,8 @@ const transactionSchema = new mongoose.Schema(
     transactionid: { // paypal transactionid
       type: String,
       required: true,
-      unique: true, 
+      unique: true,
+      index: true, // Automatically creates an index on 'transactionid' 
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

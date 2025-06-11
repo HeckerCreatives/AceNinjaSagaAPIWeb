@@ -1142,8 +1142,6 @@ exports.getallitems = async (req, res) => {
 
   try {
     const data = await Item.find(query)
-      .skip((pageOptions.page - 1) * pageOptions.limit)
-      .limit(pageOptions.limit)
       .sort({ createdAt: -1 });
 
     if (!data || data.length === 0) {
@@ -1152,25 +1150,26 @@ exports.getallitems = async (req, res) => {
         .json({ message: "failed", data: "No items found." });
     }
 
-    const totalItems = await Item.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / pageOptions.limit);
+    const skilldata = await Skill.find({ category: { $ne: "Basic" } })
+      .select('_id name')
+      .lean();
 
     const response = {
-      items: data.map((item) => ({
+      items: [
+        ...data.map((item) => ({
         itemid: item._id,
         name: item.name,
-        price: item.price,
-        currency: item.currency,
-        type: item.type,
-        inventorytype: item.inventorytype,
-      })),
-      pagination: {
-        totalItems,
-        totalPages,
-        currentPage: pageOptions.page,
-        itemsPerPage: pageOptions.limit,
-      },
+        type: "items",
+        })),
+        ...skilldata.map((skill) => ({
+          itemid: skill._id,
+          name: skill.name,
+          type: "skills",
+        })),
+    ]
     };
+
+    
 
     return res.status(200).json({
       message: "success",

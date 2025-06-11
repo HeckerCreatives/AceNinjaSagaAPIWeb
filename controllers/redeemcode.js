@@ -2,20 +2,21 @@ const Mail = require("../models/Mail");
 const { Item } = require("../models/Market");
 const { Redeemcode, CodesRedeemed } = require("../models/Redeemcode")
 const { default: mongoose } = require("mongoose");
+const { Skill } = require("../models/Skills");
 
 
 
 
 exports.createcode = async (req, res) => {
 
-    const { code , status, expiry, rewards, itemrewards } = req.body
+    const { code , status, expiry, rewards, itemrewards, skillrewards } = req.body
 
     if(!code || !status || !expiry) {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
-    if (!rewards && !itemrewards) {
-        return res.status(400).json({ message: "failed", data: "Please provide at least one reward or item reward"})
+    if (!rewards && !itemrewards && !skillrewards) {
+        return res.status(400).json({ message: "failed", data: "Please provide at least one reward type"})
     }
     // check if code already exists
     const existingCode = await Redeemcode.findOne({ code: { $regex: new RegExp('^' + code + '$', 'i') } })
@@ -27,14 +28,19 @@ exports.createcode = async (req, res) => {
     // check if itemrewards are valid items
     if(itemrewards) {
         const itemcheck = await Item.find({ _id: { $in: itemrewards.map(id => new mongoose.Types.ObjectId(id)) } })
-        console.log(itemrewards)
-        console.log(itemcheck)
         if(itemrewards && itemrewards.length > 0 && itemcheck.length !== itemrewards.length) {
             return res.status(400).json({ message: "failed", data: "Invalid item rewards provided"})
         }
     }
+    // check if skillrewards are valid skills
+    if(skillrewards) {
+        const skillcheck = await Skill.find({ _id: { $in: skillrewards.map(id => new mongoose.Types.ObjectId(id)) } })
+        if(skillrewards && skillrewards.length > 0 && skillcheck.length !== skillrewards.length) {
+            return res.status(400).json({ message: "failed", data: "Invalid skill rewards provided"})
+        }
+    }
 
-    await Redeemcode.create({ code, status, expiration: expiry, rewards, itemrewards })
+    await Redeemcode.create({ code, status, expiration: expiry, rewards, itemrewards, skillrewards })
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem while creating redeem code. Error: ${err}`)
@@ -177,7 +183,7 @@ exports.claimcode = async (req, res) => {
 
 exports.updatecode = async (req, res) => {
     try {
-        const { id, code, status, expiry, rewards, itemrewards } = req.body;
+        const { id, code, status, expiry, rewards, itemrewards, skillrewards } = req.body;
 
         if (!id) {
             return res.status(400).json({ 
@@ -202,6 +208,17 @@ exports.updatecode = async (req, res) => {
                 });
             }
             updateObj.itemrewards = itemrewards;
+        }
+        if (skillrewards !== undefined && skillrewards.length > 0) {
+            // Check if skillrewards are valid skills
+            const skillcheck = await Skill.find({ _id: { $in: skillrewards.map(id => new mongoose.Types.ObjectId(id)) } });
+            if (skillcheck.length !== skillrewards.length) {
+                return res.status(400).json({ 
+                    message: "failed", 
+                    data: "Invalid skill rewards provided" 
+                });
+            }
+            updateObj.skillrewards = skillrewards;
         }
         // Check if there are fields to update
         if (Object.keys(updateObj).length === 0) {

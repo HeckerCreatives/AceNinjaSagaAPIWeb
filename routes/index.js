@@ -1,6 +1,7 @@
 const routers = app => {
     console.log("Routers are all available");
 
+    app.use("/analytics", require("./analytics"))
     app.use("/announcement", require("./announcement"))
     app.use("/auth", require("./auth"))
     app.use("/battlepass", require("./battlepass"))

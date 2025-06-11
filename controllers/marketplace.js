@@ -1069,52 +1069,52 @@ exports.addstoreitems = async (req, res) => {
     }
 }
 
-exports.getallitems = async (req, res) => {
-    const { page = 1, limit = 10 } = req.query;
-    const pageOptions = {
-        page: parseInt(page, 10),
-        limit: parseInt(limit, 10)
-    };
+// exports.getallitems = async (req, res) => {
+//     const { page = 1, limit = 10 } = req.query;
+//     const pageOptions = {
+//         page: parseInt(page, 10),
+//         limit: parseInt(limit, 10)
+//     };
 
-    const data = await Item.find({})
-        .skip((pageOptions.page - 1) * pageOptions.limit)
-        .limit(pageOptions.limit)
-        .sort({ createdAt: -1 })
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-        });
+//     const data = await Item.find({})
+//         .skip((pageOptions.page - 1) * pageOptions.limit)
+//         .limit(pageOptions.limit)
+//         .sort({ createdAt: -1 })
+//         .then(data => data)
+//         .catch(err => {
+//             console.log(`There's a problem encountered while fetching items. Error: ${err}`);
+//             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+//         });
 
-    if (!data || data.length === 0) {
-        return res.status(404).json({ message: "failed", data: "No items found." });
-    }
+//     if (!data || data.length === 0) {
+//         return res.status(404).json({ message: "failed", data: "No items found." });
+//     }
 
-    const totalItems = await Item.countDocuments({});
+//     const totalItems = await Item.countDocuments({});
 
-    const totalPages = Math.ceil(totalItems / pageOptions.limit);
+//     const totalPages = Math.ceil(totalItems / pageOptions.limit);
 
-    const response = {
-        items: data.map(item => ({
-            itemid: item._id,
-            name: item.name,
-            price: item.price,
-            currency: item.currency,
-            type: item.type,
-            inventorytype: item.inventorytype,
-        })),
-        pagination: {
-            totalItems,
-            totalPages,
-            currentPage: pageOptions.page,
-            itemsPerPage: pageOptions.limit
-        }
-    };
-    return res.status(200).json({
-        message: "success",
-        data: response
-    });
-}
+//     const response = {
+//         items: data.map(item => ({
+//             itemid: item._id,
+//             name: item.name,
+//             price: item.price,
+//             currency: item.currency,
+//             type: item.type,
+//             inventorytype: item.inventorytype,
+//         })),
+//         pagination: {
+//             totalItems,
+//             totalPages,
+//             currentPage: pageOptions.page,
+//             itemsPerPage: pageOptions.limit
+//         }
+//     };
+//     return res.status(200).json({
+//         message: "success",
+//         data: response
+//     });
+// }
 
 
 
@@ -1190,3 +1190,78 @@ exports.getskills = async (req, res) => {
         data: response
     });
 }
+
+
+//with exclude type
+exports.getallitems = async (req, res) => {
+  const { page = 1, limit = 10, excludeType } = req.query;
+
+  const pageOptions = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+  };
+
+  const query = {};
+  if (excludeType) {
+    const excludeTypesArray = Array.isArray(excludeType) ? excludeType : [excludeType];
+    query.type = { $nin: excludeTypesArray };
+  }
+
+  try {
+    const items = await Item.find(query)
+      .skip((pageOptions.page - 1) * pageOptions.limit)
+      .limit(pageOptions.limit)
+      .sort({ createdAt: -1 });
+
+    const skills = await Skill.find({})
+      .skip((pageOptions.page - 1) * pageOptions.limit)
+      .limit(pageOptions.limit)
+      .sort({ createdAt: -1 });
+
+    if (!items && !skills) {
+      return res.status(404).json({
+        message: "failed",
+        data: "No items or skills found.",
+      });
+    }
+
+    const itemData = items.map((item) => ({
+      itemid: item._id,
+      name: item.name,
+      type: item.type,
+    }));
+
+    const skillData = skills.map((skill) => ({
+      itemid: skill._id,
+      name: skill.name,
+      type: "skills",
+    }));
+
+    const mergedItems = [...itemData, ...skillData];
+
+
+    const totalItems = await Item.countDocuments(query) + await Skill.countDocuments({});
+    const totalPages = Math.ceil(totalItems / pageOptions.limit);
+
+    const response = {
+      items: mergedItems,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: pageOptions.page,
+        itemsPerPage: pageOptions.limit,
+      },
+    };
+
+    return res.status(200).json({
+      message: "success",
+      data: response,
+    });
+  } catch (err) {
+    console.log(`There's a problem encountered while fetching data. Error: ${err}`);
+    return res.status(400).json({
+      message: "bad-request",
+      data: "There's a problem with the server. Please contact support for more details.",
+    });
+  }
+};

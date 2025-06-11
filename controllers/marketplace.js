@@ -1069,79 +1069,58 @@ exports.addstoreitems = async (req, res) => {
     }
 }
 
-
-//prev
-// exports.getallitems = async (req, res) => {
-//     const { page = 1, limit = 10 } = req.query;
-//     const pageOptions = {
-//         page: parseInt(page, 10),
-//         limit: parseInt(limit, 10)
-//     };
-
-//     const data = await Item.find({})
-//         .skip((pageOptions.page - 1) * pageOptions.limit)
-//         .limit(pageOptions.limit)
-//         .sort({ createdAt: -1 })
-//         .then(data => data)
-//         .catch(err => {
-//             console.log(`There's a problem encountered while fetching items. Error: ${err}`);
-//             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-//         });
-
-//     if (!data || data.length === 0) {
-//         return res.status(404).json({ message: "failed", data: "No items found." });
-//     }
-
-//     const totalItems = await Item.countDocuments({});
-
-//     const totalPages = Math.ceil(totalItems / pageOptions.limit);
-
-//     const response = {
-//         items: data.map(item => ({
-//             itemid: item._id,
-//             name: item.name,
-//             price: item.price,
-//             currency: item.currency,
-//             type: item.type,
-//             inventorytype: item.inventorytype,
-//         })),
-//         pagination: {
-//             totalItems,
-//             totalPages,
-//             currentPage: pageOptions.page,
-//             itemsPerPage: pageOptions.limit
-//         }
-//     };
-//     return res.status(200).json({
-//         message: "success",
-//         data: response
-//     });
-// }
-
-
-//with exclluded item type
 exports.getallitems = async (req, res) => {
-  const { page = 1, limit = 10, excludeType } = req.query;
+    const { page = 1, limit = 10 } = req.query;
+    const pageOptions = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10)
+    };
 
-  const pageOptions = {
-    page: parseInt(page, 10),
-    limit: parseInt(limit, 10),
-  };
+    const data = await Item.find({})
+        .skip((pageOptions.page - 1) * pageOptions.limit)
+        .limit(pageOptions.limit)
+        .sort({ createdAt: -1 })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
 
-  // Build query object
-  const query = {};
-  if (excludeType) {
-    // excludeType could be a string or an array
-    // Normalize it to an array
-    const excludeTypesArray = Array.isArray(excludeType)
-      ? excludeType
-      : [excludeType];
+    if (!data || data.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No items found." });
+    }
 
-    query.type = { $nin: excludeTypesArray };
-  }
+    const totalItems = await Item.countDocuments({});
 
+    const totalPages = Math.ceil(totalItems / pageOptions.limit);
+
+    const response = {
+        items: data.map(item => ({
+            itemid: item._id,
+            name: item.name,
+            price: item.price,
+            currency: item.currency,
+            type: item.type,
+            inventorytype: item.inventorytype,
+        })),
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: pageOptions.page,
+            itemsPerPage: pageOptions.limit
+        }
+    };
+    return res.status(200).json({
+        message: "success",
+        data: response
+    });
+}
+
+
+
+exports.getskinitems = async (req, res) => {
   try {
-    const data = await Item.find(query)
+    const data = await Item.find({ type: "skins" })
       .sort({ createdAt: -1 });
 
     if (!data || data.length === 0) {
@@ -1150,10 +1129,6 @@ exports.getallitems = async (req, res) => {
         .json({ message: "failed", data: "No items found." });
     }
 
-    const skilldata = await Skill.find({ category: { $ne: "Basic" } })
-      .select('_id name')
-      .lean();
-
     const response = {
       items: [
         ...data.map((item) => ({
@@ -1161,12 +1136,6 @@ exports.getallitems = async (req, res) => {
         name: item.name,
         inventorytype: item.inventorytype,
         type: "items",
-        })),
-        ...skilldata.map((skill) => ({
-          itemid: skill._id,
-          name: skill.name,
-          inventorytype: "skills",
-          type: "skills",
         })),
     ]
     };
@@ -1188,3 +1157,36 @@ exports.getallitems = async (req, res) => {
     });
   }
 };
+
+
+exports.getskills = async (req, res) => {
+
+    const skillsdata = await Skill.find({ category: { $ne: "Basic" } })
+        .sort({ createdAt: -1 })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching skills. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+    if (!skillsdata || skillsdata.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No skills found." });
+    }
+
+    const response = {
+        skills: skillsdata.map(skill => ({
+            skillid: skill._id,
+            name: skill.name,
+            description: skill.description,
+            category: skill.category,
+            maxLevel: skill.maxLevel,
+            prerequisites: skill.prerequisites || [],
+            imageUrl: skill.imageUrl
+        }))
+    };
+
+    return res.status(200).json({
+        message: "success",
+        data: response
+    });
+}

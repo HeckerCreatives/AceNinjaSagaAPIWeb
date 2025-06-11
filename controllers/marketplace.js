@@ -1159,11 +1159,13 @@ exports.getallitems = async (req, res) => {
         ...data.map((item) => ({
         itemid: item._id,
         name: item.name,
+        inventorytype: item.inventorytype,
         type: "items",
         })),
         ...skilldata.map((skill) => ({
           itemid: skill._id,
           name: skill.name,
+          inventorytype: "skills",
           type: "skills",
         })),
     ]

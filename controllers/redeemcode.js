@@ -314,13 +314,45 @@ exports.getredeemedcodeshistory = async (req, res) => {
         limit: parseInt(limit) || 10
     }
 
-    const redeemedCodes = await CodesRedeemed.find()
-    .populate("code")
-    .populate("owner", "username")
-    .sort({ createdAt: -1 })
-    .skip(pageOptions.page * pageOptions.limit)
-    .limit(pageOptions.limit)
-    .then(data => data)
+    const redeemedCodes = await CodesRedeemed.aggregate([
+        { $sort: { createdAt: -1 } },
+        { $skip: pageOptions.page * pageOptions.limit },
+        { $limit: pageOptions.limit },
+        {
+            $lookup: {
+                from: "redeemcodes",
+                localField: "code",
+                foreignField: "_id",
+                as: "code"
+            }
+        },
+        { $unwind: { path: "$code", preserveNullAndEmptyArrays: true } },
+        {
+            $lookup: {
+                from: "items",
+                localField: "code.itemrewards",
+                foreignField: "_id",
+                as: "code.itemrewards"
+            }
+        },
+        {
+            $lookup: {
+                from: "skills",
+                localField: "code.skillrewards",
+                foreignField: "_id",
+                as: "code.skillrewards"
+            }
+        },
+        {
+            $lookup: {
+                from: "characterdatas",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } }
+    ])
     .catch(err => {
         console.log(`There's a problem while fetching redeemed codes. Error: ${err}`)
 
@@ -350,7 +382,13 @@ exports.getredeemedcodeshistory = async (req, res) => {
             username: owner.username,
             code: code?.code || null,
             redeemedAt: createdAt,
-            rewards: code.rewards,
+            rewards: {
+                exp: code?.rewards?.exp || 0,
+                coins: code?.rewards?.coins || 0,
+                crystals: code?.rewards?.crystals || 0,
+            },
+            itemrewards: code?.itemrewards || [],
+            skillrewards: code?.skillrewards || [],
         })
     })
 

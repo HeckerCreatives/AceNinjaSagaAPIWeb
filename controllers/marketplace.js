@@ -91,41 +91,48 @@ exports.getMarketItems = async (req, res) => {
             { $skip: pageOptions.page * pageOptions.limit },
             { $limit: pageOptions.limit },
             {
-                $project: {
-                    _id: 0,
-                    itemId: '$items._id',
-                    name: '$items.name',
-                    type: '$items.type',
-                    rarity: '$items.rarity',
-                    price: '$items.price',
-                    currency: '$items.currency',
-                    description: '$items.description',
-                    stats: '$items.stats',
-                    imageUrl: '$items.imageUrl',
-                    gender: '$items.gender',
-                    isOpenable: '$items.isOpenable',
-                    crystals: {
-                        $cond: {
-                            if: { $eq: ['$items.type', 'crystalpacks'] },
-                            then: '$items.crystals',
-                            else: '$$REMOVE'
-                        }
-                    },
-                    coins: {
-                        $cond: {
-                            if: { $eq: ['$items.type', 'goldpacks'] },
-                            then: '$items.coins',
-                            else: '$$REMOVE'
-                        }
-                    },
-                    skill: {
-                        $cond: {
-                            if: { $eq: ['$items.type', 'skills'] },
-                            then: '$skill',
-                            else: '$$REMOVE'
-                        }
-                    }
+            $project: {
+                _id: 0,
+                itemId: '$items._id',
+                name: '$items.name',
+                type: '$items.type',
+                rarity: '$items.rarity',
+                price: '$items.price',
+                currency: '$items.currency',
+                description: '$items.description',
+                stats: '$items.stats',
+                imageUrl: '$items.imageUrl',
+                gender: '$items.gender',
+                isOpenable: '$items.isOpenable',
+                exp: {
+                $cond: {
+                    if: { $ne: ['$items.exp', null] },
+                    then: '$items.exp',
+                    else: '$$REMOVE'
                 }
+                },
+                crystals: {
+                $cond: {
+                    if: { $ne: ['$items.crystals', null] },
+                    then: '$items.crystals',
+                    else: '$$REMOVE'
+                }
+                },
+                coins: {
+                $cond: {
+                    if: { $ne: ['$items.coins', null] },
+                    then: '$items.coins',
+                    else: '$$REMOVE'
+                }
+                },
+                skill: {
+                $cond: {
+                    if: { $ne: ['$skill', null] },
+                    then: '$skill',
+                    else: '$$REMOVE'
+                }
+                }
+            }
             }
         );
 
@@ -1265,3 +1272,99 @@ exports.getallitems = async (req, res) => {
     });
   }
 };
+
+exports.editfreebiereward = async (req, res) => {
+    const { itemid, amount } = req.body;
+
+    if (!itemid || !amount) {
+        return res.status(400).json({ message: "failed", data: "Please provide item ID and amount." });
+    }
+
+    let item = await Item.findById(itemid)
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching item. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+    if (!item) {
+        return res.status(404).json({ message: "failed", data: "Item not found." });
+    }
+
+    // // check if item is freebie
+    // if (item.type.toString() !== "freebie") {
+    //     return res.status(400).json({ message: "failed", data: "Item is not a freebie." });
+    // }
+
+    // check if its exp, crystal or coins
+    let itemtype
+    // Only one of exp, crystals, or coins should be non-zero for a freebie
+    if (item.type !== "freebie") {
+        return res.status(400).json({ message: "failed", data: "Item is not a freebie." });
+    }
+
+    // Determine which field to update
+    const nonZeroFields = [
+        { key: "exp", value: item.exp || 0 },
+        { key: "crystals", value: item.crystals || 0 },
+        { key: "coins", value: item.coins || 0 }
+    ].filter(f => f.value > 0);
+
+    if (nonZeroFields.length !== 1) {
+        return res.status(400).json({ message: "failed", data: "Freebie item must have only one reward type set." });
+    }
+
+    console.log(nonZeroFields)
+    const field = nonZeroFields[0].key;
+    item[field] = amount;
+
+    // 
+
+    if (field === "exp") {
+    await Item.findOneAndUpdate(
+        { _id: itemid },
+        { exp: amount },
+    )
+    .then(  data=> console.log(data))
+    .catch(err => {
+        console.log(`There's a problem encountered while updating item. Error: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+    })    
+} else if (field === "crystals") {
+
+    await Item.findOneAndUpdate(
+        { _id: itemid },
+        { crystal: amount },
+    )
+    .then(  data=> console.log(data))
+    .catch(err => {
+        console.log(`There's a problem encountered while updating item. Error: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+    })
+} else if (field === "coins") {
+    await Item.findOneAndUpdate(
+        { _id: itemid },
+        { coins: amount },
+    )
+    .then(  data=> console.log(data))
+    .catch(err => {
+        console.log(`There's a problem encountered while updating item. Error: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+    })
+} else {
+    return res.status(400).json({ message: "failed", data: "Invalid item type." });
+}
+
+    return res.status(200).json({
+        message: "success",
+        data: {
+            itemid: item._id,
+            name: item.name,
+            type: item.type,
+            amount: amount
+        }
+    });
+
+
+
+}

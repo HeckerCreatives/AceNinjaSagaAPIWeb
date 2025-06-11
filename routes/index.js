@@ -30,6 +30,7 @@ const routers = app => {
     app.use("/transaction", require("./transaction"))
     app.use("/uploads", require('./picture'));
     app.use("/user", require("./user"))
+    app.use("/version", require("./version"))
 
 }
 

@@ -2226,6 +2226,7 @@ exports.goldPackData = [
     }
 ]
 // #endregion
+// #region TOPUPCREDITS
 exports.topupcreditdata = [
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749591"),
@@ -2354,6 +2355,71 @@ exports.topupcreditdata = [
         isEquippable: false
     }
 ]
+// #endregion
+// #region FREEBIES
+exports.freebiesdata = [
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749597"),
+        name: "Freebie Crystal Pack",
+        type: "freebie",
+        inventorytype: "freebie",
+        rarity: "basic",
+        price: 0,
+        currency: "crystal",
+        crystals: 100,
+        imageUrl: "",
+        description: "Free crystal pack for all players!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: true,
+        isEquippable: false,  
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749598"),
+        name: "Freebie Gold Pack",
+        type: "freebie",
+        inventorytype: "freebie",
+        rarity: "basic",
+        price: 0,
+        currency: "crystal",
+        coins: 10000,
+        imageUrl: "",
+        description: "Free gold pack for all players!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: true,
+        isEquippable: false,
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749599"),
+        name: "Freebie Exp Pack",
+        type: "freebie",
+        inventorytype: "freebie",
+        rarity: "basic",
+        price: 0,
+        currency: "crystal",
+        exp: 500,
+        imageUrl: "",
+        description: "Free exp pack for all players!",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        isOpenable: true,
+        isEquippable: false,
+    }
+]
+// #endregion
 // #region COMPANION
  exports.companiondata = [
             {

@@ -10,12 +10,13 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
 const { BattlepassSeason, BattlepassProgress, BattlepassMissionProgress } = require("../models/Battlepass")
 const { QuestDetails, QuestProgress } = require("../models/Quest")
+const Version = require("../models/Version")
 
 exports.initialize = async () => {
 
@@ -143,7 +144,8 @@ exports.initialize = async () => {
             ...outfitData,
             ...crystalPackData,
             ...goldPackData,
-            ...topupcreditdata
+            ...topupcreditdata,
+            ...freebiesdata
         ]
 
         const itemBulkWrite = itemData.map(item => ({
@@ -3197,6 +3199,20 @@ exports.initialize = async () => {
             console.log("Battlepass data initialized")
         }
 
+
+        // initialize version
+
+        const version = await Version.find({});
+
+        if (version.length <= 0) {
+            await Version.create({
+                version: "1.0.0",
+                description: "Initial version of the game",
+                releaseDate: new Date(),
+                isActive: true
+                });
+            console.log("Version initialized");
+        }
 
         // #region INITIALIZE FOR EXISTING PLAYERS
         const allCharacters = await CharacterData.find({});

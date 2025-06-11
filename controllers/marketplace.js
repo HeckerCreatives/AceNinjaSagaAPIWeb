@@ -1291,14 +1291,6 @@ exports.editfreebiereward = async (req, res) => {
         return res.status(404).json({ message: "failed", data: "Item not found." });
     }
 
-    // // check if item is freebie
-    // if (item.type.toString() !== "freebie") {
-    //     return res.status(400).json({ message: "failed", data: "Item is not a freebie." });
-    // }
-
-    // check if its exp, crystal or coins
-    let itemtype
-    // Only one of exp, crystals, or coins should be non-zero for a freebie
     if (item.type !== "freebie") {
         return res.status(400).json({ message: "failed", data: "Item is not a freebie." });
     }
@@ -1314,46 +1306,26 @@ exports.editfreebiereward = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Freebie item must have only one reward type set." });
     }
 
-    console.log(nonZeroFields)
     const field = nonZeroFields[0].key;
     item[field] = amount;
 
-    // 
+    // Update Item collection
+    await Item.findOneAndUpdate(
+        { _id: itemid },
+        { [field]: amount }
+    ).catch(err => {
+        console.log(`There's a problem encountered while updating item. Error: ${err}`);
+        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+    });
 
-    if (field === "exp") {
-    await Item.findOneAndUpdate(
-        { _id: itemid },
-        { exp: amount },
-    )
-    .then(  data=> console.log(data))
-    .catch(err => {
-        console.log(`There's a problem encountered while updating item. Error: ${err}`);
+    // Update market.items as well
+    await Market.updateMany(
+        { "items._id": itemid },
+        { $set: { [`items.$.${field}`]: amount } }
+    ).catch(err => {
+        console.log(`There's a problem encountered while updating market items. Error: ${err}`);
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-    })    
-} else if (field === "crystals") {
-
-    await Item.findOneAndUpdate(
-        { _id: itemid },
-        { crystal: amount },
-    )
-    .then(  data=> console.log(data))
-    .catch(err => {
-        console.log(`There's a problem encountered while updating item. Error: ${err}`);
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-    })
-} else if (field === "coins") {
-    await Item.findOneAndUpdate(
-        { _id: itemid },
-        { coins: amount },
-    )
-    .then(  data=> console.log(data))
-    .catch(err => {
-        console.log(`There's a problem encountered while updating item. Error: ${err}`);
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-    })
-} else {
-    return res.status(400).json({ message: "failed", data: "Invalid item type." });
-}
+    });
 
     return res.status(200).json({
         message: "success",
@@ -1364,7 +1336,4 @@ exports.editfreebiereward = async (req, res) => {
             amount: amount
         }
     });
-
-
-
 }

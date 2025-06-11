@@ -74,6 +74,7 @@ exports.getcodes = async (req, res) => {
     const codes = await Redeemcode.find(query)
     .sort({ createdAt: -1 })
     .populate("itemrewards")
+    .populate("skillrewards")
     .skip(pageOptions.page * pageOptions.limit)
     .limit(pageOptions.limit)
     .then(data => data)
@@ -115,6 +116,7 @@ exports.getcodes = async (req, res) => {
             expiration: expiration,
             rewards: rewards,
             itemrewards: data.itemrewards || [],
+            skillrewards: data.skillrewards || [],
             redeemedCount: redeemedCounts[index] || 0
         })
     })

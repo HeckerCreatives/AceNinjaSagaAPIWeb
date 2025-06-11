@@ -280,6 +280,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e0"),
         name: "Gakuran",
         type: "skins",
         inventorytype: "outfit",
@@ -297,6 +298,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e1"),
         name: "Tanto",
         type: "skins",
         inventorytype: "outfit",
@@ -314,6 +316,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e2"),
         name: "Shinobi Suit",
         type: "skins",
         inventorytype: "outfit",
@@ -331,6 +334,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e3"),
         name: "Male Fashion Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -348,6 +352,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e4"),
         name: "Male Fashion Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -365,6 +370,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e5"),
         name: "Male Fashion Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -382,6 +388,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e6"),
         name: "Male Fashion Attire 7",
         type: "skins",
         inventorytype: "outfit",
@@ -399,6 +406,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e7"),
         name: "Uke",
         type: "skins",
         inventorytype: "outfit",
@@ -416,6 +424,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e8"),
         name: "Warrior Cloak",
         type: "skins",
         inventorytype: "outfit",
@@ -433,6 +442,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e9"),
         name: "Male Drip Attire 3",
         type: "skins",
         inventorytype: "outfit",
@@ -450,6 +460,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f0"),
         name: "Male Drip Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -467,6 +478,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f1"),
         name: "Male Drip Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -484,6 +496,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f2"),
         name: "Male Drip Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -501,6 +514,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f3"),
         name: "Male Epic Attire 1",
         type: "skins",
         inventorytype: "outfit",
@@ -518,6 +532,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f4"),
         name: "Male Epic Attire 2",
         type: "skins",
         inventorytype: "outfit",
@@ -534,7 +549,8 @@ exports.outfitData = [
         },
         imageUrl: ""
     },
-        {
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f5"),
         name: "Male Epic Attire 3",
         type: "skins",
         inventorytype: "outfit",
@@ -552,6 +568,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f6"),
         name: "Male Epic Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -569,6 +586,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f7"),
         name: "Male Epic Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -586,6 +604,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f8"),
         name: "Male Epic Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -711,6 +730,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495d7"),
         name: "Silken Shroud",
         type: "skins",
         inventorytype: "outfit",
@@ -728,6 +748,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495d8"),
         name: "Shinobi Suit",
         type: "skins",
         inventorytype: "outfit",
@@ -745,6 +766,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495d9"),
         name: "Nightshade Armor",
         type: "skins",
         inventorytype: "outfit",
@@ -762,6 +784,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749500"),
         name: "Female Fashion Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -779,6 +802,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749501"),
         name: "Female Fashion Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -796,6 +820,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749502"),
         name: "Female Fashion Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -813,6 +838,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749503"),
         name: "Female Fashion Attire 7",
         type: "skins",
         inventorytype: "outfit",
@@ -830,6 +856,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749504"),
         name: "Warrior Princess",
         type: "skins",
         inventorytype: "outfit",
@@ -846,7 +873,8 @@ exports.outfitData = [
         },
         imageUrl: ""
     },
-        {
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749505"),
         name: "Moonlight Cloak",
         type: "skins",
         inventorytype: "outfit",
@@ -864,6 +892,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749506"),
         name: "Female Drip Attire 3",
         type: "skins",
         inventorytype: "outfit",
@@ -881,6 +910,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749507"),
         name: "Female Drip Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -898,6 +928,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749508"),
         name: "Female Drip Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -915,6 +946,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749509"),
         name: "Female Drip Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -931,7 +963,8 @@ exports.outfitData = [
         },
         imageUrl: ""
     },
-        {
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749510"),
         name: "Female Epic Attire 1",
         type: "skins",
         inventorytype: "outfit",
@@ -949,6 +982,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749511"),
         name: "Female Epic Attire 2",
         type: "skins",
         inventorytype: "outfit",
@@ -965,7 +999,8 @@ exports.outfitData = [
         },
         imageUrl: ""
     },
-        {
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749512"),
         name: "Female Epic Attire 3",
         type: "skins",
         inventorytype: "outfit",
@@ -983,6 +1018,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749513"),
         name: "Female Epic Attire 4",
         type: "skins",
         inventorytype: "outfit",
@@ -1000,6 +1036,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749514"),
         name: "Female Epic Attire 5",
         type: "skins",
         inventorytype: "outfit",
@@ -1017,6 +1054,7 @@ exports.outfitData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749515"),
         name: "Female Epic Attire 6",
         type: "skins",
         inventorytype: "outfit",
@@ -1038,6 +1076,7 @@ exports.outfitData = [
 // #region HAIR
 exports.hairData = [
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749516"),
         name: "Male Basic Ninja Hairstyle 1",
         type: "skins",
         inventorytype: "hair",
@@ -1055,6 +1094,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749517"),
         name: "Male Basic Ninja Hairstyle 2",
         type: "skins",
         inventorytype: "hair",
@@ -1072,6 +1112,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749518"),
         name: "Male Basic Ninja Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1089,6 +1130,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749519"),
         name: "Male Basic Ninja Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1106,6 +1148,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749520"),
         name: "Male Basic Ninja Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1123,6 +1166,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749521"),
         name: "Male Basic Ninja Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1140,6 +1184,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749522"),
         name: "Gakuran Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1157,6 +1202,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749523"),
         name: "Tanto Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1174,6 +1220,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749524"),
         name: "Shinobi Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1191,6 +1238,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749525"),
         name: "Male Fashion Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1208,6 +1256,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749526"),
         name: "Male Fashion Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1225,6 +1274,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749527"),
         name: "Male Fashion Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1242,6 +1292,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749528"),
         name: "Male Fashion Hairstyle 7",
         type: "skins",
         inventorytype: "hair",
@@ -1259,6 +1310,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749529"),
         name: "Uke Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1276,6 +1328,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749530"),
         name: "Warrior Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1293,6 +1346,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749531"),
         name: "Male Drip Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1310,6 +1364,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749532"),
         name: "Male Drip Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1327,6 +1382,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749533"),
         name: "Male Drip Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1344,6 +1400,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749534"),
         name: "Male Drip Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1361,6 +1418,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749535"),
         name: "Male Epic Hairstyle 1",
         type: "skins",
         inventorytype: "hair",
@@ -1378,6 +1436,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749536"),
         name: "Male Epic Hairstyle 2",
         type: "skins",
         inventorytype: "hair",
@@ -1395,6 +1454,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749537"),
         name: "Male Epic Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1412,6 +1472,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749538"),
         name: "Male Epic Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1429,6 +1490,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749539"),
         name: "Male Epic Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1446,6 +1508,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749540"),
         name: "Male Epic Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1463,6 +1526,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749541"),
         name: "Female Basic Ninja Hairstyle 1",
         type: "skins",
         inventorytype: "hair",
@@ -1480,6 +1544,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749542"),
         name: "Female Basic Ninja Hairstyle 2",
         type: "skins",
         inventorytype: "hair",
@@ -1497,6 +1562,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749543"),
         name: "Female Basic Ninja Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1514,6 +1580,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749544"),
         name: "Female Basic Ninja Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1531,6 +1598,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749545"),
         name: "Female Basic Ninja Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1548,6 +1616,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749546"),
         name: "Female Basic Ninja Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1565,6 +1634,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749547"),
         name: "Silken Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1582,6 +1652,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749548"),
         name: "Shinobi Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1599,6 +1670,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749549"),
         name: "Nightshade Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1616,6 +1688,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749550"),
         name: "Female Fashion Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1633,6 +1706,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749551"),
         name: "Female Fashion Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1650,6 +1724,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749552"),
         name: "Female Fashion Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1667,6 +1742,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749553"),
         name: "Warrior Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1684,6 +1760,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749554"),
         name: "Moonlight Hairstyle",
         type: "skins",
         inventorytype: "hair",
@@ -1701,6 +1778,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749555"),
         name: "Female Drip Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1718,6 +1796,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749556"),
         name: "Female Drip Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1735,6 +1814,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749557"),
         name: "Female Drip Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1752,6 +1832,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749558"),
         name: "Female Drip Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1769,6 +1850,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749559"),
         name: "Female Epic Hairstyle 1",
         type: "skins",
         inventorytype: "hair",
@@ -1786,6 +1868,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749560"),
         name: "Female Epic Hairstyle 2",
         type: "skins",
         inventorytype: "hair",
@@ -1803,6 +1886,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749561"),
         name: "Female Epic Hairstyle 3",
         type: "skins",
         inventorytype: "hair",
@@ -1820,6 +1904,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749562"),
         name: "Female Epic Hairstyle 4",
         type: "skins",
         inventorytype: "hair",
@@ -1837,6 +1922,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749563"),
         name: "Female Epic Hairstyle 5",
         type: "skins",
         inventorytype: "hair",
@@ -1854,6 +1940,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749564"),
         name: "Female Epic Hairstyle 6",
         type: "skins",
         inventorytype: "hair",
@@ -1875,6 +1962,7 @@ exports.hairData = [
 // #region Crystal Packs
 exports.crystalPackData = [
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749565"),
         name: "Starter Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1889,6 +1977,7 @@ exports.crystalPackData = [
         description: "Best value for new players!",
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749566"),
         name: "Basic Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1903,6 +1992,7 @@ exports.crystalPackData = [
         description: "Great value crystal pack!"
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749567"),
         name: "Advanced Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1923,6 +2013,7 @@ exports.crystalPackData = [
         }
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749568"),
         name: "Elite Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1943,6 +2034,7 @@ exports.crystalPackData = [
         }
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749569"),
         name: "Master Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1963,6 +2055,7 @@ exports.crystalPackData = [
         }
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749570"),
         name: "Legendary Crystal Pack",
         type: "crystalpacks",
         inventorytype: "crystalpacks",
@@ -1987,6 +2080,7 @@ exports.crystalPackData = [
 // #region GOLD PACKS
 exports.goldPackData = [
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749580"),
         name: "Starter Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2008,6 +2102,7 @@ exports.goldPackData = [
 
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749581"),
         name: "Basic Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2028,6 +2123,7 @@ exports.goldPackData = [
         isEquippable: false,
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749582"),
         name: "Advanced Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2048,6 +2144,7 @@ exports.goldPackData = [
         isEquippable: false,
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749583"),
         name: "Elite Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2068,6 +2165,7 @@ exports.goldPackData = [
         isEquippable: false,
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749584"),
         name: "Master Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2088,6 +2186,7 @@ exports.goldPackData = [
         isEquippable: false,
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749585"),
         name: "Legendary Gold Pack",
         type: "goldpacks",
         inventorytype: "goldpacks",
@@ -2111,6 +2210,7 @@ exports.goldPackData = [
 // #endregion
 exports.topupcreditdata = [
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749591"),
         name: "Starter Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit",
@@ -2131,6 +2231,7 @@ exports.topupcreditdata = [
         isEquippable: false
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749592"),
         name: "Basic Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit", 
@@ -2151,6 +2252,7 @@ exports.topupcreditdata = [
         isEquippable: false
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749593"),
         name: "Advanced Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit",
@@ -2171,6 +2273,7 @@ exports.topupcreditdata = [
         isEquippable: false
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749594"),
         name: "Elite Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit",
@@ -2191,6 +2294,7 @@ exports.topupcreditdata = [
         isEquippable: false
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749595"),
         name: "Master Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit",
@@ -2211,6 +2315,7 @@ exports.topupcreditdata = [
         isEquippable: false
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749596"),
         name: "Legendary Credit Pack",
         type: "topupcredit",
         inventorytype: "topupcredit",

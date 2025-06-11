@@ -172,6 +172,7 @@ exports.initialize = async () => {
         // initialize attack path
 
         const energy = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749600'),
             name: "Energy +40",
             category: "Basic",
             path: "Attack",
@@ -185,6 +186,7 @@ exports.initialize = async () => {
         })
 
         const attack1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749601'),
             name: "Attack Damage +5",
             category: "Basic",
             path: "Attack",
@@ -197,6 +199,7 @@ exports.initialize = async () => {
             prerequisites: [energy._id]
         })
         const attack2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749602'),
             name: "Attack Damage +5",
             category: "Basic",
             path: "Attack",
@@ -210,6 +213,7 @@ exports.initialize = async () => {
         })
 
         const attack3 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749603'),
             name: "Attack Damage +5",
             category: "Basic",
             path: "Attack",
@@ -222,6 +226,7 @@ exports.initialize = async () => {
             prerequisites: [attack1._id, energy._id, attack2._id]
         })
         const attack4 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749604'),
             name: "Attack Damage +5",
             category: "Basic",
             path: "Attack",
@@ -235,6 +240,7 @@ exports.initialize = async () => {
         })
 
         const magic1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749605'),
             name: "Magic Damage +5",
             category: "Basic",
             path: "Attack",
@@ -248,6 +254,7 @@ exports.initialize = async () => {
         })
 
         const magic2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749606'),
             name: "Magic Damage +5",
             category: "Basic",
             path: "Attack",
@@ -261,6 +268,7 @@ exports.initialize = async () => {
         })
 
         const magic3 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749607'),
             name: "Magic Damage +5",
             category: "Basic",
             path: "Attack",
@@ -274,6 +282,7 @@ exports.initialize = async () => {
         })
 
         const magic4 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749608'),
             name: "Magic Damage +5",
             category: "Basic",
             path: "Attack",
@@ -287,6 +296,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749609'),
             name: "Power Up",
             category: "Basic",
             path: "Attack",
@@ -318,6 +328,7 @@ exports.initialize = async () => {
         // initialize defense path
 
         const health = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749610'),
             name: "Health +40",
             category: "Basic",
             path: "Defense",
@@ -331,6 +342,7 @@ exports.initialize = async () => {
         })
 
         const armor1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749611'),
             name: "Armor +5",
             category: "Basic",
             path: "Defense",
@@ -343,6 +355,7 @@ exports.initialize = async () => {
             prerequisites: [health._id]
         })
         const armor2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749612'),
             name: "Armor +5",
             category: "Basic",
             path: "Defense",
@@ -356,6 +369,7 @@ exports.initialize = async () => {
         })
 
         const armor3 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749613'),
             name: "Armor +5",
             category: "Basic",
             path: "Defense",
@@ -368,6 +382,7 @@ exports.initialize = async () => {
             prerequisites: [health._id, armor1._id, armor2._id]
         })
         const armor4 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749614'),
             name: "Armor +5",
             category: "Basic",
             path: "Defense",
@@ -381,6 +396,7 @@ exports.initialize = async () => {
         })
 
         const magicresist1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749615'),
             name: "Magic Resist +5",
             category: "Basic",
             path: "Defense",
@@ -394,6 +410,7 @@ exports.initialize = async () => {
         })
 
         const magicresist2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749616'),
             name: "Magic Resist +5",
             category: "Basic",
             path: "Defense",
@@ -407,6 +424,7 @@ exports.initialize = async () => {
         })
 
         const magicresist3 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749617'),
             name: "Magic Resist +5",
             category: "Basic",
             path: "Defense",
@@ -420,6 +438,7 @@ exports.initialize = async () => {
         })
 
         const magicresist4 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749618'),
             name: "Magic Resist +5",
             category: "Basic",
             path: "Defense",
@@ -433,6 +452,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749619'),
             name: "Blood Shield",
             category: "Basic",
             path: "Defense",
@@ -463,6 +483,7 @@ exports.initialize = async () => {
         // initialize utility path
 
         const speed = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749620'),
             name: "speed +1",
             category: "Basic",
             path: "Utility",
@@ -476,6 +497,7 @@ exports.initialize = async () => {
         })
 
         const crit1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749621'),
             name: "Crit. Chance +1",
             category: "Basic",
             path: "Utility",
@@ -489,6 +511,7 @@ exports.initialize = async () => {
         })
 
         const armorpen = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749622'),
             name: "Armor Penetration +1",
             category: "Basic",
             path: "Utility",
@@ -502,6 +525,7 @@ exports.initialize = async () => {
         })
         
         const lifesteal = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749623'),
             name: "Lifesteal +1",
             category: "Basic",
             path: "Utility",
@@ -515,6 +539,7 @@ exports.initialize = async () => {
         })
 
         const crit2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749624'),
             name: "Crit. Chance +1",
             category: "Basic",
             path: "Utility",
@@ -528,6 +553,7 @@ exports.initialize = async () => {
         })
 
         const tbd = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749625'),
             name: "tbd",
             category: "Basic",
             path: "Utility",
@@ -541,6 +567,7 @@ exports.initialize = async () => {
         })
 
         const magicpen1 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749626'),
             name: "Magic Penetration +1",
             category: "Basic",
             path: "Utility",
@@ -554,6 +581,7 @@ exports.initialize = async () => {
         })
 
         const omnivamp = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749627'),
             name: "Omnivamp +1",
             category: "Basic",
             path: "Utility",
@@ -567,6 +595,7 @@ exports.initialize = async () => {
         })
 
         const tbd2 = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749628'),
             name: "tbd",
             category: "Basic",
             path: "Utility",
@@ -580,6 +609,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749629'),
             name: "Sensory Boost",
             category: "Basic",
             path: "Utility",
@@ -608,6 +638,7 @@ exports.initialize = async () => {
         // initialize special skills
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749630'),
             name: "Arrow Strike",
             category: "Special",
             type: "Active",
@@ -621,6 +652,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749631'),
             name: "Energy Blade",
             category: "Special",
             type: "Active",
@@ -634,6 +666,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749632'),
             name: "Spirit Aura",
             category: "Special",
             type: "Active",
@@ -648,6 +681,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749633'),
             name: "Silent Stab",
             category: "Special",
             type: "Active",
@@ -662,6 +696,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749634'),
             name: "Blazing Fire",
             category: "Special",
             type: "Active",
@@ -676,6 +711,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749635'),
             name: "Mystic Sound",
             category: "Special",
             type: "Active",
@@ -690,6 +726,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749636'),
             name: "Quick Slash",
             category: "Special",
             type: "Active",
@@ -704,6 +741,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749637'),
             name: "Rune Protection",
             category: "Special",
             type: "Active",
@@ -718,6 +756,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749638'),
             name: "Chain Attack",
             category: "Special",
             type: "Active",
@@ -732,6 +771,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749639'),
             name: "Eagle Senses", 
             category: "Special",
             type: "Active",
@@ -746,6 +786,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042746790'),
             name: "Rune Light",
             category: "Special",
             type: "Active",
@@ -760,6 +801,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042746791'),
             name: "Golem Attack",
             category: "Special",
             type: "Active",
@@ -774,6 +816,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042746792'),
             name: "Quick Shot",
             category: "Special",
             type: "Active",
@@ -788,6 +831,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042746793'),
             name: "Fear Aura",
             category: "Special",
             type: "Active",
@@ -802,6 +846,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042746794'),
             name: "Wind Strike",
             category: "Special",
             type: "Active",
@@ -816,6 +861,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042747945'),
             name: "Stone Skin",
             category: "Special",
             type: "Active",
@@ -830,6 +876,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f204274646'),
             name: "Heavy Fall",
             category: "Special",
             type: "Active",
@@ -844,6 +891,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f204274647'),
             name: "Light Attack",
             category: "Special",
             type: "Active",
@@ -858,6 +906,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f204274648'),
             name: "Stone Rain",
             category: "Special",
             type: "Active",
@@ -872,6 +921,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f204274649'),
             name: "Nature Energy",
             category: "Special",
             type: "Active",
@@ -899,6 +949,7 @@ exports.initialize = async () => {
     if(passivesecretskills.length <= 0){
         // initialize secret passive skills
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749650'),
             name: "Divine Energy",
             category: "Secret",
             type: "Passive",
@@ -919,6 +970,7 @@ exports.initialize = async () => {
     
         
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749651'),
             name: "Swiftness",
             category: "Secret",
             type: "Passive",
@@ -936,6 +988,7 @@ exports.initialize = async () => {
             prerequisites: []
         });
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749652'),
             name: "Resilience",
             category: "Secret",
             type: "Passive",
@@ -954,6 +1007,7 @@ exports.initialize = async () => {
             prerequisites: []
         });
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749653'),
             name: "Shield Glory",
             category: "Secret",
             type: "Passive",
@@ -972,6 +1026,7 @@ exports.initialize = async () => {
         });
         
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749654'),
             name: "Ascension",
             category: "Secret",
             type: "Passive",
@@ -1006,6 +1061,7 @@ exports.initialize = async () => {
     if(damagesecretskills.length <= 0){
         // initialize secret damage skills
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749655'),
             name: "Frozen Arrow",
             category: "Secret",
             type: "Active",
@@ -1026,6 +1082,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749656'),
             name: "Fire Blast",
             category: "Secret",
             type: "Active",
@@ -1047,6 +1104,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749657'),
             name: "Fear of Shadows",
             category: "Secret",
             type: "Active",
@@ -1068,6 +1126,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749658'),
             name: "Icy Breath",
             category: "Secret",
             type: "Active",
@@ -1089,6 +1148,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749659'),
             name: "World Breaker",
             category: "Secret",
             type: "Active",
@@ -1110,6 +1170,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749660'),
             name: "Quicksand",
             category: "Secret",
             type: "Active",
@@ -1132,6 +1193,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749661'),
             name: "Parasite",
             category: "Secret",
             type: "Active",
@@ -1151,6 +1213,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749662'),
             name: "Deadly Venom",
             category: "Secret",
             type: "Active",
@@ -1173,6 +1236,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749663'),
             name: "Warriors Wrath",
             category: "Secret",
             type: "Active",
@@ -1194,6 +1258,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749664'),
             name: "Dark Binding",
             category: "Secret",
             type: "Active",
@@ -1215,6 +1280,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749665'),
             name: "Lightning Strike",
             category: "Secret",
             type: "Active",
@@ -1241,6 +1307,7 @@ exports.initialize = async () => {
         // secret buff skills
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749666'),
             name: "Time Dilation",
             category: "Secret",
             type: "Active",
@@ -1260,6 +1327,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749667'),
             name: "Spirit Power",
             category: "Secret",
             type: "Active",
@@ -1282,6 +1350,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749668'),
             name: "Fire Rune",
             category: "Secret",
             type: "Active",
@@ -1303,6 +1372,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749669'),
             name: "Berserk",
             category: "Secret",
             type: "Active",
@@ -1342,6 +1412,7 @@ exports.initialize = async () => {
     if(pvpskills.length <= 0){
     
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749670'),
             name: "Gods Clash",
             category: "PvP",
             type: "Active",
@@ -1372,6 +1443,7 @@ exports.initialize = async () => {
 
     if(skilldeals.length <= 0){
         const galeforce = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749671'),
             name: "Gale Force",
             category: "Deals",
             type: "Passive",
@@ -1389,6 +1461,7 @@ exports.initialize = async () => {
         });
 
         const soulshackle = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749672'),
             name: "Soul Shackle",
             category: "Deals",
             type: "Active",
@@ -1409,6 +1482,7 @@ exports.initialize = async () => {
         });
 
         const celestialbarrage = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749673'),
             name: "Celestial Barrage",
             category: "Deals",
             type: "Active",
@@ -1430,6 +1504,7 @@ exports.initialize = async () => {
 
         const skillitems = [
             {
+                _id: new mongoose.Types.ObjectId('6828695886cc0f2042749671'),
                 name: "Gale Force",
                 price: 200,
                 currency: "crystal",
@@ -1443,6 +1518,7 @@ exports.initialize = async () => {
                 isOpenable: false
             },
             {
+                _id: new mongoose.Types.ObjectId('6828695886cc0f2042749672'),
                 name: "Soul Shackle",
                 price: 200,
                 currency: "crystal",
@@ -1456,6 +1532,7 @@ exports.initialize = async () => {
                 isOpenable: false
             },
             {
+                _id: new mongoose.Types.ObjectId('6828695886cc0f2042749673'),
                 name: "Celestial Barrage",
                 price: 200,
                 currency: "crystal",
@@ -1490,6 +1567,7 @@ exports.initialize = async () => {
 
     if(clanskills.length <= 0){
     await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749674'),
         name: "Alchemist Soul",
         category: "Clan",
         type: "Passive",
@@ -1507,6 +1585,7 @@ exports.initialize = async () => {
     });
 
     await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749675'),
         name: "Advanced Alchemist Soul",
         category: "Clan",
         type: "Passive",
@@ -1538,6 +1617,7 @@ exports.initialize = async () => {
     if(raidskills.length <= 0){
     await Skill.create([
         {
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749676'),
             name: "Lava Burst",
             category: "Raid",
             type: "Active",
@@ -1557,6 +1637,7 @@ exports.initialize = async () => {
             prerequisites: []
         },
         {
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749677'),
             name: "High Tide",
             category: "Raid",
             type: "Active",
@@ -1581,6 +1662,7 @@ exports.initialize = async () => {
             prerequisites: []
         },
         {
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749678'),
             name: "Frenzy",
             category: "Raid",
             type: "Active",
@@ -1604,6 +1686,7 @@ exports.initialize = async () => {
             prerequisites: []
         },
         {
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749679'),
             name: "Leaf Dance",
             category: "Raid",
             type: "Active",
@@ -1624,6 +1707,7 @@ exports.initialize = async () => {
             prerequisites: []
         },
         {
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749680'),
             name: "Soul's Eye",
             category: "Raid",
             type: "Active",
@@ -1659,6 +1743,7 @@ exports.initialize = async () => {
     if(mageskills.length <= 0) {
         // Initialize energy reserves (base passive)
         const energyReserves = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749681'),
             name: "Energy Reserves",
             category: "Path",
             path: "Mage",
@@ -1680,6 +1765,7 @@ exports.initialize = async () => {
         
         // First branch - Arcane skills
         const mysticShield = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749682'),
             name: "Mystic Shield",
             category: "Path",
             path: "Mage",
@@ -1701,6 +1787,7 @@ exports.initialize = async () => {
             prerequisites: [energyReserves._id]
         });
         const arcaneBlast = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749683'),
             name: "Arcane Blast",
             category: "Path",
             path: "Mage",
@@ -1722,6 +1809,7 @@ exports.initialize = async () => {
         });
         // Second branch - Fire skills
         const essenceFire = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749684'),
             name: "Essence of Fire",
             category: "Path",
             path: "Mage",
@@ -1743,6 +1831,7 @@ exports.initialize = async () => {
         });
         
         const arcaneBarrage = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749685'),
             name: "Arcane Barrage",
             category: "Path",
             path: "Mage",
@@ -1765,6 +1854,7 @@ exports.initialize = async () => {
 
         
         const crystalSpikes = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749686'),
             name: "Crystal Spikes",
             category: "Path",
             path: "Mage",
@@ -1786,6 +1876,7 @@ exports.initialize = async () => {
         });
 
         const inferno = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749687'),
             name: "Inferno",
             category: "Path",
             path: "Mage",
@@ -1810,6 +1901,7 @@ exports.initialize = async () => {
         
 
         const iceFlow = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749688'),
             name: "Ice Flow",
             category: "Path",
             path: "Mage",
@@ -1832,6 +1924,7 @@ exports.initialize = async () => {
 
         // Third branch - Ice skills
         const frozenHeart = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749689'),
             name: "Frozen Heart",
             category: "Path",
             path: "Mage",
@@ -1852,6 +1945,7 @@ exports.initialize = async () => {
 
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749690'),
             name: "Frost Nova",
             category: "Path",
             path: "Mage",
@@ -1873,6 +1967,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749691'),
             name: "Frost Siphon",
             category: "Path",
             path: "Mage",
@@ -1912,6 +2007,7 @@ exports.initialize = async () => {
     if(samuraiskills.length <= 0) {
         // Initialize base passive
         const swordMastery = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749692'),
             name: "Sword Mastery",
             category: "Path",
             path: "Samurai",
@@ -1931,6 +2027,7 @@ exports.initialize = async () => {
 
         // Level 25 skills
         const samuraiFury = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749693'),
             name: "Samurai's Fury",
             category: "Path",
             path: "Samurai",
@@ -1953,6 +2050,7 @@ exports.initialize = async () => {
         });
 
         const heavensEdge = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749694'),
             name: "Heaven's Edge",
             category: "Path",
             path: "Samurai",
@@ -1975,6 +2073,7 @@ exports.initialize = async () => {
 
         // Level 30 skills
         const warriorsHonor = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749695'),
             name: "Warrior's Honor",
             category: "Path",
             path: "Samurai",
@@ -1994,6 +2093,7 @@ exports.initialize = async () => {
         });
 
         const guardianStance = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749696'),
             name: "Guardian Stance",
             category: "Path",
             path: "Samurai",
@@ -2016,6 +2116,7 @@ exports.initialize = async () => {
         });
 
         const windCutter = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749697'),
             name: "Wind Cutter",
             category: "Path",
             path: "Samurai",
@@ -2039,6 +2140,7 @@ exports.initialize = async () => {
 
         // Level 35 skills
         const tempestStrike = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749698'),
             name: "Tempest Strike",
             category: "Path",
             path: "Samurai",
@@ -2060,6 +2162,7 @@ exports.initialize = async () => {
         });
 
         const stoneSkin = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749699'),
             name: "Stone Skin",
             category: "Path",
             path: "Samurai",
@@ -2083,6 +2186,7 @@ exports.initialize = async () => {
 
         // Level 40 skills
         const unyieldingSpirit = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749700'),
             name: "Unyielding Spirit",
             category: "Path",
             path: "Samurai",
@@ -2101,6 +2205,7 @@ exports.initialize = async () => {
             prerequisites: [swordMastery._id, samuraiFury._id, heavensEdge._id, warriorsHonor._id, tempestStrike._id, stoneSkin._id]
         });
         const ironWill = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749701'),
             name: "Iron Will",
             category: "Path",
             path: "Samurai",
@@ -2123,6 +2228,7 @@ exports.initialize = async () => {
 
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042749702'),
             name: "Dragon Slash",
             category: "Path",
             path: "Samurai",
@@ -2157,6 +2263,7 @@ exports.initialize = async () => {
     if(scholarskills.length <= 0) {
     // Base passive
     const geneTherapy = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749703'),
         name: "Gene Therapy",
         category: "Path",
         path: "Scholar",
@@ -2178,6 +2285,7 @@ exports.initialize = async () => {
 
     // Level 25 skills
     const scrollWisdom = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749704'),
         name: "Scroll of Wisdom",
         category: "Path",
         path: "Scholar",
@@ -2198,6 +2306,7 @@ exports.initialize = async () => {
     });
 
     const smartBinding = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749705'),
         name: "Smart Binding",
         category: "Path",
         path: "Scholar",
@@ -2221,6 +2330,7 @@ exports.initialize = async () => {
 
     // Level 30 skills
     const mindsEye = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749706'),
         name: "Mind's Eye",
         category: "Path",
         path: "Scholar",
@@ -2239,6 +2349,7 @@ exports.initialize = async () => {
     });
 
     const mindWrap = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749707'),
         name: "Mind Wrap",
         category: "Path",
         path: "Scholar",
@@ -2260,6 +2371,7 @@ exports.initialize = async () => {
     });
 
     const healthPotion = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749708'),
         name: "Health Potion",
         category: "Path",
         path: "Scholar",
@@ -2282,6 +2394,7 @@ exports.initialize = async () => {
 
     // Level 35 skills
     const poisonQuill = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f2042749709'),
         name: "Poison Quill",
         category: "Path",
         path: "Scholar",
@@ -2305,6 +2418,7 @@ exports.initialize = async () => {
     });
 
     const sagesResolve = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a0'),
         name: "Sage's Resolve",
         category: "Path",
         path: "Scholar",
@@ -2329,6 +2443,7 @@ exports.initialize = async () => {
 
     // Level 40 skills
     const runeMastery = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a1'),
         name: "Rune Mastery",
         category: "Path",
         path: "Scholar",
@@ -2347,6 +2462,7 @@ exports.initialize = async () => {
     });
 
     const scholarsTouch = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a2'),
         name: "Scholar's Touch",
         category: "Path",
         path: "Scholar",
@@ -2368,6 +2484,7 @@ exports.initialize = async () => {
     });
 
     await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a3'),
         name: "Cerebral Pulse",
         category: "Path",
         path: "Scholar",
@@ -2401,6 +2518,7 @@ exports.initialize = async () => {
     if(rogueskills.length <= 0) {
     // Base passive
     const adrenalineRush = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a4'),
         name: "Adrenaline Rush",
         category: "Path",
         path: "Rogue",
@@ -2421,6 +2539,7 @@ exports.initialize = async () => {
 
     // Level 25 skills
     const tremorSense = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a5'),
         name: "Tremor Sense",
         category: "Path",
         path: "Rogue",
@@ -2444,6 +2563,7 @@ exports.initialize = async () => {
     });
 
     const arrowStrike = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a6'),
         name: "Arrow Strike",
         category: "Path",
         path: "Rogue",
@@ -2467,6 +2587,7 @@ exports.initialize = async () => {
 
     // Level 30 skills
     const assassinsReflexes = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a7'),
         name: "Assassin's Reflexes",
         category: "Path",
         path: "Rogue",
@@ -2485,6 +2606,7 @@ exports.initialize = async () => {
     });
 
     const deadlyPrecision = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a8'),
         name: "Deadly Precision",
         category: "Path",
         path: "Rogue",
@@ -2508,6 +2630,7 @@ exports.initialize = async () => {
     });
 
     const lethalStrike = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496a9'),
         name: "Lethal Strike",
         category: "Path",
         path: "Rogue",
@@ -2529,6 +2652,7 @@ exports.initialize = async () => {
 
     // Level 35 skills
     const bloodSacrifice = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b0'),
         name: "Blood Sacrifice",
         category: "Path",
         path: "Rogue",
@@ -2553,6 +2677,7 @@ exports.initialize = async () => {
     });
 
     const shadowStrike = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b1'),
         name: "Shadow Strike",
         category: "Path",
         path: "Rogue",
@@ -2576,6 +2701,7 @@ exports.initialize = async () => {
 
     // Level 40 skills
     const silentKiller = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b2'),
         name: "Silent Killer",
         category: "Path",
         path: "Rogue",
@@ -2599,6 +2725,7 @@ exports.initialize = async () => {
     });
 
     const eyeOfRaven = await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b3'),
         name: "Eye of Raven",
         category: "Path",
         path: "Rogue",
@@ -2621,6 +2748,7 @@ exports.initialize = async () => {
     });
 
     await Skill.create({
+        _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b4'),
         name: "Eviscerate",
         category: "Path",
         path: "Rogue",
@@ -2655,6 +2783,7 @@ exports.initialize = async () => {
     if(darkskills.length <= 0) {
         // Base passive
         const darkPact = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b5'),
             name: "Dark Pact",
             category: "Path",
             path: "Dark",
@@ -2675,6 +2804,7 @@ exports.initialize = async () => {
 
         // Level 25 skills
         const darkSlash = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b6'),
             name: "Dark Slash",
             category: "Path",
             path: "Dark",
@@ -2696,6 +2826,7 @@ exports.initialize = async () => {
         });
 
         const necroticTouch = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b7'),
             name: "Necrotic Touch",
             category: "Path",
             path: "Dark",
@@ -2719,6 +2850,7 @@ exports.initialize = async () => {
 
         // Level 30 skills
         const voidWalker = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b8'),
             name: "Void Walker",
             category: "Path",
             path: "Dark",
@@ -2738,6 +2870,7 @@ exports.initialize = async () => {
         });
 
         const blackout = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496b9'),
             name: "Blackout",
             category: "Path",
             path: "Dark",
@@ -2760,6 +2893,7 @@ exports.initialize = async () => {
         });
 
         const hauntingVeil = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c0'),
             name: "Haunting Veil",
             category: "Path",
             path: "Dark",
@@ -2782,6 +2916,7 @@ exports.initialize = async () => {
 
         // Level 35 skills
         const shadowflame = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c1'),
             name: "Shadowflame",
             category: "Path",
             path: "Dark",
@@ -2804,6 +2939,7 @@ exports.initialize = async () => {
         });
 
         const abyssalStrike = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c2'),
             name: "Abyssal Strike",
             category: "Path",
             path: "Dark",
@@ -2828,6 +2964,7 @@ exports.initialize = async () => {
 
         // Level 40 skills
         const soulReaper = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c3'),
             name: "Soul Reaper",
             category: "Path",
             path: "Dark",
@@ -2848,6 +2985,7 @@ exports.initialize = async () => {
         });
 
         const soulDrain = await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c4'),
             name: "Soul Drain",
             category: "Path",
             path: "Dark",
@@ -2870,6 +3008,7 @@ exports.initialize = async () => {
         });
 
         await Skill.create({
+            _id: new mongoose.Types.ObjectId('6828695886cc0f20427496c5'),
             name: "Death's Embrace",
             category: "Path",
             path: "Dark",

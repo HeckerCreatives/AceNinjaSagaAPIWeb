@@ -1,8 +1,9 @@
 // const { createTransaction, completeTransaction, monitorTransaction, getusertransactions } = require("../controllers/Transaction")
 // const { createorder, completeorder } = require("../controllers/Transaction")
-const { gettopupmarketcredits, completeorder, gettopuphistory, gettopuphistorysa, getcharactertopuphistorysa } = require("../controllers/transaction")
+const { gettopupmarketcredits, completeorder, gettopuphistory, gettopuphistorysa, getcharactertopuphistorysa } = require("../controllers/Transaction")
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware")
 const router = require("express").Router()
+
 
 router
 //  .post("/createorder", protectplayer, createorder)

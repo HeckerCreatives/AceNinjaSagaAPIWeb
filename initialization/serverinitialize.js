@@ -876,7 +876,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
-            _id: new mongoose.Types.ObjectId('6828695886cc0f204274646'),
+            _id: new mongoose.Types.ObjectId('6828695886cc0f2042747946'),
             name: "Heavy Fall",
             category: "Special",
             type: "Active",
@@ -891,7 +891,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
-            _id: new mongoose.Types.ObjectId('6828695886cc0f204274647'),
+            _id: new mongoose.Types.ObjectId('682869588675cc0f20427447'),
             name: "Light Attack",
             category: "Special",
             type: "Active",
@@ -906,7 +906,7 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
-            _id: new mongoose.Types.ObjectId('6828695886cc0f204274648'),
+            _id: new mongoose.Types.ObjectId('682869588675cc0f20427448'),
             name: "Stone Rain",
             category: "Special",
             type: "Active",
@@ -921,8 +921,8 @@ exports.initialize = async () => {
         })
 
         await Skill.create({
-            _id: new mongoose.Types.ObjectId('6828695886cc0f204274649'),
-            name: "Nature Energy",
+            _id: new mongoose.Types.ObjectId('682869588675cc0f20427449'),
+            name: "Nature Energy", 
             category: "Special",
             type: "Active",
             currency: "coins",

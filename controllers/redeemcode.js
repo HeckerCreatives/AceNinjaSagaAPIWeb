@@ -1,4 +1,5 @@
-const Mail = require("../models/Mail")
+const Mail = require("../models/Mail");
+const { Item } = require("../models/Market");
 const { Redeemcode, CodesRedeemed } = require("../models/Redeemcode")
 const { default: mongoose } = require("mongoose");
 
@@ -7,20 +8,33 @@ const { default: mongoose } = require("mongoose");
 
 exports.createcode = async (req, res) => {
 
-    const { code , status, expiry, rewards } = req.body
+    const { code , status, expiry, rewards, itemrewards } = req.body
 
-    if(!code || !status || !expiry || !rewards) {
+    if(!code || !status || !expiry) {
         return res.status(400).json({ message: "failed", data: "Please input the required fields"})
     }
 
+    if (!rewards && !itemrewards) {
+        return res.status(400).json({ message: "failed", data: "Please provide at least one reward or item reward"})
+    }
     // check if code already exists
     const existingCode = await Redeemcode.findOne({ code: { $regex: new RegExp('^' + code + '$', 'i') } })
-
 
     if(existingCode) {
         return res.status(400).json({ message: "failed", data: "Code already exists"})
     }
-    await Redeemcode.create({ code, status, expiration: expiry, rewards })
+    
+    // check if itemrewards are valid items
+    if(itemrewards) {
+        const itemcheck = await Item.find({ _id: { $in: itemrewards.map(id => new mongoose.Types.ObjectId(id)) } })
+        console.log(itemrewards)
+        console.log(itemcheck)
+        if(itemrewards && itemrewards.length > 0 && itemcheck.length !== itemrewards.length) {
+            return res.status(400).json({ message: "failed", data: "Invalid item rewards provided"})
+        }
+    }
+
+    await Redeemcode.create({ code, status, expiration: expiry, rewards, itemrewards })
     .then(data => data)
     .catch(err => {
         console.log(`There's a problem while creating redeem code. Error: ${err}`)
@@ -52,6 +66,7 @@ exports.getcodes = async (req, res) => {
     }
 
     const codes = await Redeemcode.find(query)
+    .populate("itemrewards", "name ")
     .skip(pageOptions.page * pageOptions.limit)
     .limit(pageOptions.limit)
     .then(data => data)
@@ -92,6 +107,7 @@ exports.getcodes = async (req, res) => {
             status: isExpired ? 'expired' : status,
             expiration: expiration,
             rewards: rewards,
+            itemrewards: data.itemrewards ? data.itemrewards.map(item => item.name).join(", ") : null,
             redeemedCount: redeemedCounts[index] || 0
         })
     })

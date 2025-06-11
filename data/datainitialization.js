@@ -58,6 +58,24 @@ exports.weaponData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f20427495bf"),
+        name: "Katana",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        currency: "crystal",
+        price: 100,
+        description: "Increase max. health by 300 and all damage by 150 points.",
+        stats: {
+            level: 14,
+            damage: 120,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495c0"),
         name: "Water Sword",
         type: "skins",

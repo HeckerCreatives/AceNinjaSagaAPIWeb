@@ -11,6 +11,10 @@ const RedeemCodeSchema = new mongoose.Schema(
             type: Map, 
             of: Number 
         },
+        itemrewards: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Item',
+        }],
         status: {
             type: String,
             enum: ["active", "inactive"],

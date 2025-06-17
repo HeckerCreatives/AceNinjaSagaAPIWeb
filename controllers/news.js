@@ -232,14 +232,14 @@ exports.deletenews = async (req, res) => {
 }
 
 exports.createitemnews = async (req, res) => {
-    const { title, itemid, itemtype } = req.body;
+    const { title, items } = req.body;
 
-    if (!title || !itemid || !itemtype) {
+    if (!title || !items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({ message: "failed", data: "Please provide title, item ID, and item type." });
     }
 
     try {
-        await ItemNews.create({ title, item: itemid, itemtype });
+        await ItemNews.create({ title, items});
         return res.status(200).json({ message: "success" });
     } catch (err) {
         console.error(`Error creating news: ${err}`);
@@ -260,15 +260,20 @@ exports.getitemnews = async (req, res) => {
             .sort({ createdAt: -1 }) // Sort by creation date, most recent first
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
-            .populate("item");
+            .populate("items.itemid");
+
 
         const totalItemNews = await ItemNews.countDocuments();
 
         const finalData = ItemNewsData.map(data => ({
             id: data._id,
             title: data.title,
-            item: data.item,
-            itemtype: data.itemtype
+            items: data.items.map(item => ({
+                itemid: item.itemid ? item.itemid._id : null,
+                itemname: item.itemid ? item.itemid.name : "Unknown Item",
+                itemgender: item.itemid ? item.itemid.gender : "Unisex",
+                itemtype: item.itemtype
+            }))
         }));
 
         return res.status(200).json({ message: "success", data: finalData, totalPages: Math.ceil(totalItemNews / pageOptions.limit) });
@@ -295,7 +300,7 @@ exports.deleteitemnews = async (req, res) => {
 };
 
 exports.edititemnews = async (req, res) => {
-    const { id, title, itemid, itemtype } = req.body;
+    const { id, title, items } = req.body;
 
     if (!id) {
         return res.status(400).json({ message: "failed", data: "Item News ID is required." });
@@ -311,8 +316,7 @@ exports.edititemnews = async (req, res) => {
             { _id: id },
             {
                 title: title || existingItemNews.title,
-                item: itemid || existingItemNews.item,
-                itemtype: itemtype || existingItemNews.itemtype
+                items: items
             }
         );
 

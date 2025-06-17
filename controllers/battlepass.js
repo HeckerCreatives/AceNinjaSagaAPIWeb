@@ -172,9 +172,9 @@ exports.editbattlepassdetails = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Grand reward must be a non-empty array." });
         }
         // Validate each grandreward item
-        for (const item of grandreward) {
-            if (!item._id || !mongoose.Types.ObjectId.isValid(item._id)) {
-                return res.status(400).json({ message: "failed", data: "Each grand reward item must have a valid _id." });
+        for (const uid of grandreward) {
+            if (!uid || !mongoose.Types.ObjectId.isValid(uid)) {
+            return res.status(400).json({ message: "failed", data: "Each grand reward item must be a valid ObjectId." });
             }
         }
         updateData.grandreward = grandreward;

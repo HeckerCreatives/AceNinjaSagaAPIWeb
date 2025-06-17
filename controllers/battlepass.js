@@ -14,7 +14,7 @@ exports.getbattlepass = async (req, res) => {
     }
 
     const battlepassdata = await BattlepassSeason.find({})
-        .populate('grandreward', 'type name rarity description')
+        .populate('grandreward', 'type name rarity description inventorytype')
         .skip((pageOptions.page - 1) * pageOptions.limit)
         .limit(pageOptions.limit)
         .sort({ createdAt: -1 })
@@ -78,6 +78,7 @@ exports.getbattlepass = async (req, res) => {
             _id: gr._id || "No Grand Reward",
             name: gr.name || "No Grand Reward",
             type: gr.type || "none",
+            inventorytype: gr.inventorytype || "none",
             rarity: gr.rarity || "none",
             description: gr.description || "No description available"
         })) || [],

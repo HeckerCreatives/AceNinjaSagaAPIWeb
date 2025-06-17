@@ -177,6 +177,8 @@ exports.editbattlepassdetails = async (req, res) => {
             return res.status(400).json({ message: "failed", data: "Each grand reward item must be a valid ObjectId." });
             }
         }
+
+        
         updateData.grandreward = grandreward;
     } 
     if (!bpid || Object.keys(updateData).length === 0) {

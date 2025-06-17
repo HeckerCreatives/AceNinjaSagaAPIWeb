@@ -26,6 +26,18 @@ exports.getdailyquest = async (req, res) => {
     const totalCount = await QuestDetails.countDocuments(options.query)
     const totalPages = Math.ceil(totalCount / options.limit);
 
+
+    
+                        const now = new Date();
+                    const phTime = new Date(now.getTime()); 
+                    const midnight = new Date(phTime);
+                    midnight.setDate(midnight.getDate() + 1);
+                    midnight.setHours(0, 0, 0, 0);
+                    
+                    const timer = midnight - phTime;
+                    const hours = Math.floor(timer / (1000 * 60 * 60));
+                    const minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
+
     const finaldata = Dailyquestdata.map(quest => {
         return {
             id: quest._id,
@@ -36,7 +48,10 @@ exports.getdailyquest = async (req, res) => {
             rewardtype: quest.rewardtype || "none",
             rewards: quest.rewards,
             daily: quest.daily,
-            createdAt: quest.createdAt
+            createdAt: quest.createdAt,
+            timer: timer || 0, // Timer in milliseconds until next reset
+            minutes: minutes || 0, // Minutes until next reset
+            hours: hours || 0, // Hours until next reset
         };
     })
 

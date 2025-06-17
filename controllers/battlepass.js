@@ -41,6 +41,18 @@ exports.getbattlepass = async (req, res) => {
 
     const grandrewarditems = await Item.find({ currency: { $ne: "coins"}})
 
+    // timer
+
+                        const now = new Date();
+                    const phTime = new Date(now.getTime()); 
+                    const midnight = new Date(phTime);
+                    midnight.setDate(midnight.getDate() + 1);
+                    midnight.setHours(0, 0, 0, 0);
+                    
+                    const timer = midnight - phTime;
+                    const hours = Math.floor(timer / (1000 * 60 * 60));
+                    const minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
+
     const finaldata1 = grandrewarditems.map(i => ({
             id: i._id,
             name: i.name,
@@ -71,7 +83,10 @@ exports.getbattlepass = async (req, res) => {
             xpReward: fm.xpReward,
             requirements: fm.requirements,
             rewardtype: fm.rewardtype || "none",
-            daily: fm.daily || false
+            daily: fm.daily || false,
+            timer: timer || 0,
+            minutes: minutes || 0,
+            hours: hours || 0
         })),
         premiumMissions: bp.premiumMissions.map(pm => ({
             _id: pm._id,
@@ -80,7 +95,10 @@ exports.getbattlepass = async (req, res) => {
             xpReward: pm.xpReward,
             requirements: pm.requirements,
             rewardtype: pm.rewardtype || "none",
-            daily: pm.daily || false
+            daily: pm.daily || false,
+            timer: timer || 0,
+            minutes: minutes || 0,
+            hours: hours || 0
         })),
         tiers: bp.tiers,
         // grandreward: {

@@ -1201,7 +1201,7 @@ exports.getskills = async (req, res) => {
 
 //with exclude type
 exports.getallitems = async (req, res) => {
-  const { page = 1, limit = 10, excludeType } = req.query;
+  const { page = 1, limit = 10, excludeType, itemtype, gender } = req.query;
 
   const pageOptions = {
     page: parseInt(page, 10),
@@ -1213,6 +1213,8 @@ exports.getallitems = async (req, res) => {
     const excludeTypesArray = Array.isArray(excludeType) ? excludeType : [excludeType];
     query.type = { $nin: excludeTypesArray };
   }
+
+  c
 
   try {
     const items = await Item.find(query)
@@ -1335,5 +1337,98 @@ exports.editfreebiereward = async (req, res) => {
             type: item.type,
             amount: amount
         }
+    });
+}
+
+
+exports.getallitemsandskill  = async (req, res) => {
+
+    const { page, limit, itemType, genderType } = req.query;
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10
+    };
+
+    const query = {
+        inventorytype: { $nin: ['skills', 'hair'] }
+    };
+    if (itemType) {
+
+        if(itemType !== "item"){
+            query.inventorytype = itemType;
+        } else {
+            query.inventorytype = { $nin: ['skills', 'hair', "weapon", "outfit"] }; // Exclude skills and hair for itemType "item"
+        }
+    }
+    let skilldata
+    if (itemType === "skills") {
+        query.category = { $ne: "Basic" }; // Exclude Basic category for skills
+        
+        skilldata = await Skill.find(query)
+            .skip(pageOptions.page* pageOptions.limit)
+            .limit(pageOptions.limit)
+            .sort({ createdAt: -1 })
+            .then(data => data)
+            .catch(err => {
+                console.log(`There's a problem encountered while fetching skills. Error: ${err}`);
+                return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+            });
+    }
+
+    if (genderType) {
+        query.gender  = genderType;
+
+    }
+
+    const items = await Item.find(query)
+        .skip(pageOptions.page * pageOptions.limit)
+        .limit(pageOptions.limit)
+        .sort({ createdAt: -1 })
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+        });
+
+    if (!items || items.length === 0) {
+        return res.status(404).json({ message: "failed", data: "No items found." });
+    }
+
+    
+    const totalItems = await Item.countDocuments(query);
+    const totalSkills = skilldata ? await Skill.countDocuments({ category: { $ne: "Basic" } }) : 0;
+    const totalDocuments = totalItems + totalSkills;
+
+    const totalPages = Math.ceil(totalDocuments / pageOptions.limit);
+    
+
+    const sdata = skilldata ? skilldata.map(skill => ({
+        itemid: skill._id,
+        name: skill.name,
+        type: "skills",
+        gender: "unisex"
+    })) : [];
+
+    const itemData = items.map(item => ({
+        itemid: item._id,
+        name: item.name,
+        type: item.type,
+        gender: item.gender
+    }));
+    const mergedItems = [...itemData, ...sdata];
+
+    const response = {
+        items: mergedItems,
+        pagination: {
+            totalItems: totalDocuments,
+            totalPages,
+            currentPage: pageOptions.page,
+            itemsPerPage: pageOptions.limit
+        }
+    };
+
+    return res.status(200).json({
+        message: "success",
+        data: response
     });
 }

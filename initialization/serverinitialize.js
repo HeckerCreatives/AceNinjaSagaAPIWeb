@@ -17,6 +17,7 @@ const { CharacterChapter } = require("../models/Chapter")
 const { BattlepassSeason, BattlepassProgress, BattlepassMissionProgress } = require("../models/Battlepass")
 const { QuestDetails, QuestProgress } = require("../models/Quest")
 const Version = require("../models/Version")
+const PvpStats = require("../models/PvpStats")
 
 exports.initialize = async () => {
 
@@ -3401,7 +3402,25 @@ exports.initialize = async () => {
             }
             console.log(`Quest progress created for character ${character.username}`)
             }
+
+                    // pvpstats
+
+        const pvpStats = await PvpStats.findOne({ owner: character._id });
+
+        if (!pvpStats) {
+            await PvpStats.create({
+                owner: character._id,
+                win: 0,
+                lose: 0,
+                totalMatches: 0,
+                winRate: 0,
+                rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba04fa") // Default rank ID, adjust as necessary
+            });
+            console.log(`PVP stats created for character ${character.username}`);
         }
+        }
+
+        
 
         // Initialize season data
         const seasons = await Season.find({})

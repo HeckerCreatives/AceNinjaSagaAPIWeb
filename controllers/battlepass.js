@@ -67,13 +67,20 @@ exports.getbattlepass = async (req, res) => {
         freeMissions: bp.freeMissions,
         premiumMissions: bp.premiumMissions,
         tiers: bp.tiers,
-        grandreward: {
-            _id: bp.grandreward?._id || "No Grand Reward",
-            name: bp.grandreward?.name || "No Grand Reward",
-            type: bp.grandreward?.type || "none",
-            rarity: bp.grandreward?.rarity || "none",
-            description: bp.grandreward?.description || "No description available"
-        },
+        // grandreward: {
+        //     _id: bp.grandreward?._id || "No Grand Reward",
+        //     name: bp.grandreward?.name || "No Grand Reward",
+        //     type: bp.grandreward?.type || "none",
+        //     rarity: bp.grandreward?.rarity || "none",
+        //     description: bp.grandreward?.description || "No description available"
+        // },
+        grandreward: bp.grandreward.map(gr => ({
+            _id: gr._id || "No Grand Reward",
+            name: gr.name || "No Grand Reward",
+            type: gr.type || "none",
+            rarity: gr.rarity || "none",
+            description: gr.description || "No description available"
+        })) || [],
         createdAt: bp.createdAt,
         updatedAt: bp.updatedAt
     }));
@@ -160,7 +167,18 @@ exports.editbattlepassdetails = async (req, res) => {
     if (status) updateData.status = status;
     if (tierCount) updateData.tierCount = tierCount;
     if (premiumCost) updateData.premiumCost = premiumCost;
-    if (grandreward) updateData.grandreward = grandreward;
+    if (grandreward) {
+        if (!Array.isArray(grandreward) || grandreward.length === 0) {
+            return res.status(400).json({ message: "failed", data: "Grand reward must be a non-empty array." });
+        }
+        // Validate each grandreward item
+        for (const item of grandreward) {
+            if (!item._id || !mongoose.Types.ObjectId.isValid(item._id)) {
+                return res.status(400).json({ message: "failed", data: "Each grand reward item must have a valid _id." });
+            }
+        }
+        updateData.grandreward = grandreward;
+    } 
     if (!bpid || Object.keys(updateData).length === 0) {
         return res.status(400).json({ message: "failed", data: "Please provide all required fields." });
     }

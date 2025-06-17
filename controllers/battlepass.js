@@ -64,8 +64,24 @@ exports.getbattlepass = async (req, res) => {
         status: bp.status,
         tierCount: bp.tierCount,
         premiumCost: bp.premiumCost,
-        freeMissions: bp.freeMissions,
-        premiumMissions: bp.premiumMissions,
+        freeMissions: bp.freeMissions.map(fm => ({
+            _id: fm._id,
+            missionName: fm.missionName,
+            description: fm.description,
+            xpReward: fm.xpReward,
+            requirements: fm.requirements,
+            rewardtype: fm.rewardtype || "none",
+            daily: fm.daily || false
+        })),
+        premiumMissions: bp.premiumMissions.map(pm => ({
+            _id: pm._id,
+            missionName: pm.missionName,
+            description: pm.description,
+            xpReward: pm.xpReward,
+            requirements: pm.requirements,
+            rewardtype: pm.rewardtype || "none",
+            daily: pm.daily || false
+        })),
         tiers: bp.tiers,
         // grandreward: {
         //     _id: bp.grandreward?._id || "No Grand Reward",

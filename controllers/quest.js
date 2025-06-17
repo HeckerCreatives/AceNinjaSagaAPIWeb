@@ -33,6 +33,7 @@ exports.getdailyquest = async (req, res) => {
             description: quest.description,
             requirements: quest.requirements,
             xpReward: quest.xpReward,
+            rewardtype: quest.rewardtype || "none",
             rewards: quest.rewards,
             daily: quest.daily,
             createdAt: quest.createdAt
@@ -48,7 +49,7 @@ exports.getdailyquest = async (req, res) => {
 
 exports.editdailyquest = async (req, res) => {
 
-    const { id, missionName, description, requirements, daily, xpReward } = req.body; 
+    const { id, missionName, description, requirements, daily, xpReward, rewardtype } = req.body; 
 
     const updateData = {
     };
@@ -58,6 +59,7 @@ exports.editdailyquest = async (req, res) => {
     if (requirements) updateData.requirements = requirements;
     if (xpReward !== undefined) updateData.xpReward = xpReward;
     if (daily !== undefined) updateData.daily = daily;
+    if (rewardtype) updateData.rewardtype = rewardtype;
     if (!id) {
         return res.status(400).json({ message: "bad-request", data: "Quest ID is required." });
     }

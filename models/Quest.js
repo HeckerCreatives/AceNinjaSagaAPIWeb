@@ -16,6 +16,10 @@ const QuestDetailsSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
+        rewardtype: {
+            type: String,
+            index: true,
+        },
         requirements: {
             type: Object,
             required: true

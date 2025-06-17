@@ -1274,7 +1274,7 @@ exports.getallitems = async (req, res) => {
 };
 
 exports.editfreebiereward = async (req, res) => {
-    const { itemid, amount } = req.body;
+    const { itemid, amount, description, } = req.body;
 
     if (!itemid || !amount) {
         return res.status(400).json({ message: "failed", data: "Please provide item ID and amount." });
@@ -1312,7 +1312,10 @@ exports.editfreebiereward = async (req, res) => {
     // Update Item collection
     await Item.findOneAndUpdate(
         { _id: itemid },
-        { [field]: amount }
+        { 
+            [field]: amount,
+            description: description || item.description 
+        }
     ).catch(err => {
         console.log(`There's a problem encountered while updating item. Error: ${err}`);
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
@@ -1321,7 +1324,7 @@ exports.editfreebiereward = async (req, res) => {
     // Update market.items as well
     await Market.updateMany(
         { "items._id": itemid },
-        { $set: { [`items.$.${field}`]: amount } }
+        { $set: { [`items.$.${field}`]: amount, description: description || item.description } }
     ).catch(err => {
         console.log(`There's a problem encountered while updating market items. Error: ${err}`);
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });

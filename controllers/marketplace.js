@@ -1324,7 +1324,7 @@ exports.editfreebiereward = async (req, res) => {
     // Update market.items as well
     await Market.updateMany(
         { "items._id": itemid },
-        { $set: { [`items.$.${field}`]: amount, description: description || item.description } }
+        { $set: { [`items.$.${field}`]: amount, 'items.$.description': description || item.description } }
     ).catch(err => {
         console.log(`There's a problem encountered while updating market items. Error: ${err}`);
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });

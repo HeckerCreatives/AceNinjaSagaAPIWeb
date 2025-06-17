@@ -200,27 +200,35 @@ exports.updatecode = async (req, res) => {
         if (status !== undefined && status !== "") updateObj.status = status;
         if (expiry !== undefined && expiry !== "") updateObj.expiration = expiry;
         if (rewards !== undefined && rewards !== "") updateObj.rewards = rewards;
-        if (itemrewards !== undefined && itemrewards.length > 0) {
+        if (itemrewards !== undefined) {
+            if (itemrewards.length > 0) {
             // Check if itemrewards are valid items
             const itemcheck = await Item.find({ _id: { $in: itemrewards.map(id => new mongoose.Types.ObjectId(id)) } });
             if (itemcheck.length !== itemrewards.length) {
                 return res.status(400).json({ 
-                    message: "failed", 
-                    data: "Invalid item rewards provided" 
+                message: "failed", 
+                data: "Invalid item rewards provided" 
                 });
             }
             updateObj.itemrewards = itemrewards;
+            } else {
+            updateObj.itemrewards = [];
+            }
         }
-        if (skillrewards !== undefined && skillrewards.length > 0) {
+        if (skillrewards !== undefined) {
+            if (skillrewards.length > 0) {
             // Check if skillrewards are valid skills
             const skillcheck = await Skill.find({ _id: { $in: skillrewards.map(id => new mongoose.Types.ObjectId(id)) } });
             if (skillcheck.length !== skillrewards.length) {
                 return res.status(400).json({ 
-                    message: "failed", 
-                    data: "Invalid skill rewards provided" 
+                message: "failed", 
+                data: "Invalid skill rewards provided" 
                 });
             }
             updateObj.skillrewards = skillrewards;
+            } else {
+            updateObj.skillrewards = [];
+            }
         }
         // Check if there are fields to update
         if (Object.keys(updateObj).length === 0) {

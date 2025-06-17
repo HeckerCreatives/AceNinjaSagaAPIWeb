@@ -52,6 +52,10 @@ const BattlepassSeasonSchema = new mongoose.Schema(
                     type: Object,
                     required: true
                 },
+                rewardtype: {
+                    type: String,
+                    index: true,
+                },
                 daily: {
                     type: Boolean,
                     default: false
@@ -75,6 +79,10 @@ const BattlepassSeasonSchema = new mongoose.Schema(
                 requirements: {
                     type: Object,
                     required: true
+                },
+                rewardtype: {
+                    type: String,
+                    index: true,
                 },
                 daily: {
                     type: Boolean,
@@ -144,7 +152,8 @@ const BattlepassProgressSchema = new mongoose.Schema(
                 tier: Number,
                 rewardType: {
                     type: String,
-                    enum: ['free', 'premium']
+                    enum: ['free', 'premium', 'grandreward'],
+                    required: true
                 }
             }
         ]
@@ -232,7 +241,7 @@ const BattlepassHistorySchema = new mongoose.Schema(
         claimedrewards: {
             type: {
                 type: String,
-                enum: ['free', 'premium'],
+                enum: ['free', 'premium', 'grandreward'],
                 required: true
             },
             item: {

@@ -1214,8 +1214,6 @@ exports.getallitems = async (req, res) => {
     query.type = { $nin: excludeTypesArray };
   }
 
-  c
-
   try {
     const items = await Item.find(query)
       .skip((pageOptions.page - 1) * pageOptions.limit)

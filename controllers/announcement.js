@@ -20,7 +20,7 @@ exports.createannouncement = async (req, res) => {
     try {
         await Announcement.create({ title, content, type: contentType, url: mediaUrl, announcementtype: announcementtype });
 
-        socket.emit("sendnotification", "")
+        socket.emit("sendmessagesnotif", { unreadcount: 1 })
 
         return res.status(200).json({ message: "success" });
     } catch (err) {

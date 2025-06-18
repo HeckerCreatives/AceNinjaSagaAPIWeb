@@ -58,7 +58,7 @@ exports.createnews = async (req, res) => {
             video = 1
         }
 
-        socket.emit("sendnewsandshowcase", JSON.stringify({ images: images, video: video }))
+        socket.emit("sendnewsandshowcase", { images: images, video: video })
 
         return res.status(200).json({ message: "success" });
     } catch (err) {

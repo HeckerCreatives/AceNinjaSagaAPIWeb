@@ -48,7 +48,17 @@ exports.createnews = async (req, res) => {
     try {
         await News.create({ title, content, type: contentType, url: mediaUrl });
 
-        socket.emit("sendnewsandshowcase", JSON.stringify({ unreadcount: 1 }))
+        let images = 0;
+        let video = 0;
+
+        if (contentType == "image"){
+            images = 1
+        }
+        else if (contentType == "video"){
+            video = 1
+        }
+
+        socket.emit("sendnewsandshowcase", JSON.stringify({ images: images, video: video }))
 
         return res.status(200).json({ message: "success" });
     } catch (err) {

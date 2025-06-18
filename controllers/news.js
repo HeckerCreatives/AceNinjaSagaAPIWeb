@@ -48,7 +48,7 @@ exports.createnews = async (req, res) => {
     try {
         await News.create({ title, content, type: contentType, url: mediaUrl });
 
-        socket.emit("sendnotification", "")
+        socket.emit("sendnewsandshowcase", JSON.stringify({ unreadcount: 1 }))
 
         return res.status(200).json({ message: "success" });
     } catch (err) {

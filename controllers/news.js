@@ -1,6 +1,5 @@
 const { default: mongoose } = require("mongoose")
 const { News, ItemNews } = require("../models/News")
-const axios = require('axios')
 const socket = require("../socket/config");
 
 // exports.creatnews = async (req, res) => {

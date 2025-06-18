@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose")
 const Announcement = require("../models/Announcement")
+const socket = require("../socket/config");
 
 exports.createannouncement = async (req, res) => {
     const { title, content, contentType, url, announcementtype } = req.body;
@@ -18,6 +19,9 @@ exports.createannouncement = async (req, res) => {
 
     try {
         await Announcement.create({ title, content, type: contentType, url: mediaUrl, announcementtype: announcementtype });
+
+        socket.emit("sendnotification", "")
+
         return res.status(200).json({ message: "success" });
     } catch (err) {
         console.error(`Error creating news: ${err}`);

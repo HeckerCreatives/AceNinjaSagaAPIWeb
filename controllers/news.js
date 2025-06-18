@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose")
 const { News, ItemNews } = require("../models/News")
-
+const axios = require('axios')
+const socket = require("../socket/config");
 
 // exports.creatnews = async (req, res) => {
    
@@ -47,6 +48,9 @@ exports.createnews = async (req, res) => {
 
     try {
         await News.create({ title, content, type: contentType, url: mediaUrl });
+
+        socket.emit("sendnotification", "")
+
         return res.status(200).json({ message: "success" });
     } catch (err) {
         console.error(`Error creating news: ${err}`);

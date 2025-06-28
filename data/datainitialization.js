@@ -1760,6 +1760,24 @@ exports.hairData = [
         imageUrl: ""
     },
     {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749562"),
+        name: "Female Fashion Hairstyle 7",
+        type: "skins",
+        inventorytype: "hair",
+        rarity: "common",
+        gender: "female",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749553"),
         name: "Warrior Hairstyle",
         type: "skins",

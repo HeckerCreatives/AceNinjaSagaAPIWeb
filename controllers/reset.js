@@ -4,6 +4,7 @@ const ResetHistory = require("../models/Resethistory");
 const { QuestDetails, QuestProgress } = require("../models/Quest");
 const { CharacterDailySpin } = require("../models/Rewards");
 const Reset = require("../models/Reset");
+const { CharacterMonthlyLogin } = require("../models/Rewards");
 
 
 
@@ -347,7 +348,7 @@ exports.resetallmonthlylogin = async (req, res) => {
     await ResetHistory.create({
         owner: id,
         type: "monthlylogin",
-        action: `Reset all monthly login`,
+        action: `Reset all character daily monthly login`,
     })
     .then(data => data)
     .catch(err => {
@@ -376,6 +377,60 @@ exports.resetallfreebies = async (req, res) => {
         owner: id,
         type: "freebies",
         action: `Reset all freebies`,
+    })
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while logging the reset action" });
+    });
+
+    res.status(200).json({
+        message: "success",
+    });
+}
+
+exports.resetmonthlylogin = async (req, res) => {
+    const { id } = req.user;
+
+    await Reset.deleteMany(
+        { type: "monthlylogin", action: "checkin" }
+    )
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while resetting the monthly login" });
+    });
+
+    // Create the default days array
+    const daysArray = [];
+    for (let i = 1; i <= 28; i++) {
+        daysArray.push({ day: i, loggedIn: false, missed: false, claimed: false });
+    }
+
+    // Update the character login of users
+    await CharacterMonthlyLogin.updateMany(
+        {},
+        { 
+            $set: { 
+                login: false, 
+                loginstreak: 0, 
+                lastlogin: null,
+                days: daysArray,
+                totalLoggedIn: 0,
+                currentDay: 1
+            } 
+        }
+    )
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while updating character monthly login" });
+    });
+
+    await ResetHistory.create({
+        owner: id,
+        type: "monthlylogin",
+        action: `Reset all monthly login`,
     })
     .then(data => data)
     .catch(err => {

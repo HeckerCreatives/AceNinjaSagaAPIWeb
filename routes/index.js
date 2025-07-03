@@ -22,6 +22,7 @@ const routers = app => {
     app.use("/ranking", require("./ranking"))
     app.use("/ranktier", require('./ranktier'));
     app.use("/redeemcode", require("./redeemcode"))
+    app.use("/reset", require("./reset"))
     app.use("/rewards", require("./rewards"))
     app.use("/seasons", require('./seasons'));
     app.use("/skills", require("./skills"))

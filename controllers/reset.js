@@ -359,3 +359,31 @@ exports.resetallmonthlylogin = async (req, res) => {
         message: "success",
     });
 }
+
+exports.resetallfreebies = async (req, res) => {
+    const { id } = req.user;
+
+    await Reset.deleteMany(
+        { type: { $regex: /^freebie/i }, action: "claim" }
+    )
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while resetting the freebies" });
+    });
+
+    await ResetHistory.create({
+        owner: id,
+        type: "freebies",
+        action: `Reset all freebies`,
+    })
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while logging the reset action" });
+    });
+
+    res.status(200).json({
+        message: "success",
+    });
+}

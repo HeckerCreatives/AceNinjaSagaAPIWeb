@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getbattlepassquests, resetpassquest, getresethistory, getquests, resetquest, resetallpassquests, resetallquests, resetallweeklylogin, resetallmonthlylogin } = require('../controllers/reset');
+const { getbattlepassquests, resetpassquest, getresethistory, getquests, resetquest, resetallpassquests, resetallquests, resetallweeklylogin, resetallmonthlylogin, resetallfreebies } = require('../controllers/reset');
 const { protectsuperadmin } = require('../middleware/middleware');
 
 router
@@ -12,4 +12,5 @@ router
  .get('/getresethistory', protectsuperadmin, getresethistory)
  .post('/resetallweekylogin', protectsuperadmin, resetallweeklylogin)
  .post('/resetallmonthlylogin', protectsuperadmin, resetallmonthlylogin)
+ .post('/resetallfreebies', protectsuperadmin, resetallfreebies)
 module.exports = router;

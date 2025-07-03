@@ -7,18 +7,20 @@ const CharacterTitleSchema = new mongoose.Schema(
             ref: "Characterdata",
             index: true
         },
-        items: [
-            {
-                itemid: {
-                    type: String,
-                    index: true
-                },
-                isEquipped: {
-                    type: Boolean,
-                    default: false    
-                }
-            }
-        ]
+        title: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Titles",
+        },
+        index: {
+            type: Number,
+            required: true,
+            index: true
+        },
+        title: {
+            type: String,
+            required: true,
+            index: true
+        },
     },
     {
         timestamps: true

@@ -4,6 +4,7 @@ const routers = app => {
     app.use("/analytics", require("./analytics"))
     app.use("/announcement", require("./announcement"))
     app.use("/auth", require("./auth"))
+    app.use("/badge", require("./badge"))
     app.use("/battlepass", require("./battlepass"))
     app.use("/character", require("./character"))
     app.use("/companion", require("./companion"))
@@ -28,6 +29,7 @@ const routers = app => {
     app.use("/skills", require("./skills"))
     app.use("/sociallinks", require("./sociallinks"))
     app.use("/subscription", require("./subscription"))
+    app.use("/title", require("./title"))
     app.use("/transaction", require("./transaction"))
     app.use("/uploads", require('./picture'));
     app.use("/user", require("./user"))

@@ -3527,3 +3527,116 @@ const questmissionsdata = [
 exports.questmissionsdata = questmissionsdata;
 
 // #endregion
+
+// #region TITLES AND BADGES
+
+const titlesdata = [
+    {
+        index: 1,
+        title: "Ace",
+        description: "You are an Ace Ninja, mastering the art of ninjutsu."
+    },
+    {
+        index: 2,
+        title: "Clan God",
+        description: "You are a revered leader of your clan, guiding them to greatness."
+    },
+    {
+        index: 3,
+        title: "Final Boss",
+        description: "You are the ultimate challenge, feared by all who dare to face you."
+    },
+    {
+        index: 4,
+        title: "GOAT",
+        description: "You are the Greatest of All Time, unmatched in skill and prowess."
+    },
+    {
+        index: 5,
+        title: "Mastermind",
+        description: "You are a strategic genius, always one step ahead of your opponents."
+    },
+    {
+        index: 6,
+        title: "Player DIFF",
+        description: "You are the difference maker in every match, leading your team to victory."
+    },
+    {
+        index: 7,
+        title: "Stylish",
+        description: "You are known for your stylish moves and flashy techniques."
+    },
+    {
+        index: 8,
+        title: "Unkillable",
+        description: "You are a force of nature, nearly impossible to defeat in battle."
+    },
+    {
+        index: 9,
+        title: "VIP",
+        description: "You are a Very Important Player, enjoying exclusive perks and privileges."
+    },
+    {
+        index: 10,
+        title: "Void Walker",
+        description: "You traverse the void, mastering the balance between light and darkness."
+    }
+]
+
+exports.titlesdata = titlesdata;
+
+const badgesdata = [
+    {
+        index: 1,
+        title: "VIP",
+        description: "You are a Very Important Player, enjoying exclusive perks and privileges."
+    },
+    {
+        index: 2,
+        title: "Raid Boss",
+        description: "You are a formidable opponent in raid battles, feared by all challengers."
+    },
+    {
+        index: 3,
+        title: "Clan Season 1 Champion",
+        description: "You led your clan to victory in the first season, proving your dominance."
+    },
+    {
+        index: 4,
+        title: "PVP",
+        description: "You are a skilled PvP player, dominating the arena with your prowess."
+    },
+    {
+        index: 5,
+        title: "Season 1",
+        description: "You participated in the first season, marking your place in history."
+    },
+    {
+        index: 6,
+        title: "Shadow Badge",
+        description: "You are a master of stealth, moving unseen and unheard in the shadows."
+    },
+    {
+        index: 7,
+        title: "Samurai",
+        description: "You are a skilled samurai, wielding your sword with precision and honor."
+    },
+    {
+        index: 8,
+        title: "Dark Path",
+        description: "You have chosen the path of darkness, embracing its power and mystery."
+    },
+    {
+        index: 9,
+        title: "Ninja",
+        description: "You are a master ninja, skilled in the art of stealth and combat."
+    },
+    {
+        index: 10,
+        title: "Ace",
+        description: "You are an Ace Ninja, mastering the art of ninjutsu and combat."
+    }
+]
+
+
+exports.badgesdata = badgesdata;

@@ -7,6 +7,7 @@ const routers = app => {
     app.use("/badge", require("./badge"))
     app.use("/battlepass", require("./battlepass"))
     app.use("/character", require("./character"))
+    app.use("/chapter", require("./chapter"))
     app.use("/companion", require("./companion"))
     app.use("/contactus", require("./contactus"))
     app.use("/dashboard", require('./dashboard'));

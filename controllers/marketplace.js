@@ -42,7 +42,7 @@ exports.getMarketItems = async (req, res) => {
                 }
             },
             { $unwind: '$items' },
-            { $match: { "items.inventorytype": { $ne: "hair" } } },
+            { $match: { "items.inventorytype": { $nin: ["hair", "weapon"] } } },
             {
                 $lookup: {
                     from: 'skills',
@@ -996,7 +996,7 @@ exports.getstoreitemlist = async (req, res) => {
     // Filter out items that are already in the market
     const filteredItems = items.filter(item => {
         return !marketitems.items.some(marketItem => marketItem._id.toString() === item._id.toString()) 
-            && item.inventorytype !== 'hair';
+            && item.inventorytype !== 'hair' && item.inventorytype !== 'weapon';
     });
 
     if(!filteredItems || filteredItems.length === 0) {

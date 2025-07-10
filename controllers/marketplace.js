@@ -1352,86 +1352,155 @@ exports.getallitemsandskill  = async (req, res) => {
         limit: parseInt(limit) || 10
     };
 
-    const query = {
-        inventorytype: { $nin: ['skills', 'hair'] }
-    };
-    if (itemType) {
+    try {
+        // Handle skills-only filter
+        if (itemType === "skills") {
+            const skillData = await Skill.find({ category: { $ne: "Basic" } })
+                .skip(pageOptions.page * pageOptions.limit)
+                .limit(pageOptions.limit)
+                .sort({ createdAt: -1 });
 
-        if(itemType !== "item"){
-            query.inventorytype = itemType;
-        } else {
-            query.inventorytype = { $nin: ['skills', 'hair', "weapon", "outfit"] }; // Exclude skills and hair for itemType "item"
-        }
-    }
-    let skilldata
-    if (itemType === "skills") {
-        query.category = { $ne: "Basic" }; // Exclude Basic category for skills
-        
-        skilldata = await Skill.find(query)
-            .skip(pageOptions.page* pageOptions.limit)
-            .limit(pageOptions.limit)
-            .sort({ createdAt: -1 })
-            .then(data => data)
-            .catch(err => {
-                console.log(`There's a problem encountered while fetching skills. Error: ${err}`);
-                return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+            const totalSkills = await Skill.countDocuments({ category: { $ne: "Basic" } });
+            const totalPages = Math.ceil(totalSkills / pageOptions.limit);
+
+            const formattedSkills = skillData.map(skill => ({
+                itemid: skill._id,
+                name: skill.name,
+                type: "skills",
+                gender: "unisex"
+            }));
+
+            return res.status(200).json({
+                message: "success",
+                data: {
+                    items: formattedSkills,
+                    pagination: {
+                        totalItems: totalSkills,
+                        totalPages,
+                        currentPage: pageOptions.page,
+                        itemsPerPage: pageOptions.limit
+                    }
+                }
             });
-    }
+        }
 
-    if (genderType) {
-        query.gender  = genderType;
+        // Handle items-only filter
+        if (itemType === "items") {
+            const query = {
+                inventorytype: { $nin: ['skills', 'hair'] }
+            };
 
-    }
+            if (genderType) {
+                query.gender = genderType;
+            }
 
-    const items = await Item.find(query)
-        .skip(pageOptions.page * pageOptions.limit)
-        .limit(pageOptions.limit)
-        .sort({ createdAt: -1 })
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while fetching items. Error: ${err}`);
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+            const items = await Item.find(query)
+                .skip(pageOptions.page * pageOptions.limit)
+                .limit(pageOptions.limit)
+                .sort({ createdAt: -1 });
+
+            const totalItems = await Item.countDocuments(query);
+            const totalPages = Math.ceil(totalItems / pageOptions.limit);
+
+            const formattedItems = items.map(item => ({
+                itemid: item._id,
+                name: item.name,
+                type: item.type,
+                gender: item.gender
+            }));
+
+            return res.status(200).json({
+                message: "success",
+                data: {
+                    items: formattedItems,
+                    pagination: {
+                        totalItems,
+                        totalPages,
+                        currentPage: pageOptions.page,
+                        itemsPerPage: pageOptions.limit
+                    }
+                }
+            });
+        }
+
+        // Handle specific item type filter (weapon, outfit, etc.)
+        const query = {
+            inventorytype: { $nin: ['skills', 'hair'] }
+        };
+
+        if (itemType && itemType !== "item" && itemType !== "skills" && itemType !== "items") {
+            query.inventorytype = itemType;
+        } else if (itemType === "item") {
+            query.inventorytype = { $nin: ['skills', 'hair', "weapon", "outfit"] };
+        }
+
+        if (genderType) {
+            query.gender = genderType;
+        }
+
+        // Fetch items
+        const items = await Item.find(query)
+            .skip(pageOptions.page * pageOptions.limit)
+            .limit(pageOptions.limit)
+            .sort({ createdAt: -1 });
+
+        // Fetch skills if no specific itemType filter or mixed results needed
+        let skillData = [];
+        if (!itemType || itemType === "all") {
+            skillData = await Skill.find({ category: { $ne: "Basic" } })
+                .skip(pageOptions.page * pageOptions.limit)
+                .limit(pageOptions.limit)
+                .sort({ createdAt: -1 });
+        }
+
+        // Check if any data found
+        if ((!items || items.length === 0) && (!skillData || skillData.length === 0)) {
+            return res.status(404).json({ message: "failed", data: "No items or skills found." });
+        }
+
+        // Calculate totals
+        const totalItems = await Item.countDocuments(query);
+        const totalSkills = (!itemType || itemType === "all") ? await Skill.countDocuments({ category: { $ne: "Basic" } }) : 0;
+        const totalDocuments = totalItems + totalSkills;
+        const totalPages = Math.ceil(totalDocuments / pageOptions.limit);
+
+        // Format response data
+        const formattedSkills = skillData.map(skill => ({
+            itemid: skill._id,
+            name: skill.name,
+            type: "skills",
+            gender: "unisex"
+        }));
+
+        const formattedItems = items.map(item => ({
+            itemid: item._id,
+            name: item.name,
+            type: item.type,
+            gender: item.gender
+        }));
+
+        const mergedItems = [...formattedItems, ...formattedSkills];
+
+        const response = {
+            items: mergedItems,
+            pagination: {
+                totalItems: totalDocuments,
+                totalPages,
+                currentPage: pageOptions.page,
+                itemsPerPage: pageOptions.limit
+            }
+        };
+
+        return res.status(200).json({
+            message: "success",
+            data: response
         });
 
-    if (!items || items.length === 0) {
-        return res.status(404).json({ message: "failed", data: "No items found." });
+    } catch (err) {
+        console.log(`There's a problem encountered while fetching items and skills. Error: ${err}`);
+        return res.status(400).json({ 
+            message: "bad-request", 
+            data: "There's a problem with the server. Please contact support for more details." 
+        });
     }
-
-    
-    const totalItems = await Item.countDocuments(query);
-    const totalSkills = skilldata ? await Skill.countDocuments({ category: { $ne: "Basic" } }) : 0;
-    const totalDocuments = totalItems + totalSkills;
-
-    const totalPages = Math.ceil(totalDocuments / pageOptions.limit);
-    
-
-    const sdata = skilldata ? skilldata.map(skill => ({
-        itemid: skill._id,
-        name: skill.name,
-        type: "skills",
-        gender: "unisex"
-    })) : [];
-
-    const itemData = items.map(item => ({
-        itemid: item._id,
-        name: item.name,
-        type: item.type,
-        gender: item.gender
-    }));
-    const mergedItems = [...itemData, ...sdata];
-
-    const response = {
-        items: mergedItems,
-        pagination: {
-            totalItems: totalDocuments,
-            totalPages,
-            currentPage: pageOptions.page,
-            itemsPerPage: pageOptions.limit
-        }
-    };
-
-    return res.status(200).json({
-        message: "success",
-        data: response
-    });
 }

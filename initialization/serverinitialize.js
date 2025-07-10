@@ -3319,6 +3319,17 @@ exports.initialize = async () => {
                 await CharacterChapter.insertMany(chapterlist)
                 console.log(`Chapter challenge created for character ${character.username}`);
             }
+
+            // const charactermonthlylogin = await CharacterMonthlyLogin.findOne({ owner: character._id });
+
+            // const currentDate = new Date();
+            // const today = currentDate.getDate();
+
+            // await CharacterMonthlyLogin.updateOne(
+            //     { owner: character._id },
+            //     { $set: { currentDay: today } }
+            // );
+            // console.log(`Current day updated for character ${character.username} to ${today}`);
         }
     }
 

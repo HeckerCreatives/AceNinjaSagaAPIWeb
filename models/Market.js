@@ -85,17 +85,14 @@ const itemSchema = new mongoose.Schema({
         },
         damage: {
             type: Number,
-            min: 0
         },
         defense: {
             type: Number,
             default: 0,
-            min: 0
         },
         speed: {
             type: Number,
             default: 0,
-            min: 0
         }
     }
 });

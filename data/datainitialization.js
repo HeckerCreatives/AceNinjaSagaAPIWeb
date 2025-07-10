@@ -182,6 +182,78 @@ exports.weaponData = [
             speed: 0
         },
         imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749600"),
+        name: "Fire Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Burn opponent's 3% max. health every time they attack. Increase magic damage by 10.",
+        stats: {
+            level: 20,
+            damage: 200,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749601"),
+        name: "Lightning Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increase speed by 5. Increase magic damage by 15.",
+        stats: {
+            level: 20,
+            damage: 300,
+            defense: 0,
+            speed: 5
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749602"),
+        name: "Ancient Spear",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "rare",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increases user's armor and magic resist by 15 and max. health by 300, but reduces speed by 5.",
+        stats: {
+            level: 10,
+            damage: 200,
+            defense: 15,
+            speed: -5
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749603"),
+        name: "God's Axe",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "When equipped user is immune to stun, fear, freeze, poison and burn effects.",
+        stats: {
+            level: 20,
+            damage: 300,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
     }
 ]
 
@@ -1760,7 +1832,7 @@ exports.hairData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749562"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749952"),
         name: "Female Fashion Hairstyle 7",
         type: "skins",
         inventorytype: "hair",

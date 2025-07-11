@@ -2816,784 +2816,804 @@ exports.monthlylogindata = [
 // #endregion
 // #region BATTLEPASS
 
-            const battlepassData = [
-            {
-                title: "Battlepass", 
-                season: 1,
-                tierCount: 50,
-                premiumCost: 1000,
-                currency: "crystal",
-                status: "active",
-                freeMissions: [
-                    {
-                        missionName: "Win Multiple PvP Matches",
-                        description: "Win matches in PvP mode.",
-                        xpReward: 250,
-                        requirements: { pvpwins: 3 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Defeat Enemies",
-                        description: "Defeat enemies in any mode.",
-                        xpReward: 250,
-                        requirements: { enemiesdefeated: 5 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Claim Daily Quests",
-                        description: "Claim daily quests.",
-                        xpReward: 250,
-                        requirements: { dailyquests: 2 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Use Skills",
-                        description: "Use any skill in battle.",
-                        xpReward: 250,
-                        requirements: { skillsused: 10 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Deal Total Damage",
-                        description: "Deal damage in battles.",
-                        xpReward: 250,
-                        requirements: { totaldamage: 5000 },
-                        daily: true,
-                    },
-                ],
-                premiumMissions: [
-                    {
-                        missionName: "Win PvP Matches",
-                        description: "Win matches in PvP mode.",
-                        xpReward: 500,
-                        requirements: { pvpwins: 3 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Claim Daily Quests",
-                        description: "Claim daily quests.",
-                        xpReward: 500,
-                        requirements: { dailyquests: 5 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Use Skills",
-                        description: "Use any skill in battle.",
-                        xpReward: 500,
-                        requirements: { skillsused: 25 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Participate in PvP",
-                        description: "Join PvP matches.",
-                        xpReward: 500,
-                        requirements: { pvpparticipated: 3 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Deal Total Damage",
-                        description: "Deal damage in battles.",
-                        xpReward: 500,
-                        requirements: { totaldamage: 15000 },
-                        daily: true,
-                    },
-                ],
-                tiers: [
-                    {
-                        tierNumber: 1,
-                        freeReward: { type: "coins", amount: 500 },
-                        premiumReward: { type: "coins", amount: 1000 },
-                        xpRequired: 1000
-                    },
-                    {
-                        tierNumber: 2, 
-                        freeReward: { type: "exp", amount: 1000 },
-                        premiumReward: { type: "exp", amount: 2000 },
-                        xpRequired: 2000
-                    },
-                    {
-                        tierNumber: 3,
-                        freeReward: { type: "crystal", amount: 25 },
-                        premiumReward: { type: "crystal", amount: 50 },
-                        xpRequired: 3000
-                    },
-                    {
-                        tierNumber: 4,
-                        freeReward: { type: "coins", amount: 1000 },
-                        premiumReward: { type: "coins", amount: 2000 },
-                        xpRequired: 4000
-                    },
-                    {
-                        tierNumber: 5,
-                        freeReward: { type: "exp", amount: 1500 },
-                        premiumReward: { type: "exp", amount: 3000 },
-                        xpRequired: 5000
-                    },
-                    {
-                        tierNumber: 6,
-                        freeReward: { type: "crystal", amount: 35 },
-                        premiumReward: { type: "crystal", amount: 70 },
-                        xpRequired: 6000
-                    },
-                    {
-                        tierNumber: 7,
-                        freeReward: { type: "coins", amount: 1500 },
-                        premiumReward: { type: "coins", amount: 3000 },
-                        xpRequired: 7000
-                    },
-                    {
-                        tierNumber: 8,
-                        freeReward: { type: "exp", amount: 2000 },
-                        premiumReward: { type: "exp", amount: 4000 },
-                        xpRequired: 8000
-                    },
-                    {
-                        tierNumber: 9,
-                        freeReward: { type: "crystal", amount: 50 },
-                        premiumReward: { type: "crystal", amount: 100 },
-                        xpRequired: 9000
-                    },
-                    {
-                        tierNumber: 10,
-                        freeReward: { type: "coins", amount: 2000 },
-                        premiumReward: { type: "coins", amount: 4000 },
-                        xpRequired: 10000
-                    },
-                    {
-                        tierNumber: 11,
-                        freeReward: { type: "exp", amount: 2500 },
-                        premiumReward: { type: "exp", amount: 5000 },
-                        xpRequired: 11000
-                    },
-                    {
-                        tierNumber: 12,
-                        freeReward: { type: "crystal", amount: 60 },
-                        premiumReward: { type: "crystal", amount: 120 },
-                        xpRequired: 12000
-                    },
-                    {
-                        tierNumber: 13,
-                        freeReward: { type: "coins", amount: 2500 },
-                        premiumReward: { type: "coins", amount: 5000 },
-                        xpRequired: 13000
-                    },
-                    {
-                        tierNumber: 14,
-                        freeReward: { type: "exp", amount: 3000 },
-                        premiumReward: { type: "exp", amount: 6000 },
-                        xpRequired: 14000
-                    },
-                    {
-                        tierNumber: 15,
-                        freeReward: { type: "crystal", amount: 75 },
-                        premiumReward: { type: "crystal", amount: 150 },
-                        xpRequired: 15000
-                    },
-                    {
-                        tierNumber: 16,
-                        freeReward: { type: "coins", amount: 3000 },
-                        premiumReward: { type: "coins", amount: 6000 },
-                        xpRequired: 16000
-                    },
-                    {
-                        tierNumber: 17,
-                        freeReward: { type: "exp", amount: 3500 },
-                        premiumReward: { type: "exp", amount: 7000 },
-                        xpRequired: 17000
-                    },
-                    {
-                        tierNumber: 18,
-                        freeReward: { type: "crystal", amount: 85 },
-                        premiumReward: { type: "crystal", amount: 170 },
-                        xpRequired: 18000
-                    },
-                    {
-                        tierNumber: 19,
-                        freeReward: { type: "coins", amount: 3500 },
-                        premiumReward: { type: "coins", amount: 7000 },
-                        xpRequired: 19000
-                    },
-                    {
-                        tierNumber: 20,
-                        freeReward: { type: "exp", amount: 4000 },
-                        premiumReward: { type: "exp", amount: 8000 },
-                        xpRequired: 20000
-                    },
-                    {
-                        tierNumber: 21,
-                        freeReward: { type: "crystal", amount: 100 },
-                        premiumReward: { type: "crystal", amount: 200 },
-                        xpRequired: 21000
-                    },
-                    {
-                        tierNumber: 22,
-                        freeReward: { type: "coins", amount: 4000 },
-                        premiumReward: { type: "coins", amount: 8000 },
-                        xpRequired: 22000
-                    },
-                    {
-                        tierNumber: 23,
-                        freeReward: { type: "exp", amount: 4500 },
-                        premiumReward: { type: "exp", amount: 9000 },
-                        xpRequired: 23000
-                    },
-                    {
-                        tierNumber: 24,
-                        freeReward: { type: "crystal", amount: 110 },
-                        premiumReward: { type: "crystal", amount: 220 },
-                        xpRequired: 24000
-                    },
-                    {
-                        tierNumber: 25,
-                        freeReward: { type: "coins", amount: 4500 },
-                        premiumReward: { type: "coins", amount: 9000 },
-                        xpRequired: 25000
-                    },
-                    {
-                        tierNumber: 26,
-                        freeReward: { type: "exp", amount: 5000 },
-                        premiumReward: { type: "exp", amount: 10000 },
-                        xpRequired: 26000
-                    },
-                    {
-                        tierNumber: 27,
-                        freeReward: { type: "crystal", amount: 125 },
-                        premiumReward: { type: "crystal", amount: 250 },
-                        xpRequired: 27000
-                    },
-                    {
-                        tierNumber: 28,
-                        freeReward: { type: "coins", amount: 5000 },
-                        premiumReward: { type: "coins", amount: 10000 },
-                        xpRequired: 28000
-                    },
-                    {
-                        tierNumber: 29,
-                        freeReward: { type: "exp", amount: 5500 },
-                        premiumReward: { type: "exp", amount: 11000 },
-                        xpRequired: 29000
-                    },
-                    {
-                        tierNumber: 30,
-                        freeReward: { type: "crystal", amount: 135 },
-                        premiumReward: { type: "crystal", amount: 270 },
-                        xpRequired: 30000
-                    },
-                    {
-                        tierNumber: 31,
-                        freeReward: { type: "coins", amount: 5500 },
-                        premiumReward: { type: "coins", amount: 11000 },
-                        xpRequired: 31000
-                    },
-                    {
-                        tierNumber: 32,
-                        freeReward: { type: "exp", amount: 6000 },
-                        premiumReward: { type: "exp", amount: 12000 },
-                        xpRequired: 32000
-                    },
-                    {
-                        tierNumber: 33,
-                        freeReward: { type: "crystal", amount: 150 },
-                        premiumReward: { type: "crystal", amount: 300 },
-                        xpRequired: 33000
-                    },
-                    {
-                        tierNumber: 34,
-                        freeReward: { type: "coins", amount: 6000 },
-                        premiumReward: { type: "coins", amount: 12000 },
-                        xpRequired: 34000
-                    },
-                    {
-                        tierNumber: 35,
-                        freeReward: { type: "exp", amount: 6500 },
-                        premiumReward: { type: "exp", amount: 13000 },
-                        xpRequired: 35000
-                    },
-                    {
-                        tierNumber: 36,
-                        freeReward: { type: "crystal", amount: 160 },
-                        premiumReward: { type: "crystal", amount: 320 },
-                        xpRequired: 36000
-                    },
-                    {
-                        tierNumber: 37,
-                        freeReward: { type: "coins", amount: 6500 },
-                        premiumReward: { type: "coins", amount: 13000 },
-                        xpRequired: 37000
-                    },
-                    {
-                        tierNumber: 38,
-                        freeReward: { type: "exp", amount: 7000 },
-                        premiumReward: { type: "exp", amount: 14000 },
-                        xpRequired: 38000
-                    },
-                    {
-                        tierNumber: 39,
-                        freeReward: { type: "crystal", amount: 175 },
-                        premiumReward: { type: "crystal", amount: 350 },
-                        xpRequired: 39000
-                    },
-                    {
-                        tierNumber: 40,
-                        freeReward: { type: "coins", amount: 7000 },
-                        premiumReward: { type: "coins", amount: 14000 },
-                        xpRequired: 40000
-                    },
-                    {
-                        tierNumber: 41,
-                        freeReward: { type: "exp", amount: 7500 },
-                        premiumReward: { type: "exp", amount: 15000 },
-                        xpRequired: 41000
-                    },
-                    {
-                        tierNumber: 42,
-                        freeReward: { type: "crystal", amount: 185 },
-                        premiumReward: { type: "crystal", amount: 370 },
-                        xpRequired: 42000
-                    },
-                    {
-                        tierNumber: 43,
-                        freeReward: { type: "coins", amount: 7500 },
-                        premiumReward: { type: "coins", amount: 15000 },
-                        xpRequired: 43000
-                    },
-                    {
-                        tierNumber: 44,
-                        freeReward: { type: "exp", amount: 8000 },
-                        premiumReward: { type: "exp", amount: 16000 },
-                        xpRequired: 44000
-                    },
-                    {
-                        tierNumber: 45,
-                        freeReward: { type: "crystal", amount: 200 },
-                        premiumReward: { type: "crystal", amount: 400 },
-                        xpRequired: 45000
-                    },
-                    {
-                        tierNumber: 46,
-                        freeReward: { type: "coins", amount: 8000 },
-                        premiumReward: { type: "coins", amount: 16000 },
-                        xpRequired: 46000
-                    },
-                    {
-                        tierNumber: 47,
-                        freeReward: { type: "exp", amount: 8500 },
-                        premiumReward: { type: "exp", amount: 17000 },
-                        xpRequired: 47000
-                    },
-                    {
-                        tierNumber: 48,
-                        freeReward: { type: "crystal", amount: 210 },
-                        premiumReward: { type: "crystal", amount: 420 },
-                        xpRequired: 48000
-                    },
-                    {
-                        tierNumber: 49,
-                        freeReward: { type: "coins", amount: 8500 },
-                        premiumReward: { type: "coins", amount: 17000 },
-                        xpRequired: 49000
-                    },
-                    {
-                        tierNumber: 50,
-                        freeReward: { type: "crystal", amount: 250 },
-                        premiumReward: { type: "crystal", amount: 500 },
-                        xpRequired: 50000
-                    }
-                ],
-                startDate: new Date(),
-                endDate: new Date(new Date().setMonth(new Date().getMonth() + 2)),            
-            }
-            ]
+const battlepassData = [
+{
+    title: "Battlepass", 
+    season: 1,
+    tierCount: 50,
+    premiumCost: 1000,
+    currency: "crystal",
+    status: "active",
+    freeMissions: [
+        {
+            missionName: "Win Multiple PvP Matches",
+            description: "Win matches in PvP mode.",
+            xpReward: 250,
+            rewardtype: "exp",
+            requirements: { pvpwins: 3 },
+            daily: true,
+        },
+        {
+            missionName: "Defeat Enemies",
+            description: "Defeat enemies in any mode.",
+            xpReward: 250,
+            rewardtype: "exp",
+            requirements: { enemiesdefeated: 5 },
+            daily: true,
+        },
+        {
+            missionName: "Claim Daily Quests",
+            description: "Claim daily quests.",
+            xpReward: 250,
+            rewardtype: "exp",
+            requirements: { dailyquests: 2 },
+            daily: true,
+        },
+        {
+            missionName: "Use Skills",
+            description: "Use any skill in battle.",
+            xpReward: 250,
+            rewardtype: "exp",
+            requirements: { skillsused: 10 },
+            daily: true,
+        },
+        {
+            missionName: "Deal Total Damage",
+            description: "Deal damage in battles.",
+            xpReward: 250,
+            rewardtype: "exp",
+            requirements: { totaldamage: 5000 },
+            daily: true,
+        },
+    ],
+    premiumMissions: [
+        {
+            missionName: "Win PvP Matches",
+            description: "Win matches in PvP mode.",
+            xpReward: 500,
+            rewardtype: "exp",
+            requirements: { pvpwins: 3 },
+            daily: true,
+        },
+        {
+            missionName: "Claim Daily Quests",
+            description: "Claim daily quests.",
+            xpReward: 500,
+            rewardtype: "exp",
+            requirements: { dailyquests: 5 },
+            daily: true,
+        },
+        {
+            missionName: "Use Skills",
+            description: "Use any skill in battle.",
+            xpReward: 500,
+            rewardtype: "exp",
+            requirements: { skillsused: 25 },
+            daily: true,
+        },
+        {
+            missionName: "Participate in PvP",
+            description: "Join PvP matches.",
+            xpReward: 500,
+            rewardtype: "exp",
+            requirements: { pvpparticipated: 3 },
+            daily: true,
+        },
+        {
+            missionName: "Deal Total Damage",
+            description: "Deal damage in battles.",
+            xpReward: 500,
+            rewardtype: "exp",
+            requirements: { totaldamage: 15000 },
+            daily: true,
+        },
+    ],
+    tiers: [
+        {
+            tierNumber: 1,
+            freeReward: { type: "coins", amount: 500 },
+            premiumReward: { type: "coins", amount: 1000 },
+            xpRequired: 1000
+        },
+        {
+            tierNumber: 2, 
+            freeReward: { type: "exp", amount: 1000 },
+            premiumReward: { type: "exp", amount: 2000 },
+            xpRequired: 2000
+        },
+        {
+            tierNumber: 3,
+            freeReward: { type: "crystal", amount: 25 },
+            premiumReward: { type: "crystal", amount: 50 },
+            xpRequired: 3000
+        },
+        {
+            tierNumber: 4,
+            freeReward: { type: "coins", amount: 1000 },
+            premiumReward: { type: "coins", amount: 2000 },
+            xpRequired: 4000
+        },
+        {
+            tierNumber: 5,
+            freeReward: { type: "exp", amount: 1500 },
+            premiumReward: { type: "exp", amount: 3000 },
+            xpRequired: 5000
+        },
+        {
+            tierNumber: 6,
+            freeReward: { type: "crystal", amount: 35 },
+            premiumReward: { type: "crystal", amount: 70 },
+            xpRequired: 6000
+        },
+        {
+            tierNumber: 7,
+            freeReward: { type: "coins", amount: 1500 },
+            premiumReward: { type: "coins", amount: 3000 },
+            xpRequired: 7000
+        },
+        {
+            tierNumber: 8,
+            freeReward: { type: "exp", amount: 2000 },
+            premiumReward: { type: "exp", amount: 4000 },
+            xpRequired: 8000
+        },
+        {
+            tierNumber: 9,
+            freeReward: { type: "crystal", amount: 50 },
+            premiumReward: { type: "crystal", amount: 100 },
+            xpRequired: 9000
+        },
+        {
+            tierNumber: 10,
+            freeReward: { type: "coins", amount: 2000 },
+            premiumReward: { type: "coins", amount: 4000 },
+            xpRequired: 10000
+        },
+        {
+            tierNumber: 11,
+            freeReward: { type: "exp", amount: 2500 },
+            premiumReward: { type: "exp", amount: 5000 },
+            xpRequired: 11000
+        },
+        {
+            tierNumber: 12,
+            freeReward: { type: "crystal", amount: 60 },
+            premiumReward: { type: "crystal", amount: 120 },
+            xpRequired: 12000
+        },
+        {
+            tierNumber: 13,
+            freeReward: { type: "coins", amount: 2500 },
+            premiumReward: { type: "coins", amount: 5000 },
+            xpRequired: 13000
+        },
+        {
+            tierNumber: 14,
+            freeReward: { type: "exp", amount: 3000 },
+            premiumReward: { type: "exp", amount: 6000 },
+            xpRequired: 14000
+        },
+        {
+            tierNumber: 15,
+            freeReward: { type: "crystal", amount: 75 },
+            premiumReward: { type: "crystal", amount: 150 },
+            xpRequired: 15000
+        },
+        {
+            tierNumber: 16,
+            freeReward: { type: "coins", amount: 3000 },
+            premiumReward: { type: "coins", amount: 6000 },
+            xpRequired: 16000
+        },
+        {
+            tierNumber: 17,
+            freeReward: { type: "exp", amount: 3500 },
+            premiumReward: { type: "exp", amount: 7000 },
+            xpRequired: 17000
+        },
+        {
+            tierNumber: 18,
+            freeReward: { type: "crystal", amount: 85 },
+            premiumReward: { type: "crystal", amount: 170 },
+            xpRequired: 18000
+        },
+        {
+            tierNumber: 19,
+            freeReward: { type: "coins", amount: 3500 },
+            premiumReward: { type: "coins", amount: 7000 },
+            xpRequired: 19000
+        },
+        {
+            tierNumber: 20,
+            freeReward: { type: "exp", amount: 4000 },
+            premiumReward: { type: "exp", amount: 8000 },
+            xpRequired: 20000
+        },
+        {
+            tierNumber: 21,
+            freeReward: { type: "crystal", amount: 100 },
+            premiumReward: { type: "crystal", amount: 200 },
+            xpRequired: 21000
+        },
+        {
+            tierNumber: 22,
+            freeReward: { type: "coins", amount: 4000 },
+            premiumReward: { type: "coins", amount: 8000 },
+            xpRequired: 22000
+        },
+        {
+            tierNumber: 23,
+            freeReward: { type: "exp", amount: 4500 },
+            premiumReward: { type: "exp", amount: 9000 },
+            xpRequired: 23000
+        },
+        {
+            tierNumber: 24,
+            freeReward: { type: "crystal", amount: 110 },
+            premiumReward: { type: "crystal", amount: 220 },
+            xpRequired: 24000
+        },
+        {
+            tierNumber: 25,
+            freeReward: { type: "coins", amount: 4500 },
+            premiumReward: { type: "coins", amount: 9000 },
+            xpRequired: 25000
+        },
+        {
+            tierNumber: 26,
+            freeReward: { type: "exp", amount: 5000 },
+            premiumReward: { type: "exp", amount: 10000 },
+            xpRequired: 26000
+        },
+        {
+            tierNumber: 27,
+            freeReward: { type: "crystal", amount: 125 },
+            premiumReward: { type: "crystal", amount: 250 },
+            xpRequired: 27000
+        },
+        {
+            tierNumber: 28,
+            freeReward: { type: "coins", amount: 5000 },
+            premiumReward: { type: "coins", amount: 10000 },
+            xpRequired: 28000
+        },
+        {
+            tierNumber: 29,
+            freeReward: { type: "exp", amount: 5500 },
+            premiumReward: { type: "exp", amount: 11000 },
+            xpRequired: 29000
+        },
+        {
+            tierNumber: 30,
+            freeReward: { type: "crystal", amount: 135 },
+            premiumReward: { type: "crystal", amount: 270 },
+            xpRequired: 30000
+        },
+        {
+            tierNumber: 31,
+            freeReward: { type: "coins", amount: 5500 },
+            premiumReward: { type: "coins", amount: 11000 },
+            xpRequired: 31000
+        },
+        {
+            tierNumber: 32,
+            freeReward: { type: "exp", amount: 6000 },
+            premiumReward: { type: "exp", amount: 12000 },
+            xpRequired: 32000
+        },
+        {
+            tierNumber: 33,
+            freeReward: { type: "crystal", amount: 150 },
+            premiumReward: { type: "crystal", amount: 300 },
+            xpRequired: 33000
+        },
+        {
+            tierNumber: 34,
+            freeReward: { type: "coins", amount: 6000 },
+            premiumReward: { type: "coins", amount: 12000 },
+            xpRequired: 34000
+        },
+        {
+            tierNumber: 35,
+            freeReward: { type: "exp", amount: 6500 },
+            premiumReward: { type: "exp", amount: 13000 },
+            xpRequired: 35000
+        },
+        {
+            tierNumber: 36,
+            freeReward: { type: "crystal", amount: 160 },
+            premiumReward: { type: "crystal", amount: 320 },
+            xpRequired: 36000
+        },
+        {
+            tierNumber: 37,
+            freeReward: { type: "coins", amount: 6500 },
+            premiumReward: { type: "coins", amount: 13000 },
+            xpRequired: 37000
+        },
+        {
+            tierNumber: 38,
+            freeReward: { type: "exp", amount: 7000 },
+            premiumReward: { type: "exp", amount: 14000 },
+            xpRequired: 38000
+        },
+        {
+            tierNumber: 39,
+            freeReward: { type: "crystal", amount: 175 },
+            premiumReward: { type: "crystal", amount: 350 },
+            xpRequired: 39000
+        },
+        {
+            tierNumber: 40,
+            freeReward: { type: "coins", amount: 7000 },
+            premiumReward: { type: "coins", amount: 14000 },
+            xpRequired: 40000
+        },
+        {
+            tierNumber: 41,
+            freeReward: { type: "exp", amount: 7500 },
+            premiumReward: { type: "exp", amount: 15000 },
+            xpRequired: 41000
+        },
+        {
+            tierNumber: 42,
+            freeReward: { type: "crystal", amount: 185 },
+            premiumReward: { type: "crystal", amount: 370 },
+            xpRequired: 42000
+        },
+        {
+            tierNumber: 43,
+            freeReward: { type: "coins", amount: 7500 },
+            premiumReward: { type: "coins", amount: 15000 },
+            xpRequired: 43000
+        },
+        {
+            tierNumber: 44,
+            freeReward: { type: "exp", amount: 8000 },
+            premiumReward: { type: "exp", amount: 16000 },
+            xpRequired: 44000
+        },
+        {
+            tierNumber: 45,
+            freeReward: { type: "crystal", amount: 200 },
+            premiumReward: { type: "crystal", amount: 400 },
+            xpRequired: 45000
+        },
+        {
+            tierNumber: 46,
+            freeReward: { type: "coins", amount: 8000 },
+            premiumReward: { type: "coins", amount: 16000 },
+            xpRequired: 46000
+        },
+        {
+            tierNumber: 47,
+            freeReward: { type: "exp", amount: 8500 },
+            premiumReward: { type: "exp", amount: 17000 },
+            xpRequired: 47000
+        },
+        {
+            tierNumber: 48,
+            freeReward: { type: "crystal", amount: 210 },
+            premiumReward: { type: "crystal", amount: 420 },
+            xpRequired: 48000
+        },
+        {
+            tierNumber: 49,
+            freeReward: { type: "coins", amount: 8500 },
+            premiumReward: { type: "coins", amount: 17000 },
+            xpRequired: 49000
+        },
+        {
+            tierNumber: 50,
+            freeReward: { type: "crystal", amount: 250 },
+            premiumReward: { type: "crystal", amount: 500 },
+            xpRequired: 50000
+        }
+    ],
+    startDate: new Date(),
+    endDate: new Date(new Date().setMonth(new Date().getMonth() + 2)),            
+}
+]
 exports.battlepassData = battlepassData;
 
 // #endregion
 
 // #region SEASON
 
-            const seasonData = [
-                {
-                    title: "Season 1",
-                    duration: 90, // 90 days
-                    isActive: "active",
-                    startedAt: new Date()
-                },
-                {
-                    title: "Season 2",
-                    duration: 90,
-                    isActive: "upcoming",
-                    startedAt: new Date(new Date().setMonth(new Date().getMonth() + 3)) // Starts in 3 months
-                }
-            ]
+const seasonData = [
+    {
+        title: "Season 1",
+        duration: 90, // 90 days
+        isActive: "active",
+        startedAt: new Date()
+    },
+    {
+        title: "Season 2",
+        duration: 90,
+        isActive: "upcoming",
+        startedAt: new Date(new Date().setMonth(new Date().getMonth() + 3)) // Starts in 3 months
+    }
+]
 exports.seasonData = seasonData;
 // #endregion
 // #region CHAPTERS
 
 
 const chapterlistdata = [
-                    {
-                        
-                        name: "chapter1challenge1",
-                        completed: false,
-                        chapter: 101
-                    },
-                    {
-                        
-                        name: "chapter1challenge2",
-                        completed: false,
-                        chapter: 102
-                    },
-                    {
-                        
-                        name: "chapter1challenge3",
-                        completed: false,
-                        chapter: 103
-                    },
-                    {
-                        
-                        name: "chapter2challenge1",
-                        completed: false,
-                        chapter: 201
-                    },
-                    {
-                        
-                        name: "chapter2challenge2",
-                        completed: false,
-                        chapter: 202
-                    },
-                    {
-                        
-                        name: "chapter2challenge3",
-                        completed: false,
-                        chapter: 203
-                    },
-                    {
-                        
-                        name: "chapter3challenge1",
-                        completed: false,
-                        chapter: 301
-                    },
-                    {
-                        
-                        name: "chapter3challenge2",
-                        completed: false,
-                        chapter: 302
-                    },
-                    {
-                        
-                        name: "chapter3challenge3",
-                        completed: false,
-                        chapter: 303
-                    },
-                    {
-                        
-                        name: "chapter4challenge1",
-                        completed: false,
-                        chapter: 401
-                    },
-                    {
-                        
-                        name: "chapter4challenge2",
-                        completed: false,
-                        chapter: 402
-                    },
-                    {
-                        
-                        name: "chapter4challenge3",
-                        completed: false,
-                        chapter: 403
-                    },
-                    {
-                        
-                        name: "chapter5challenge1",
-                        completed: false,
-                        chapter: 501
-                    },
-                    {
-                        
-                        name: "chapter5challenge2",
-                        completed: false,
-                        chapter: 502
-                    },
-                    {
-                        
-                        name: "chapter5challenge3",
-                        completed: false,
-                        chapter: 503
-                    },
-                    {
-                        
-                        name: "chapter6challenge1",
-                        completed: false,
-                        chapter: 601
-                    },
-                    {
-                        
-                        name: "chapter6challenge2",
-                        completed: false,
-                        chapter: 602
-                    },
-                    {
-                        
-                        name: "chapter6challenge3",
-                        completed: false,
-                        chapter: 603
-                    },
-                    {
-                        
-                        name: "chapter7challenge1",
-                        completed: false,
-                        chapter: 701
-                    },
-                    {
-                        
-                        name: "chapter7challenge2",
-                        completed: false,
-                        chapter: 702
-                    },
-                    {
-                        
-                        name: "chapter7challenge3",
-                        completed: false,
-                        chapter: 703
-                    },
-                    {
-                        
-                        name: "chapter8challenge1",
-                        completed: false,
-                        chapter: 801
-                    },
-                    {
-                        
-                        name: "chapter8challenge2",
-                        completed: false,
-                        chapter: 802
-                    },
-                    {
-                        
-                        name: "chapter8challenge3",
-                        completed: false,
-                        chapter: 803
-                    },
-                    {
-                        
-                        name: "chapter9challenge1",
-                        completed: false,
-                        chapter: 901
-                    },
-                    {
-                        
-                        name: "chapter9challenge2",
-                        completed: false,
-                        chapter: 902
-                    },
-                    {
-                        
-                        name: "chapter9challenge3",
-                        completed: false,
-                        chapter: 903
-                    },
-                    {
-                        
-                        name: "chapter10challenge1",
-                        completed: false,
-                        chapter: 1001
-                    },
-                    {
-                        
-                        name: "chapter10challenge2",
-                        completed: false,
-                        chapter: 1002
-                    },
-                    {
-                        
-                        name: "chapter10challenge3",
-                        completed: false,
-                        chapter: 1003
-                    },
-                    {
-                        
-                        name: "chapter11challenge1",
-                        completed: false,
-                        chapter: 1101
-                    },
-                    {
-                        
-                        name: "chapter11challenge2",
-                        completed: false,
-                        chapter: 1102
-                    },
-                    {
-                        
-                        name: "chapter11challenge3",
-                        completed: false,
-                        chapter: 1103
-                    },
-                    {
-                        
-                        name: "chapter12challenge1",
-                        completed: false,
-                        chapter: 1201
-                    },
-                    {
-                        
-                        name: "chapter12challenge2",
-                        completed: false,
-                        chapter: 1202
-                    },
-                    {
-                        
-                        name: "chapter12challenge3",
-                        completed: false,
-                        chapter: 1203
-                    },
-                    {
-                        
-                        name: "chapter13challenge1",
-                        completed: false,
-                        chapter: 1301
-                    },
-                    {
-                        
-                        name: "chapter13challenge2",
-                        completed: false,
-                        chapter: 1302
-                    },
-                    {
-                        
-                        name: "chapter13challenge3",
-                        completed: false,
-                        chapter: 1303
-                    },
-                    {
-                        
-                        name: "chapter14challenge1",
-                        completed: false,
-                        chapter: 1401
-                    },
-                    {
-                        
-                        name: "chapter14challenge2",
-                        completed: false,
-                        chapter: 1402
-                    },
-                    {
-                        
-                        name: "chapter14challenge3",
-                        completed: false,
-                        chapter: 1403
-                    },
-                    {
-                        
-                        name: "chapter15challenge1",
-                        completed: false,
-                        chapter: 1501
-                    },
-                    {
-                        
-                        name: "chapter15challenge2",
-                        completed: false,
-                        chapter: 1502
-                    },
-                    {
-                        
-                        name: "chapter15challenge3",
-                        completed: false,
-                        chapter: 1503
-                    },
-                    {
-                        
-                        name: "chapter16challenge1",
-                        completed: false,
-                        chapter: 1601
-                    },
-                    {
-                        
-                        name: "chapter16challenge2",
-                        completed: false,
-                        chapter: 1602
-                    },
-                    {
-                        
-                        name: "chapter16challenge3",
-                        completed: false,
-                        chapter: 1603
-                    },
-                ]
+    {
+        
+        name: "chapter1challenge1",
+        completed: false,
+        chapter: 101
+    },
+    {
+        
+        name: "chapter1challenge2",
+        completed: false,
+        chapter: 102
+    },
+    {
+        
+        name: "chapter1challenge3",
+        completed: false,
+        chapter: 103
+    },
+    {
+        
+        name: "chapter2challenge1",
+        completed: false,
+        chapter: 201
+    },
+    {
+        
+        name: "chapter2challenge2",
+        completed: false,
+        chapter: 202
+    },
+    {
+        
+        name: "chapter2challenge3",
+        completed: false,
+        chapter: 203
+    },
+    {
+        
+        name: "chapter3challenge1",
+        completed: false,
+        chapter: 301
+    },
+    {
+        
+        name: "chapter3challenge2",
+        completed: false,
+        chapter: 302
+    },
+    {
+        
+        name: "chapter3challenge3",
+        completed: false,
+        chapter: 303
+    },
+    {
+        
+        name: "chapter4challenge1",
+        completed: false,
+        chapter: 401
+    },
+    {
+        
+        name: "chapter4challenge2",
+        completed: false,
+        chapter: 402
+    },
+    {
+        
+        name: "chapter4challenge3",
+        completed: false,
+        chapter: 403
+    },
+    {
+        
+        name: "chapter5challenge1",
+        completed: false,
+        chapter: 501
+    },
+    {
+        
+        name: "chapter5challenge2",
+        completed: false,
+        chapter: 502
+    },
+    {
+        
+        name: "chapter5challenge3",
+        completed: false,
+        chapter: 503
+    },
+    {
+        
+        name: "chapter6challenge1",
+        completed: false,
+        chapter: 601
+    },
+    {
+        
+        name: "chapter6challenge2",
+        completed: false,
+        chapter: 602
+    },
+    {
+        
+        name: "chapter6challenge3",
+        completed: false,
+        chapter: 603
+    },
+    {
+        
+        name: "chapter7challenge1",
+        completed: false,
+        chapter: 701
+    },
+    {
+        
+        name: "chapter7challenge2",
+        completed: false,
+        chapter: 702
+    },
+    {
+        
+        name: "chapter7challenge3",
+        completed: false,
+        chapter: 703
+    },
+    {
+        
+        name: "chapter8challenge1",
+        completed: false,
+        chapter: 801
+    },
+    {
+        
+        name: "chapter8challenge2",
+        completed: false,
+        chapter: 802
+    },
+    {
+        
+        name: "chapter8challenge3",
+        completed: false,
+        chapter: 803
+    },
+    {
+        
+        name: "chapter9challenge1",
+        completed: false,
+        chapter: 901
+    },
+    {
+        
+        name: "chapter9challenge2",
+        completed: false,
+        chapter: 902
+    },
+    {
+        
+        name: "chapter9challenge3",
+        completed: false,
+        chapter: 903
+    },
+    {
+        
+        name: "chapter10challenge1",
+        completed: false,
+        chapter: 1001
+    },
+    {
+        
+        name: "chapter10challenge2",
+        completed: false,
+        chapter: 1002
+    },
+    {
+        
+        name: "chapter10challenge3",
+        completed: false,
+        chapter: 1003
+    },
+    {
+        
+        name: "chapter11challenge1",
+        completed: false,
+        chapter: 1101
+    },
+    {
+        
+        name: "chapter11challenge2",
+        completed: false,
+        chapter: 1102
+    },
+    {
+        
+        name: "chapter11challenge3",
+        completed: false,
+        chapter: 1103
+    },
+    {
+        
+        name: "chapter12challenge1",
+        completed: false,
+        chapter: 1201
+    },
+    {
+        
+        name: "chapter12challenge2",
+        completed: false,
+        chapter: 1202
+    },
+    {
+        
+        name: "chapter12challenge3",
+        completed: false,
+        chapter: 1203
+    },
+    {
+        
+        name: "chapter13challenge1",
+        completed: false,
+        chapter: 1301
+    },
+    {
+        
+        name: "chapter13challenge2",
+        completed: false,
+        chapter: 1302
+    },
+    {
+        
+        name: "chapter13challenge3",
+        completed: false,
+        chapter: 1303
+    },
+    {
+        
+        name: "chapter14challenge1",
+        completed: false,
+        chapter: 1401
+    },
+    {
+        
+        name: "chapter14challenge2",
+        completed: false,
+        chapter: 1402
+    },
+    {
+        
+        name: "chapter14challenge3",
+        completed: false,
+        chapter: 1403
+    },
+    {
+        
+        name: "chapter15challenge1",
+        completed: false,
+        chapter: 1501
+    },
+    {
+        
+        name: "chapter15challenge2",
+        completed: false,
+        chapter: 1502
+    },
+    {
+        
+        name: "chapter15challenge3",
+        completed: false,
+        chapter: 1503
+    },
+    {
+        
+        name: "chapter16challenge1",
+        completed: false,
+        chapter: 1601
+    },
+    {
+        
+        name: "chapter16challenge2",
+        completed: false,
+        chapter: 1602
+    },
+    {
+        
+        name: "chapter16challenge3",
+        completed: false,
+        chapter: 1603
+    },
+]
 exports.chapterlistdata = chapterlistdata;
 
 // #endregion
 // #region QUESTMISSIONS
 const questmissionsdata = [
-                        {
-                        missionName: "Participate in PvP",
-                        description: "Join a PvP match.",
-                        xpReward: 100,
-                        requirements: { pvpparticipated: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Participate in Raid",
-                        description: "Join a raid battle.",
-                        xpReward: 100,
-                        requirements: { raidparticipated: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Daily Spin",
-                        description: "Use the daily spin.",
-                        xpReward: 100,
-                        requirements: { dailyspin: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Daily Login",
-                        description: "Claim your daily login reward.",
-                        xpReward: 100,
-                        requirements: { dailyloginclaimed: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Story Challenge",
-                        description: "Complete a story chapter challenge.",
-                        xpReward: 100,
-                        requirements: { storychapters: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Defeat Enemies",
-                        description: "Defeat enemies in any mode.",
-                        xpReward: 100,
-                        requirements: { enemiesdefeated: 15 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Deal Damage",
-                        description: "Deal damage in battles.",
-                        xpReward: 100,
-                        requirements: { totaldamage: 15000 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Make Friends",
-                        description: "Add a new friend.",
-                        xpReward: 100,
-                        requirements: { friendsadded: 1 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Self Healing",
-                        description: "Heal yourself in battle.",
-                        xpReward: 100,
-                        requirements: { selfheal: 3000 },
-                        daily: true,
-                    },
-                    {
-                        missionName: "Win PvP Matches",
-                        description: "Win matches in PvP mode.",
-                        xpReward: 100,
-                        requirements: { pvpwins: 5 },
-                        daily: true,
-                    },
+    {
+        missionName: "Participate in PvP",
+        description: "Join a PvP match.",
+        rewardtype: "exp",
+        xpReward: 100,
+        requirements: { pvpparticipated: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Participate in Raid",
+        description: "Join a raid battle.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { raidparticipated: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Daily Spin",
+        description: "Use the daily spin.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { dailyspin: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Daily Login",
+        description: "Claim your daily login reward.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { dailyloginclaimed: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Story Challenge",
+        description: "Complete a story chapter challenge.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { storychapters: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Defeat Enemies",
+        description: "Defeat enemies in any mode.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { enemiesdefeated: 15 },
+        daily: true,
+    },
+    {
+        missionName: "Deal Damage",
+        description: "Deal damage in battles.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { totaldamage: 15000 },
+        daily: true,
+    },
+    {
+        missionName: "Make Friends",
+        description: "Add a new friend.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { friendsadded: 1 },
+        daily: true,
+    },
+    {
+        missionName: "Self Healing",
+        description: "Heal yourself in battle.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { selfheal: 3000 },
+        daily: true,
+    },
+    {
+        missionName: "Win PvP Matches",
+        description: "Win matches in PvP mode.",
+        xpReward: 100,
+        rewardtype: "exp",
+        requirements: { pvpwins: 5 },
+        daily: true,
+    },
 ]
 
 exports.questmissionsdata = questmissionsdata;

@@ -5,6 +5,8 @@ const { QuestDetails, QuestProgress } = require("../models/Quest");
 const { CharacterDailySpin } = require("../models/Rewards");
 const Reset = require("../models/Reset");
 const { CharacterMonthlyLogin } = require("../models/Rewards");
+const Rankings = require("../models/Ranking");
+const Season = require("../models/Season");
 
 
 
@@ -437,6 +439,62 @@ exports.resetmonthlylogin = async (req, res) => {
         console.error(err);
         return res.status(500).json({ message: "An error occurred while logging the reset action" });
     });
+
+    res.status(200).json({
+        message: "success",
+    });
+}
+
+exports.resetpvpranking = async (req, res) => {
+    const { id } = req.user
+    const { resettype, seasonid } = req.body;
+
+    if (resettype === "seasonreset"){
+        if (!seasonid) {
+            return res.status(400).json({ message: "seasonid is required for this reset type" });
+        }
+
+        const isCurrentSeason = await Season.findById(seasonid);
+        if (!isCurrentSeason 
+            // || isCurrentSeason.isActive !== "active"
+        ) {
+            return res.status(400).json({ message: "Invalid season ID or the season is not active." });
+        }
+
+        await Rankings.updateMany(
+            {},
+            { $set: { mmr: 0, rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa'), season: seasonid } }
+        )
+        .then(data => data)
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({ message: "An error occurred while resetting the PVP rankings" });
+        });
+
+        await ResetHistory.create({
+            owner: id,
+            type: "pvp",
+            action: `Season reset for PVP rankings`,
+        })
+    } else if (resettype === "mmrreset"){
+        await Rankings.updateMany(
+            {},
+            { $set: { mmr: 0, rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa') } }
+        )
+        .then(data => data)
+        .catch(err => {
+            console.error(err);
+            return res.status(500).json({ message: "An error occurred while resetting the PVP MMR" });
+        });
+
+        await ResetHistory.create({
+            owner: id,
+            type: "pvp",
+            action: `MMR reset for PVP rankings`,
+        })
+    } else {
+        return res.status(400).json({ message: "Invalid reset type. Use 'seasonreset' or 'mmrreset'." });
+    }
 
     res.status(200).json({
         message: "success",

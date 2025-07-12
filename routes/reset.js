@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { getbattlepassquests, resetpassquest, getresethistory, getquests, resetquest, resetallpassquests, resetallquests, resetallweeklylogin, resetallmonthlylogin, resetallfreebies, resetalldailyspin, resetallexpspin, resetmonthlylogin } = require('../controllers/reset');
+const { getbattlepassquests, resetpassquest, getresethistory, getquests, resetquest, resetallpassquests, resetallquests, resetallweeklylogin, resetallmonthlylogin, resetallfreebies, resetalldailyspin, resetallexpspin, resetmonthlylogin, resetpvpranking } = require('../controllers/reset');
 const { protectsuperadmin } = require('../middleware/middleware');
 
 router
@@ -16,4 +16,5 @@ router
  .post('/resetallmonthlylogin', protectsuperadmin, resetallmonthlylogin)
  .post('/resetallfreebies', protectsuperadmin, resetallfreebies)
  .post('/resetmonthlylogin', protectsuperadmin, resetmonthlylogin)
+ .post('/resetpvpranking', protectsuperadmin, resetpvpranking)
 module.exports = router;

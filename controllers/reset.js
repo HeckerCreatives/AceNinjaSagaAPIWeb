@@ -5,7 +5,7 @@ const { QuestDetails, QuestProgress } = require("../models/Quest");
 const { CharacterDailySpin } = require("../models/Rewards");
 const Reset = require("../models/Reset");
 const { CharacterMonthlyLogin } = require("../models/Rewards");
-const Rankings = require("../models/Ranking");
+const { Rankings, RankingHistory } = require("../models/Ranking");
 const Season = require("../models/Season");
 
 
@@ -446,57 +446,157 @@ exports.resetmonthlylogin = async (req, res) => {
 }
 
 exports.resetpvpranking = async (req, res) => {
-    const { id } = req.user
-    const { resettype, seasonid } = req.body;
+    const { id } = req.user;
+    const { resettype, seasonid, limit } = req.body;
 
-    if (resettype === "seasonreset"){
-        if (!seasonid) {
-            return res.status(400).json({ message: "seasonid is required for this reset type" });
-        }
+    const session = await mongoose.startSession();
 
-        const isCurrentSeason = await Season.findById(seasonid);
-        if (!isCurrentSeason 
-            // || isCurrentSeason.isActive !== "active"
-        ) {
-            return res.status(400).json({ message: "Invalid season ID or the season is not active." });
-        }
-
-        await Rankings.updateMany(
-            {},
-            { $set: { mmr: 0, rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa'), season: seasonid } }
-        )
-        .then(data => data)
-        .catch(err => {
-            console.error(err);
-            return res.status(500).json({ message: "An error occurred while resetting the PVP rankings" });
-        });
-
-        await ResetHistory.create({
-            owner: id,
-            type: "pvp",
-            action: `Season reset for PVP rankings`,
-        })
-    } else if (resettype === "mmrreset"){
-        await Rankings.updateMany(
-            {},
-            { $set: { mmr: 0, rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa') } }
-        )
-        .then(data => data)
-        .catch(err => {
-            console.error(err);
-            return res.status(500).json({ message: "An error occurred while resetting the PVP MMR" });
-        });
-
-        await ResetHistory.create({
-            owner: id,
-            type: "pvp",
-            action: `MMR reset for PVP rankings`,
-        })
-    } else {
-        return res.status(400).json({ message: "Invalid reset type. Use 'seasonreset' or 'mmrreset'." });
+    const limitData = { }
+    if (limit) {
+        limitData.limit = parseInt(limit);
     }
+    try {
+        await session.startTransaction();
 
-    res.status(200).json({
-        message: "success",
-    });
+        // Validate reset type
+        if (!["seasonreset", "mmrreset"].includes(resettype)) {
+            return res.status(400).json({ 
+                message: "Invalid reset type. Use 'seasonreset' or 'mmrreset'." 
+            });
+        }
+
+        // Validate season for season reset
+        if (resettype === "seasonreset" && !seasonid) {
+            return res.status(400).json({ 
+                message: "seasonid is required for this reset type" 
+            });
+        }
+
+        let targetSeasonId = seasonid;
+        if (resettype === "seasonreset") {
+            const isCurrentSeason = await Season.findById(seasonid).session(session);
+            if (!isCurrentSeason) {
+                await session.abortTransaction();
+                return res.status(400).json({ 
+                    message: "Invalid season ID or the season is not active." 
+                });
+            }
+            targetSeasonId = seasonid;
+        }
+
+        // Fetch highest index in rankhistory
+        const highestIndex = await RankingHistory.findOne({})
+            .sort({ index: -1 })
+            .select('index')
+            .session(session);
+
+        const newIndex = highestIndex ? highestIndex.index + 1 : 1;
+
+        const aggregationPipeline = [
+            { $match: targetSeasonId ? { season: new mongoose.Types.ObjectId(targetSeasonId) } : {} },
+            {
+                $lookup: {
+                    from: "characterdatas",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "character"
+                }
+            },
+            { $unwind: "$character" },
+            {
+                $match: {
+                    "character.level": { $gte: 20 }
+                }
+            },
+            {
+                $sort: {
+                    mmr: -1,
+                    updatedAt: 1,
+                    "character.level": -1
+                }
+            }
+        ];
+
+        if (limit && parseInt(limit) > 0) {
+            aggregationPipeline.push({ $limit: parseInt(limit) });
+        }
+
+        aggregationPipeline.push({
+            $project: {
+                owner: "$character._id",
+                mmr: 1,
+                rank: 1,
+                season: 1,
+                index: newIndex
+            }
+        });
+
+        const topPlayersAggregation = await Rankings.aggregate(aggregationPipeline).session(session);
+
+        let resetAction = "";
+        if (resettype === "seasonreset") {
+            await Rankings.updateMany(
+                {},
+                { 
+                    $set: { 
+                        mmr: 0, 
+                        rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa'), 
+                        season: new mongoose.Types.ObjectId(seasonid) 
+                    } 
+                },
+                { session }
+            );
+            resetAction = `Season reset for PVP rankings (Season: ${seasonid})`;
+
+        } else if (resettype === "mmrreset") {
+            await Rankings.updateMany(
+                {},
+                { 
+                    $set: { 
+                        mmr: 0, 
+                        rank: new mongoose.Types.ObjectId('684ce1f4c61e8f1dd3ba04fa') 
+                    } 
+                },
+                { session }
+            );
+            resetAction = `MMR reset for PVP rankings`;
+        }
+
+        // Save top players to history (only if we have qualified players)
+        if (topPlayersAggregation.length > 0) {
+            const rankinghistorydata = topPlayersAggregation.map(player => ({
+                owner: player.owner,
+                mmr: player.mmr,
+                rank: player.rank,
+                season: player.season,
+                index: highestIndex ? highestIndex.index + 1 : 1,
+            }));
+
+            await RankingHistory.insertMany(rankinghistorydata, { session });
+        }
+
+        // Log the reset action
+        await ResetHistory.create([{
+            owner: id,
+            type: "pvp",
+            action: resetAction,
+        }], { session });
+
+        await session.commitTransaction();
+
+        res.status(200).json({
+            message: "success"
+        });
+
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(`Error in resetpvpranking: ${err}`);
+        return res.status(500).json({ 
+            message: "An error occurred while resetting PVP rankings",
+            error: err.message 
+        });
+    } finally {
+        session.endSession();
+    }
 }
+

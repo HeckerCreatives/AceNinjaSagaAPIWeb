@@ -1,5 +1,5 @@
 const Characterdata = require("../models/Characterdata");
-const Rankings = require("../models/Ranking");
+const { Rankings, RankingHistory } = require("../models/Ranking");
 const Season = require("../models/Season");
 const RankTier = require("../models/RankTier");
 
@@ -443,3 +443,73 @@ exports.getleaderboardssuperadmin = async (req, res) => {
         });
     }
 };
+
+// #region RANKING HISTORY
+
+// select ranking history first 
+
+exports.selectRankingHistory = async (req, res) => {
+
+    const { id } = req.user
+
+     const pipeline = [
+        {
+            $group: {
+                _id: "$index",
+                date: { $first: "$createdAt" },
+            }
+        },
+        { $sort: { _id: 1 } } 
+    ];
+
+     const data = await RankingHistory.aggregate(pipeline)
+        .then(data => data)
+        .catch(err => {
+            console.log(`Error fetching ranking history: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem fetching ranking history!" });
+        });
+    if (data.length === 0) {
+        return res.status(404).json({ message: "not-found", data: "No ranking history found." });
+    }
+
+    const formattedData = data.map(item => ({
+        name: `${item.date.toISOString().split('T')[0]} - #${item._id}`,
+        index: item._id,
+    }));
+
+    return res.status(200).json({ message: "success", data: formattedData });
+}
+
+exports.getRankingHistory = async (req, res) => {
+    const { index } = req.query;
+
+    if (!index) {
+        return res.status(400).json({ message: "bad-request", data: "Index is required." });
+    }
+
+    const data = await RankingHistory.find({ index })
+        .populate("owner", "username level")
+        .populate("rank", "name icon")
+        .sort({ mmr: -1 })
+        .then(data => data)
+        .catch(err => {
+            console.log(`Error fetching ranking history: ${err}`);
+            return res.status(400).json({ message: "bad-request", data: "There's a problem fetching ranking history!" });
+        });
+    if (data.length === 0) {
+        return res.status(404).json({ message: "not-found", data: "No ranking history found for this index." });
+    }
+
+    const formattedData = data.map((item, index) => ({
+        id: item._id,
+        username: item.owner.username,
+        level: item.owner.level,
+        mmr: item.mmr,
+        rank: index + 1,
+        rankName: item.rank ? item.rank.name : "Unranked",
+        season: item.season ? item.season.title : "Unknown",
+        createdAt: item.createdAt.toISOString().split('T')[0]
+    }));
+
+    return res.status(200).json({ message: "success", data: formattedData });
+}

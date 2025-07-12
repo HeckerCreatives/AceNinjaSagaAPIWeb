@@ -1,7 +1,7 @@
 const Maintenance = require("../models/Maintenance")
 const Staffusers = require("../models/Staffusers")
 const Users = require("../models/Users")
-const Rankings = require("../models/Ranking")
+const { Rankings } = require("../models/Ranking")
 const RankTier = require("../models/RankTier")
 const Season = require("../models/Season")
 const Downloadlinks = require("../models/Downloadlinks")

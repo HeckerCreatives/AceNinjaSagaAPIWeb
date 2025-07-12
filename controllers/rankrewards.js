@@ -30,9 +30,10 @@ exports.getRankRewards = async (req, res) => {
 
 exports.editrankrewards = async (req, res) => {
     const { id } = req.user;
-    const { rankId, rewards } = req.body;
+    const { rankid, rewards } = req.body;
 
-    if (!rankId || !rewards || !Array.isArray(rewards)) {
+    console.log("Editing rank rewards for user:", id, "Rank ID:", rankid, "Rewards:", rewards);
+    if (!rankid || !rewards || !Array.isArray(rewards)) {
         return res.status(400).json({ message: "bad-request", data: "Invalid input data." });
     }
 
@@ -42,7 +43,7 @@ exports.editrankrewards = async (req, res) => {
 
     try {
         const updatedReward = await RankReward.findOneAndUpdate(
-            { rank: rankId },
+            { rank: rankid },
             { rewards: rewards },
             { new: true }
         ).populate("rank", "name");

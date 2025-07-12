@@ -2717,7 +2717,9 @@ exports.rankrewarddata = [
                 rewardtype: "outfit",
                 reward: {
                     id: "6828695886cc0f20427495e0", // _id if its from items such as outfit, weapon rewards
+                    name: "Gakuran Outfit",
                     fid: "6828695886cc0f20427495d7", // if its outfit then there must be a female counterpart reward
+                    fname: "Silken Outfit"
                 }
             }
         ]

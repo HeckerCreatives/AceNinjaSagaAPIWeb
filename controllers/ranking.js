@@ -481,7 +481,12 @@ exports.selectRankingHistory = async (req, res) => {
 }
 
 exports.getRankingHistory = async (req, res) => {
-    const { index } = req.query;
+    const { page, limit, index } = req.query;
+
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 10
+    }
 
     if (!index) {
         return res.status(400).json({ message: "bad-request", data: "Index is required." });
@@ -491,6 +496,8 @@ exports.getRankingHistory = async (req, res) => {
         .populate("owner", "username level")
         .populate("rank", "name icon")
         .sort({ mmr: -1 })
+        .skip(pageOptions.page * pageOptions.limit)
+        .limit(pageOptions.limit)
         .then(data => data)
         .catch(err => {
             console.log(`Error fetching ranking history: ${err}`);
@@ -499,6 +506,9 @@ exports.getRankingHistory = async (req, res) => {
     if (data.length === 0) {
         return res.status(404).json({ message: "not-found", data: "No ranking history found for this index." });
     }
+
+    const totalCount = await RankingHistory.countDocuments({ index });
+    const totalPages = Math.ceil(totalCount / pageOptions.limit);
 
     const formattedData = data.map((item, index) => ({
         id: item._id,
@@ -511,5 +521,12 @@ exports.getRankingHistory = async (req, res) => {
         createdAt: item.createdAt.toISOString().split('T')[0]
     }));
 
-    return res.status(200).json({ message: "success", data: formattedData });
+    return res.status(200).json({ message: "success", data: formattedData, pagination: {
+        currentPage: pageOptions.page,
+        totalPages,
+        totalCount,
+        itemsPerPage: pageOptions.limit,
+        hasNext: pageOptions.page < totalPages - 1,
+        hasPrev: pageOptions.page > 0
+    } });
 }

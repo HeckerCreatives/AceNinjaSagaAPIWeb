@@ -22,6 +22,7 @@ const routers = app => {
     app.use("/pvp", require('./pvp'));
     app.use("/quest", require('./quest'));
     app.use("/ranking", require("./ranking"))
+    app.use("/rankreward", require("./rankreward"))
     app.use("/ranktier", require('./ranktier'));
     app.use("/redeemcode", require("./redeemcode"))
     app.use("/reset", require("./reset"))

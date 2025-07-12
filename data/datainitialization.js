@@ -2642,6 +2642,217 @@ exports.ranktierdata = [
     }
     ]
 // #endregion
+// #region RANKREWARDS
+exports.rankrewarddata = [
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9901"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba04fa"), // Rookie
+        rewards: [
+            {
+                rewardtype: "coins",
+                amount: 1000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 5000,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9902"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba04fc"), // Veteran
+        rewards: [
+            {
+                rewardtype: "coins",
+                amount: 2000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 10000,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            },
+            {
+                rewardtype: "crystal",
+                amount: 50,
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9903"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba04fe"), // Elder
+        rewards: [
+            {
+                rewardtype: "coins",
+                amount: 3000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 15000,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            },
+            {
+                rewardtype: "crystal",
+                amount: 100,
+            },
+            {
+                rewardtype: "outfit",
+                reward: {
+                    id: "6828695886cc0f20427495e0", // _id if its from items such as outfit, weapon rewards
+                    fid: "6828695886cc0f20427495d7", // if its outfit then there must be a female counterpart reward
+                }
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9904"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba0500"), // Ronin
+        rewards: [
+            {
+                rewardtype: "coins",
+                amount: 4000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 20000,
+            },
+            {
+                rewardtype: "crystal",
+                amount: 150,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            },
+            {
+                rewardtype: "outfit",
+                reward: {
+                    id: "6828695886cc0f20427495e1", // _id if its from items such as outfit, weapon rewards
+                    name: "Tanto Outfit",
+                    fid: "6828695886cc0f20427495d8", // if its outfit then there must
+                    fname: "Shinobi Outfit"
+                }
+            },
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f20427495bf", // weapons are unisex so no fid is needed
+                    name: "Katana"
+                }
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9905"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba0502"), // Shogun
+        rewards: [
+            {
+                rewardtype: "crystal",
+                amount: 200,
+            },
+            {
+                rewardtype: "exp",
+                amount: 25000,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            },
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: 4, // index 4 in badgesdata
+                    name: "PVP"
+                }
+            },
+            {
+                rewardtype: "outfit",
+                reward: {
+                    id: "6828695886cc0f20427495e7", // _id if its from items such as outfit, weapon rewards
+                    name: "Uke Outfit",
+                    fid: "6828695886cc0f2042749504", // if its outfit then there must
+                    fname: "Warrior Princess Outfit"
+                }
+            },
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f20427495c1", // weapons are unisex so no fid is needed
+                    name: "Ice Shuriken"
+                }
+            },
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba9906"),
+        rank: new mongoose.Types.ObjectId("684ce1f4c61e8f1dd3ba0504"), // Ace
+        rewards: [
+            {
+                rewardtype: "exp",
+                amount: 30000,
+            },
+            {
+                rewardtype: "crystal",
+                amount: 250,
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1, // index 1 in titlesdata
+                    name: "Ace"
+                }
+            },
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: 4, // index 4 in badgesdata
+                    name: "PVP"
+                }
+            },
+            {
+                rewardtype: "outfit",
+                reward: {
+                    id: "6828695886cc0f20427495f3", // _id if its from items such as outfit, weapon rewards
+                    name: "Male Epic Outfit 1",
+                    fid: "6828695886cc0f2042749510", // if its outfit then there must be a female outfit counterpart
+                    fname: "Female Epic Outfit 1",
+                }
+            },
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f20427495c5", // weapons are unisex so no fid is needed
+                    name: "Moonstone"
+                }
+            },
+        ]
+    }
+]
+// #endregion
 // #region REWARDS
 exports.dailyexpdata = [
                 {

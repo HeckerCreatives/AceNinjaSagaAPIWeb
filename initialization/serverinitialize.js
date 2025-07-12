@@ -1,7 +1,7 @@
 const Maintenance = require("../models/Maintenance")
 const Staffusers = require("../models/Staffusers")
 const Users = require("../models/Users")
-const { Rankings } = require("../models/Ranking")
+const { Rankings, RankReward } = require("../models/Ranking")
 const RankTier = require("../models/RankTier")
 const Season = require("../models/Season")
 const Downloadlinks = require("../models/Downloadlinks")
@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -3119,6 +3119,19 @@ exports.initialize = async () => {
         for (const rank of ranktierdata) {
             await RankTier.create(rank)
             console.log(`Rank tier ${rank.name} created`)
+        }
+    }
+
+    const rankrewards = await RankReward.find({})
+    .then(data => data)
+    .catch(err => {
+        console.log(`Error finding rank rewards: ${err}`)
+    })
+
+    if (rankrewards.length <= 0) {
+        for (const reward of rankrewarddata) {
+            await RankReward.create(reward)
+            console.log(`Rank reward ${reward._id} created`)
         }
     }
 

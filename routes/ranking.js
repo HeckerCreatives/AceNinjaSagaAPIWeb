@@ -1,4 +1,4 @@
-const { getleaderboards, addmmr, getpvpleaderboards } = require('../controllers/ranking');
+const { getleaderboards, addmmr, getpvpleaderboards, getleaderboardssuperadmin } = require('../controllers/ranking');
 const { protectplayer, protectsuperadmin } = require('../middleware/middleware');
 
 const router = require('express').Router();
@@ -10,5 +10,5 @@ router
 
 
  .get("/getrankingssuperadmin", protectsuperadmin, getleaderboards)
-
+ .get("/getleaderboardssuperadmin", protectsuperadmin, getleaderboardssuperadmin)
 module.exports = router;

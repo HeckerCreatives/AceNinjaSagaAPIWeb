@@ -29,63 +29,129 @@ exports.addmmr = async (req, res) => {
 }
 
 exports.getleaderboards = async (req, res) => {
-
     const { characterid } = req.query;
     const limit = parseInt(req.query.limit) || 100;
 
+    try {
+        // Get current player's ranking data with level check
+        const lbvalue = await Rankings.findOne({ owner: characterid })
+            .populate({
+                path: "owner",
+                select: "username level",
+                match: { level: { $gte: 20 } } // Only level 20+
+            });
 
-    const lbvalue = await Rankings.findOne({ owner: characterid })
-    .then(data => data)
-    .catch(err => {
-        console.log(`Error finding lbvalue: ${err}`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-    })
-
-    const leaderboards = await Rankings.countDocuments({ mmr: { $gt: lbvalue.mmr } })
-    .then(data => data)
-    .catch(err => {
-        console.log(`Error finding leaderboards: ${err}`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-    })
-
-
-    const topleaderboard = await Rankings.find()
-    .populate("owner" , "username")
-    .sort({ mmr: -1 })
-    .limit(parseInt(limit))
-    .then(data => data)
-    .catch(err => {
-        console.log(`Error finding topleaderboard: ${err}`)
-        return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later." })
-    })
-
-    console.log(topleaderboard)
-
-    const formattedResponse = {
-        data: topleaderboard.reduce((acc, rank, index) => {
-            acc[index + 1] = {
-                rank: index + 1,
-                username: rank?.owner?.username,
-                mmr: rank.mmr,
-                isCurrentPlayer: rank?.owner?._id.toString() === characterid
-            };
-            return acc;
-        }, {}),
-        playerRank: {
-            rank: leaderboards + 1,
-            username: lbvalue.owner.username,
-            mmr: lbvalue.mmr
+        if (!lbvalue || !lbvalue.owner) {
+            return res.status(400).json({ 
+                message: "bad-request", 
+                data: "Character not found or below level 20 requirement." 
+            });
         }
-    };
 
-    return res.status(200).json({
-        message: "success",
-        data: formattedResponse.data,
-        playerRank: formattedResponse.playerRank
-    });
+        // Use aggregation pipeline for complex sorting and filtering
+        const leaderboardPipeline = [
+            {
+                $lookup: {
+                    from: "characterdatas",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "character"
+                }
+            },
+            { $unwind: "$character" },
+            {
+                $match: {
+                    "character.level": { $gte: 20 } // Only level 20+
+                }
+            },
+            {
+                $sort: {
+                    mmr: -1,           // Primary: Highest MMR first
+                    updatedAt: 1,      // Secondary: Longest staying (earliest updatedAt) first
+                    "character.level": -1  // Tertiary: Highest level first
+                }
+            },
+            { $limit: parseInt(limit) },
+            {
+                $project: {
+                    _id: 1,
+                    mmr: 1,
+                    updatedAt: 1,
+                    username: "$character.username",
+                    level: "$character.level",
+                    owner: "$character._id"
+                }
+            }
+        ];
 
+        const topleaderboard = await Rankings.aggregate(leaderboardPipeline);
 
-}
+        // Count players with higher MMR (level 20+ only)
+        const playersAbove = await Rankings.aggregate([
+            {
+                $lookup: {
+                    from: "characterdatas",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "character"
+                }
+            },
+            { $unwind: "$character" },
+            {
+                $match: {
+                    "character.level": { $gte: 20 },
+                    $or: [
+                        { mmr: { $gt: lbvalue.mmr } },
+                        {
+                            mmr: lbvalue.mmr,
+                            updatedAt: { $lt: lbvalue.updatedAt }
+                        },
+                        {
+                            mmr: lbvalue.mmr,
+                            updatedAt: lbvalue.updatedAt,
+                            "character.level": { $gt: lbvalue.owner.level }
+                        }
+                    ]
+                }
+            },
+            { $count: "count" }
+        ]);
+
+        const playerRank = (playersAbove[0]?.count || 0) + 1;
+
+        const formattedResponse = {
+            data: topleaderboard.reduce((acc, rank, index) => {
+                acc[index + 1] = {
+                    rank: index + 1,
+                    username: rank.username,
+                    mmr: rank.mmr,
+                    level: rank.level,
+                    isCurrentPlayer: rank.owner.toString() === characterid
+                };
+                return acc;
+            }, {}),
+            playerRank: {
+                rank: playerRank,
+                username: lbvalue.owner.username,
+                mmr: lbvalue.mmr,
+                level: lbvalue.owner.level
+            }
+        };
+
+        return res.status(200).json({
+            message: "success",
+            data: formattedResponse.data,
+            playerRank: formattedResponse.playerRank
+        });
+
+    } catch (err) {
+        console.log(`Error in getleaderboards: ${err}`);
+        return res.status(400).json({ 
+            message: "bad-request", 
+            data: "There's a problem with the server. Please try again later." 
+        });
+    }
+};
 
 exports.getlevelleaderboards = async (req, res) => {
 
@@ -237,6 +303,143 @@ exports.getpvpleaderboards = async (req, res) => {
         return res.status(500).json({
             message: "error",
             data: "An error occurred while fetching the leaderboard."
+        });
+    }
+};
+
+
+
+// ...existing code...
+
+exports.getleaderboardssuperadmin = async (req, res) => {
+    const { page, limit, seasonid, minLevel } = req.query;
+    
+    const pageOptions = {
+        page: parseInt(page) || 0,
+        limit: parseInt(limit) || 100
+    };
+    
+    const levelRequirement = parseInt(minLevel) || 20; // Default to level 20+
+
+    try {
+        // Get selected season or current active season
+        let selectedSeason = seasonid
+            ? await Season.findById(seasonid)
+            : await Season.findOne({ isActive: "active" });
+
+        if (!selectedSeason) {
+            return res.status(404).json({ 
+                message: "error", 
+                data: "Season not found." 
+            });
+        }
+
+        console.log(`Fetching leaderboard for season: ${selectedSeason.title} (ID: ${selectedSeason._id})`);
+        // Use aggregation pipeline for complex sorting and filtering
+        const leaderboardPipeline = [
+            {
+                $match: { season: selectedSeason._id }
+            },
+            {
+                $lookup: {
+                    from: "characterdatas",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "character"
+                }
+            },
+            { $unwind: "$character" },
+            {
+                $match: {
+                    "character.level": { $gte: levelRequirement } // Only specified level and above
+                }
+            },
+            {
+                $lookup: {
+                    from: "ranktiers",
+                    localField: "rank",
+                    foreignField: "_id",
+                    as: "rankInfo"
+                }
+            },
+            { $unwind: { path: "$rankInfo", preserveNullAndEmptyArrays: true } },
+            {
+                $sort: {
+                    mmr: -1,                    // Primary: Highest MMR first
+                    updatedAt: 1,               // Secondary: Longest staying (earliest updatedAt) first
+                }
+            },
+            { $skip: pageOptions.page * pageOptions.limit },
+            { $limit: pageOptions.limit },
+            {
+                $project: {
+                    _id: 1,
+                    mmr: 1,
+                    lastActive: "$updatedAt",
+                    characterId: "$character._id",
+                    username: "$character.username",
+                    level: "$character.level",
+                    rankName: "$rankInfo.name",
+                }
+            }
+        ];
+
+        const leaderboardData = await Rankings.aggregate(leaderboardPipeline);
+
+        // Get total count for pagination
+        const totalCountPipeline = [
+            {
+                $match: { season: selectedSeason._id }
+            },
+            {
+                $lookup: {
+                    from: "characterdatas",
+                    localField: "owner",
+                    foreignField: "_id",
+                    as: "character"
+                }
+            },
+            { $unwind: "$character" },
+            {
+                $match: {
+                    "character.level": { $gte: levelRequirement }
+                }
+            },
+            { $count: "total" }
+        ];
+
+        const totalCountResult = await Rankings.aggregate(totalCountPipeline);
+        const totalPlayers = totalCountResult[0]?.total || 0;
+        const totalPages = Math.ceil(totalPlayers / pageOptions.limit);
+
+        const formattedResponse = leaderboardData.map((player, index) => ({
+            rank: pageOptions.page * pageOptions.limit + index + 1,
+            characterId: player.characterId,
+            username: player.username,
+            level: player.level,
+            mmr: player.mmr,
+            rankName: player.rankName || "Unranked",
+            lastActive: player.lastActive
+        }));
+
+        return res.status(200).json({
+            message: "success",
+            data: formattedResponse,
+            pagination: {
+                currentPage: pageOptions.page,
+                totalPages,
+                totalPlayers,
+                itemsPerPage: pageOptions.limit,
+                hasNext: pageOptions.page < totalPages - 1,
+                hasPrev: pageOptions.page > 0
+            },
+        });
+
+    } catch (err) {
+        console.error(`Error in getleaderboardssuperadmin: ${err}`);
+        return res.status(500).json({ 
+            message: "error", 
+            data: "An error occurred while fetching the leaderboard data." 
         });
     }
 };

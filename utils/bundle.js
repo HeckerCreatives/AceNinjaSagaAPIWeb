@@ -6,7 +6,6 @@ exports.gethairbundle = (itemid) => {
     }
 
     const bundle = itembundledata.find(bundle => bundle.itemid === itemid);
-
     if (!bundle) {
         return "";
     }

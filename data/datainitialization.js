@@ -3423,6 +3423,7 @@ const battlepassData = [
             xpRequired: 50000
         }
     ],
+    grandreward: [new mongoose.Types.ObjectId("6828695886cc0f20427495bc")],
     startDate: new Date(),
     endDate: new Date(new Date().setMonth(new Date().getMonth() + 2)),            
 }

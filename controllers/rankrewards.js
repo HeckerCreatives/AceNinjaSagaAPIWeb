@@ -32,7 +32,6 @@ exports.editrankrewards = async (req, res) => {
     const { id } = req.user;
     const { rankid, rewards } = req.body;
 
-    console.log("Editing rank rewards for user:", id, "Rank ID:", rankid, "Rewards:", rewards);
     if (!rankid || !rewards || !Array.isArray(rewards)) {
         return res.status(400).json({ message: "bad-request", data: "Invalid input data." });
     }

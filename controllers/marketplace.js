@@ -4,6 +4,8 @@ const { Market, CharacterInventory, Item } = require("../models/Market")
 const Characterdata = require("../models/Characterdata")
 const { Skill, CharacterSkillTree } = require("../models/Skills");
 const { checkmaintenance } = require("../utils/maintenance");
+const { gethairbundle } = require("../utils/bundle");
+const { getCharacterGenderString } = require("../utils/character");
 
 
 
@@ -653,6 +655,7 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
                 data: "Character not found"
             });
         }
+        const charactergender = await getCharacterGenderString(character._id);
 
 
         // Process each item
@@ -674,7 +677,25 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
             }
 
             const itemData = marketItem.items[0];
+            if(charactergender !== itemData.gender){
+                results.push({
+                    itemid,
+                    status: 'failed',
+                    message: 'Character gender does not match item gender'
+                });
+                continue
+            }
 
+            const hairItem = gethairbundle(itemData._id.toString())
+            if (itemData.type === "outfit" && !hairItem) {
+                results.push({
+                    itemid,
+                    status: 'failed',
+                    message: 'Hair bundle not found'
+                });
+                continue;
+            }
+            
             try {
                 // Check if item exists in inventory
                 const inventory = await CharacterInventory.findOne(
@@ -711,6 +732,20 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
                             session 
                         }
                     );
+
+                    if (itemData.inventorytype === "outfit") {
+                        await CharacterInventory.findOneAndUpdate(
+                            { owner: character._id, type: "hair" },
+                            { $push: { items: { item: hairItem, quantity: 1 } } },
+                            { upsert: true, new: true, session }
+                        )
+
+                        results.push({
+                            itemid,
+                            status: 'success',
+                            name: itemData.name
+                        });
+                    }
                 }
 
                 results.push({
@@ -730,10 +765,9 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
 
         await session.commitTransaction();
 
-        console.log(results)
         return res.status(200).json({ 
             message: "success",
-
+            data: results
         });
 
     } catch (err) {

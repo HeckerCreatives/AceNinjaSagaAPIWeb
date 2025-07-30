@@ -15,14 +15,14 @@ exports.getMarketItems = async (req, res) => {
         limit: parseInt(limit, 10) || 10
     }
 
-    const maintenance = await checkmaintenance(markettype || "market")
+    // const maintenance = await checkmaintenance(markettype || "market")
 
-    if (maintenance === "failed") {
-        return res.status(400).json({
-            message: "failed",
-            data: "The market is currently under maintenance. Please try again later."
-        });
-    }
+    // if (maintenance === "failed") {
+    //     return res.status(400).json({
+    //         message: "failed",
+    //         data: "The market is currently under maintenance. Please try again later."
+    //     });
+    // }
 
     const query = {
 

@@ -1,6 +1,6 @@
 const { io } = require("socket.io-client");
 
-const socket = io("http://localhost:5002/", {
+const socket = io(process.env.SOCKET_URL, {
     reconnection: true,
     transports: ['websocket'],
     query: {

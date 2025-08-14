@@ -3431,7 +3431,6 @@ const battlepassData = [
 exports.battlepassData = battlepassData;
 
 // #endregion
-
 // #region SEASON
 
 const seasonData = [
@@ -3833,7 +3832,6 @@ const questmissionsdata = [
 exports.questmissionsdata = questmissionsdata;
 
 // #endregion
-
 // #region TITLES AND BADGES
 
 const titlesdata = [
@@ -3888,7 +3886,6 @@ const titlesdata = [
         description: "You traverse the void, mastering the balance between light and darkness."
     }
 ]
-
 exports.titlesdata = titlesdata;
 
 const badgesdata = [
@@ -3943,6 +3940,46 @@ const badgesdata = [
         description: "You are an Ace Ninja, mastering the art of ninjutsu and combat."
     }
 ]
-
-
 exports.badgesdata = badgesdata;
+
+//  #endregion
+//  #region RAID BOSS
+const raidbossdata = [
+    {
+        bossname: "aetherion",
+        rewards: [],
+        itemrewards: [],
+        skillrewards: [],
+        status: "active"
+    },
+    {
+        bossname: "ignarok",
+        rewards: [],
+        itemrewards: [],
+        skillrewards: [],
+        status: "inactive"
+    },
+    {
+        bossname: "umbraxis",
+        rewards: [],
+        itemrewards: [],
+        skillrewards: [],
+        status: "inactive"
+    },
+    {
+        bossname: "tectalon",
+        rewards: [],
+        itemrewards: [],
+        skillrewards: [],
+        status: "inactive"
+    },
+    {
+        bossname: "colossus",
+        rewards: [],
+        itemrewards: [],
+        skillrewards: [],
+        status: "inactive"
+    }
+]
+exports.raidbossdata = raidbossdata;
+//#endregion

@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata, raidbossdata } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -20,6 +20,7 @@ const Version = require("../models/Version")
 const PvpStats = require("../models/PvpStats")
 const Title = require("../models/Title")
 const Badge = require("../models/Badge")
+const Raidboss = require("../models/Raidboss")
 
 exports.initialize = async () => {
 
@@ -3464,20 +3465,26 @@ exports.initialize = async () => {
 
         
 
-        // Initialize season data
-        const seasons = await Season.find({})
+    // Initialize season data
+    const seasons = await Season.find({})
 
-        if (seasons.length <= 0) {
-            await Season.insertMany(seasonData)
-            console.log("Season data initialized")
-        }
+    if (seasons.length <= 0) {
+        await Season.insertMany(seasonData)
+        console.log("Season data initialized")
+    }
 
-        const quest = await QuestDetails.find({})
-        if (quest.length <= 0) {
-            await QuestDetails.insertMany(questmissionsdata)
-            console.log("Quest data initialized")
-        }
+    const quest = await QuestDetails.find({})
+    if (quest.length <= 0) {
+        await QuestDetails.insertMany(questmissionsdata)
+        console.log("Quest data initialized")
+    }
 
+    const raidboss = await Raidboss.find({})
+
+    if (raidboss.length <= 0){
+        await Raidboss.insertMany(raidbossdata)
+        console.log("raid boss data initialized")
+    }
 
     console.log("SERVER DATA INITIALIZED")
 }

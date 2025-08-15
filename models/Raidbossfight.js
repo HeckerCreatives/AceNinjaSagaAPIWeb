@@ -6,10 +6,6 @@ const RaidbossFightSchema = new mongoose.Schema(
             type:  mongoose.Schema.Types.ObjectId, 
             ref: 'Users'
         },
-        bossname: {
-            type:  mongoose.Schema.Types.ObjectId, 
-            ref: 'Raidboss'
-        },
         status: {
             type: String,
             enum: ["done", "notdone"],

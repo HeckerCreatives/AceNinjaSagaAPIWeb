@@ -232,21 +232,27 @@ exports.getplayerdata = async (req, res) => {
         const ranking = await Rankings.findOne({ owner: characterid }).lean();
 
         // Fetch inventory data
-        const inventoryData = await CharacterInventory.find({ owner: characterid }).lean();
+        const inventoryData = await CharacterInventory.find({ owner: characterid })
+            .populate({
+                path: 'items.item',
+                model: 'Item',
+                select: 'name description rarity stats level price imageUrl currency inventorytype gender'
+            })
+            .lean();
 
         // Initialize inventory with predefined structure
-        const inventory = inventoryData.map(entry => ({
-            type: entry.type,
-            items: []
-        }));
+         const inventory = inventoryData.map(entry => ({
+             type: entry.type,
+             items: []
+         }));
 
-        // Map inventory data to predefined structure
-        inventoryData.forEach(inventoryEntry => {
-            const predefinedEntry = inventory.find(entry => entry.type === inventoryEntry.type);
-            if (predefinedEntry) {
-            predefinedEntry.items = inventoryEntry.items || [];
-            }
-        });
+         // Map inventory data to predefined structure
+         inventoryData.forEach(inventoryEntry => {
+             const predefinedEntry = inventory.find(entry => entry.type === inventoryEntry.type);
+             if (predefinedEntry) {
+                 predefinedEntry.items = inventoryEntry.items || [];
+             }
+         });
 
         // Fetch companions data
         const companionData = await CharacterCompanion.findOne({ owner: characterid, isEquipped: true }).lean();
@@ -270,14 +276,25 @@ exports.getplayerdata = async (req, res) => {
             wallet: wallet.map(w => ({ type: w.type, amount: w.amount })),
             stats: stats || {},
             inventory: inventory.map(({ type, items }) => ({
-            type,
-            items: items.map(({ item, quantity, isEquipped, acquiredAt, details }) => ({
-                id: item,
-                quantity,
-                isEquipped,
-                acquiredAt,
-                details
-            }))
+                type,
+                items: items.map(({ item, quantity, isEquipped, acquiredAt }) => ({
+                    id: item?._id || item,
+                    name: item?.name || null,
+                    quantity,
+                    isEquipped,
+                    acquiredAt,
+                    details: item ? {
+                        description: item.description || null,
+                        rarity: item.rarity || null,
+                        stats: item.stats || null,
+                        level: item.level || null,
+                        price: item.price || null,
+                        imageUrl: item.imageUrl || null,
+                        currency: item.currency || null,
+                        inventorytype: item.inventorytype || null,
+                        gender: item.gender || null
+                    } : null
+                }))
             })),
             companions: companions.map(({ _id, companion, isEquipped, details }) => ({
             id: _id,

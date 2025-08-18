@@ -7,6 +7,7 @@ const Reset = require("../models/Reset");
 const { CharacterMonthlyLogin } = require("../models/Rewards");
 const { Rankings, RankingHistory } = require("../models/Ranking");
 const Season = require("../models/Season");
+const RaidbossFight = require("../models/Raidbossfight");
 
 
 
@@ -433,6 +434,35 @@ exports.resetmonthlylogin = async (req, res) => {
         owner: id,
         type: "monthlylogin",
         action: `Reset all monthly login`,
+    })
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while logging the reset action" });
+    });
+
+    res.status(200).json({
+        message: "success",
+    });
+}
+
+exports.resettraidboss = async (req, res) => {
+    const { id } = req.user;
+
+    await RaidbossFight.updateMany(
+        {},
+        { $set: { status: "notdone" } }
+    )
+    .then(data => data)
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while resetting raid boss fights" });
+    });
+
+    await ResetHistory.create({
+        owner: id,
+        type: "raidboss",
+        action: `Reset raidboss fights`,
     })
     .then(data => data)
     .catch(err => {

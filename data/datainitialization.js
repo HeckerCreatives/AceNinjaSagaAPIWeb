@@ -3947,37 +3947,107 @@ exports.badgesdata = badgesdata;
 const raidbossdata = [
     {
         bossname: "aetherion",
-        rewards: [],
-        itemrewards: [],
-        skillrewards: [],
+        rewards: [
+            { "type": "exp", "amount": 50000, "name": "exp" },
+            { "type": "crystal", "amount": 500, "name": "crystal" },
+            { "type": "coins", "amount": 100000, "name": "coins" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bf", "name": "Katana" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c5", "name": "Moonstone" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c1", "name": "Ice Shuriken" },
+            { "type": "weapon", "id": "6828695886cc0f2042749600", "name": "Fire Blade" },
+            { "type": "skin", "id": "6828695886cc0f20427495e0", "gender": "male", "name": "Gakuran Attire", "fid": "6828695886cc0f2042749510", "fname": "Female Epic Attire 1" },
+            { "type": "skin", "id": "6828695886cc0f20427495f3", "gender": "male", "name": "Male Epic Attire 1", "fid": "6828695886cc0f2042749511", "fname": "Female Epic Attire 2" },
+            { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
+            { "type": "title", "id": 1, "name": "Ace" },
+            { "type": "badge", "id": 4, "name": "Raid Boss" },
+            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
+        ],        
         status: "active"
     },
     {
         bossname: "ignarok",
-        rewards: [],
-        itemrewards: [],
-        skillrewards: [],
+        rewards: [
+            { "type": "exp", "amount": 50000, "name": "exp" },
+            { "type": "crystal", "amount": 500, "name": "crystal" },
+            { "type": "coins", "amount": 100000, "name": "coins" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bf", "name": "Katana" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c5", "name": "Moonstone" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c1", "name": "Ice Shuriken" },
+            { "type": "weapon", "id": "6828695886cc0f2042749600", "name": "Fire Blade" },
+            { "type": "skin", "id": "6828695886cc0f20427495e0", "gender": "male", "name": "Gakuran Attire", "fid": "6828695886cc0f2042749510", "fname": "Female Epic Attire 1" },
+            { "type": "skin", "id": "6828695886cc0f20427495f3", "gender": "male", "name": "Male Epic Attire 1", "fid": "6828695886cc0f2042749511", "fname": "Female Epic Attire 2" },
+            { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
+            { "type": "title", "id": 1, "name": "Ace" },
+            { "type": "badge", "id": 4, "name": "Raid Boss" },
+            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
+        ],           
         status: "inactive"
     },
     {
         bossname: "umbraxis",
-        rewards: [],
-        itemrewards: [],
-        skillrewards: [],
+         rewards: [
+            { "type": "exp", "amount": 50000, "name": "exp" },
+            { "type": "crystal", "amount": 500, "name": "crystal" },
+            { "type": "coins", "amount": 100000, "name": "coins" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bf", "name": "Katana" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c5", "name": "Moonstone" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c1", "name": "Ice Shuriken" },
+            { "type": "weapon", "id": "6828695886cc0f2042749600", "name": "Fire Blade" },
+            { "type": "skin", "id": "6828695886cc0f20427495e0", "gender": "male", "name": "Gakuran Attire", "fid": "6828695886cc0f2042749510", "fname": "Female Epic Attire 1" },
+            { "type": "skin", "id": "6828695886cc0f20427495f3", "gender": "male", "name": "Male Epic Attire 1", "fid": "6828695886cc0f2042749511", "fname": "Female Epic Attire 2" },
+            { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
+            { "type": "title", "id": 1, "name": "Ace" },
+            { "type": "badge", "id": 4, "name": "Raid Boss" },
+            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
+        ],   
         status: "inactive"
     },
     {
         bossname: "tectalon",
-        rewards: [],
-        itemrewards: [],
-        skillrewards: [],
+        rewards: [
+            { "type": "exp", "amount": 50000, "name": "exp" },
+            { "type": "crystal", "amount": 500, "name": "crystal" },
+            { "type": "coins", "amount": 100000, "name": "coins" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bf", "name": "Katana" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c5", "name": "Moonstone" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c1", "name": "Ice Shuriken" },
+            { "type": "weapon", "id": "6828695886cc0f2042749600", "name": "Fire Blade" },
+            { "type": "skin", "id": "6828695886cc0f20427495e0", "gender": "male", "name": "Gakuran Attire", "fid": "6828695886cc0f2042749510", "fname": "Female Epic Attire 1" },
+            { "type": "skin", "id": "6828695886cc0f20427495f3", "gender": "male", "name": "Male Epic Attire 1", "fid": "6828695886cc0f2042749511", "fname": "Female Epic Attire 2" },
+            { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
+            { "type": "title", "id": 1, "name": "Ace" },
+            { "type": "badge", "id": 4, "name": "Raid Boss" },
+            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
+        ],   
         status: "inactive"
     },
     {
         bossname: "colossus",
-        rewards: [],
-        itemrewards: [],
-        skillrewards: [],
+        rewards: [
+            { "type": "exp", "amount": 50000, "name": "exp" },
+            { "type": "crystal", "amount": 500, "name": "crystal" },
+            { "type": "coins", "amount": 100000, "name": "coins" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bf", "name": "Katana" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c5", "name": "Moonstone" },
+            { "type": "weapon", "id": "6828695886cc0f20427495c1", "name": "Ice Shuriken" },
+            { "type": "weapon", "id": "6828695886cc0f2042749600", "name": "Fire Blade" },
+            { "type": "skin", "id": "6828695886cc0f20427495e0", "gender": "male", "name": "Gakuran Attire", "fid": "6828695886cc0f2042749510", "fname": "Female Epic Attire 1" },
+            { "type": "skin", "id": "6828695886cc0f20427495f3", "gender": "male", "name": "Male Epic Attire 1", "fid": "6828695886cc0f2042749511", "fname": "Female Epic Attire 2" },
+            { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
+            { "type": "title", "id": 1, "name": "Ace" },
+            { "type": "badge", "id": 4, "name": "Raid Boss" },
+            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
+            { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
+        ],   
         status: "inactive"
     }
 ]

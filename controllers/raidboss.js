@@ -7,6 +7,7 @@ const Characterdata = require("../models/Characterdata");
 const { awardBattlepassReward, determineRewardType } = require("../utils/battlepassrewards");
 const { gethairbundle } = require("../utils/bundle");
 const ResetHistory = require("../models/Resethistory");
+const socket = require("../socket/config");
 
 // CRUD Operations
 
@@ -167,59 +168,15 @@ exports.updateRaidboss = async (req, res) => {
             });
         }
 
-        // Update fields + dynamic reward normalization
-        let normalizedUpdateRewards = boss.rewards || [];
-        if (rewards !== undefined) {
-            if (!Array.isArray(rewards)) {
-                return res.status(400).json({ 
-                    message: "failed", 
-                    data: "Rewards must be an array" 
-                });
-            }
-
-            normalizedUpdateRewards = [];
-            for (const reward of rewards) {
-                const normalized = determineRewardType(reward);
-                if (!normalized || normalized.type === 'invalid') {
-                    return res.status(400).json({ 
-                        message: "failed", 
-                        data: `Invalid reward entry: ${JSON.stringify(reward)}` 
-                    });
-                }
-                normalizedUpdateRewards.push({
-                    type: normalized.type,
-                    amount: normalized.amount,
-                    id: normalized.id,
-                    gender: reward.gender,
-                    name: reward.name
-                });
-            }
-        }
-
-        let malecount = 0;
-        let femalecount = 0;
-
-        for (const reward of normalizedUpdateRewards) {
-            if (reward.gender === 'male') {
-            malecount++;
-            } else if (reward.gender === 'female') {
-            femalecount++;
-            } else {
-            // unspecified/neutral counts toward both
-            malecount++;
-            femalecount++;
-            }
-        }
-
-        if (malecount > 15 || femalecount > 15) {
+        if (rewards.length > 15) {
             return res.status(400).json({
-            message: "failed",
-            data: "Total number of rewards per gender must not exceed 15"
+                message: "failed",
+                data: "Total number of rewards must not exceed 15"
             });
         }
 
         if (bossname) boss.bossname = bossname;
-        boss.rewards = normalizedUpdateRewards;
+        boss.rewards = rewards;
         if (status) boss.status = status;
 
         await boss.save();
@@ -464,7 +421,6 @@ exports.manualResetRaidboss = async (req, res) => {
 
         await session.commitTransaction();
 
-        // Log reset history (non-blocking — if logging fails we still return success)
         try {
             const id = req.user && (req.user.id || req.user._id) ? (req.user.id || req.user._id) : null;
             if (id) {
@@ -488,6 +444,8 @@ exports.manualResetRaidboss = async (req, res) => {
         const timeUntilMidnight = midnight - now;
         const secondsRemaining = Math.floor(timeUntilMidnight / 1000);
 
+        socket.emit("sendchangeraidboss", { raidboss: randomBoss.bossname, timeremaining: secondsRemaining })
+        
         return res.status(200).json({ 
             message: "success", 
             data: {

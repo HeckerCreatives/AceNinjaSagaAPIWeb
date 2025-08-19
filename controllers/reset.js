@@ -8,6 +8,8 @@ const { CharacterMonthlyLogin } = require("../models/Rewards");
 const { Rankings, RankingHistory } = require("../models/Ranking");
 const Season = require("../models/Season");
 const RaidbossFight = require("../models/Raidbossfight");
+const Raidboss = require("../models/Raidboss")
+const socket = require("../socket/config");
 
 
 
@@ -449,6 +451,25 @@ exports.resetmonthlylogin = async (req, res) => {
 exports.resettraidboss = async (req, res) => {
     const { id } = req.user;
 
+    const inactiveBosses = await Raidboss.find({ status: "inactive" }).toArray();
+
+    if (inactiveBosses.length === 0) {
+        console.log("No inactive bosses to activate.");
+        return;
+    }
+
+    // 2. Pick a random boss from the inactive ones
+    const randomBoss = inactiveBosses[Math.floor(Math.random() * inactiveBosses.length)];
+
+    // 3. Set all bosses to inactive
+    await Raidboss.updateMany({}, { $set: { status: "inactive" } });
+
+    // 4. Activate the chosen boss
+    await Raidboss.updateOne(
+        { _id: randomBoss._id },
+        { $set: { status: "active" } }
+    );
+
     await RaidbossFight.updateMany(
         {},
         { $set: { status: "notdone" } }
@@ -469,6 +490,19 @@ exports.resettraidboss = async (req, res) => {
         console.error(err);
         return res.status(500).json({ message: "An error occurred while logging the reset action" });
     });
+
+    const now = new Date();
+    const phTime = new Date(now.getTime());
+
+    // Calculate time until next midnight (00:00) in UTC+8
+    const midnight = new Date(phTime);
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0, 0, 0, 0);
+
+    const timeUntilMidnight = midnight - phTime;
+    const secondsRemaining = Math.floor(timeUntilMidnight / 1000);
+
+    socket.emit("sendchangeraidboss", { raidboss: randomBoss.bossname, timeremaining: secondsRemaining })
 
     res.status(200).json({
         message: "success",

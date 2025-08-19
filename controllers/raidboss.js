@@ -176,13 +176,7 @@ exports.updateRaidboss = async (req, res) => {
                     data: "Rewards must be an array" 
                 });
             }
-            if (rewards.length > 15) {
-                return res.status(400).json({ 
-                    message: "failed", 
-                    data: "Rewards entries must not exceed 15" 
-                });
-            }
-            
+
             normalizedUpdateRewards = [];
             for (const reward of rewards) {
                 const normalized = determineRewardType(reward);
@@ -202,12 +196,25 @@ exports.updateRaidboss = async (req, res) => {
             }
         }
 
-        const newRewardsCount = normalizedUpdateRewards.length;
+        let malecount = 0;
+        let femalecount = 0;
 
-        if (newRewardsCount > 15) {
-            return res.status(400).json({ 
-                message: "failed", 
-                data: "Total number of rewards must not exceed 15" 
+        for (const reward of normalizedUpdateRewards) {
+            if (reward.gender === 'male') {
+            malecount++;
+            } else if (reward.gender === 'female') {
+            femalecount++;
+            } else {
+            // unspecified/neutral counts toward both
+            malecount++;
+            femalecount++;
+            }
+        }
+
+        if (malecount > 15 || femalecount > 15) {
+            return res.status(400).json({
+            message: "failed",
+            data: "Total number of rewards per gender must not exceed 15"
             });
         }
 

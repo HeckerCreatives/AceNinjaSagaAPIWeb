@@ -194,6 +194,55 @@ exports.companionlist = async (req, res) => {
 }
 
 
+// Clean companion list: no character ownership checks, simple paginated list
+exports.companionListClean = async (req, res) => {
+    const { page, limit } = req.query;
+
+    const options = {
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(limit, 10) || 10,
+    };
+
+    try {
+        const companions = await Companion.find()
+            .limit(options.limit)
+            .skip(options.limit * (options.page - 1))
+            .sort({ levelrequirement: 1 })
+            .then(data => data);
+
+        const totalData = await Companion.countDocuments();
+        const totalPages = Math.ceil(totalData / options.limit);
+
+        const finalData = companions.map(c => {
+            const { id, name, activedescription, passivedescription, passiveeffects, activeeffects, levelrequirement, price, currency } = c;
+            return {
+                id: id,
+                name: name,
+                activedescription: activedescription,
+                passivedescription: passivedescription,
+                passiveeffects: passiveeffects,
+                activeeffects: activeeffects,
+                levelrequirement: levelrequirement,
+                price: price,
+                currency: currency
+            };
+        });
+
+        return res.status(200).json({
+            message: 'success',
+            data: finalData,
+            totalpages: totalPages
+        });
+    } catch (err) {
+        console.log(`There's a problem encountered while getting companions. Error: ${err}.`);
+        return res.status(400).json({
+            message: 'bad-request',
+            data: "There's a problem with the server. Please try again later."
+        });
+    }
+}
+
+
 exports.buycompanion = async (req, res) => {
 
     const { id } = req.user

@@ -369,6 +369,16 @@ exports.setActiveRaidboss = async (req, res) => {
 
         await session.commitTransaction();
 
+        // Calculate time until next midnight for timer
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setDate(midnight.getDate() + 1);
+        midnight.setHours(0, 0, 0, 0);
+        const timeUntilMidnight = midnight - now;
+        const secondsRemaining = Math.floor(timeUntilMidnight / 1000);
+
+        socket.emit("sendchangeraidboss", { raidboss: boss.bossname, timeremaining: secondsRemaining })
+
         return res.status(200).json({ 
             message: "success", 
             data: `${boss.bossname} is now the active raid boss` 

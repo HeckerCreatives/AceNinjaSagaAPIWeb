@@ -567,11 +567,11 @@ exports.resetpvpranking = async (req, res) => {
                 }
             },
             { $unwind: "$character" },
-            {
-                $match: {
-                    "character.level": { $gte: 20 }
-                }
-            },
+            // {
+            //     $match: {
+            //         "character.level": { $gte: 20 }
+            //     }
+            // },
             {
                 $sort: {
                     mmr: -1,

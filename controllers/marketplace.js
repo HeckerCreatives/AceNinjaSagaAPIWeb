@@ -1389,7 +1389,8 @@ exports.getallitemsandskill  = async (req, res) => {
     try {
         // Handle skills-only filter
         if (itemType === "skills") {
-            const skillData = await Skill.find({ category: { $ne: "Basic" } })
+            // category not equal to Basic and Path
+            const skillData = await Skill.find({ category: { $nin: ["Basic", "Path"] } })
                 .skip(pageOptions.page * pageOptions.limit)
                 .limit(pageOptions.limit)
                 .sort({ createdAt: -1 });

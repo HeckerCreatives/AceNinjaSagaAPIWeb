@@ -3960,7 +3960,7 @@ const raidbossdata = [
             { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
             { "type": "title", "id": 1, "name": "Ace" },
             { "type": "badge", "id": 4, "name": "Raid Boss" },
-            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749602", "name": "Ancient Spear" },
             { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
             { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
         ],        
@@ -3981,7 +3981,7 @@ const raidbossdata = [
             { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
             { "type": "title", "id": 1, "name": "Ace" },
             { "type": "badge", "id": 4, "name": "Raid Boss" },
-            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749602", "name": "Ancient Spear" },
             { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
             { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
         ],           
@@ -4002,7 +4002,7 @@ const raidbossdata = [
             { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
             { "type": "title", "id": 1, "name": "Ace" },
             { "type": "badge", "id": 4, "name": "Raid Boss" },
-            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749602", "name": "Ancient Spear" },
             { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
             { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
         ],   
@@ -4023,7 +4023,7 @@ const raidbossdata = [
             { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
             { "type": "title", "id": 1, "name": "Ace" },
             { "type": "badge", "id": 4, "name": "Raid Boss" },
-            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749602", "name": "Ancient Spear" },
             { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
             { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
         ],   
@@ -4044,7 +4044,7 @@ const raidbossdata = [
             { "type": "skin", "id": "6828695886cc0f20427495e7", "gender": "male", "name": "Uke Attire", "fid": "6828695886cc0f2042749512", "fname": "Female Epic Attire 3" },
             { "type": "title", "id": 1, "name": "Ace" },
             { "type": "badge", "id": 4, "name": "Raid Boss" },
-            { "type": "companion", "id": "682868aa3b00fa188878aa7e", "name": "Viper" },
+            { "type": "weapon", "id": "6828695886cc0f2042749602", "name": "Ancient Spear" },
             { "type": "weapon", "id": "6828695886cc0f2042749603", "name": "God's Axe" },
             { "type": "weapon", "id": "6828695886cc0f20427495bd", "name": "Lizard" }
         ],   

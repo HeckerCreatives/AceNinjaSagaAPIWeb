@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata, raidbossdata } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata, raidbossdata, chestData, chestItems } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -21,6 +21,7 @@ const PvpStats = require("../models/PvpStats")
 const Title = require("../models/Title")
 const Badge = require("../models/Badge")
 const Raidboss = require("../models/Raidboss")
+const Chest = require("../models/Chests")
 
 exports.initialize = async () => {
 
@@ -149,7 +150,8 @@ exports.initialize = async () => {
             ...crystalPackData,
             ...goldPackData,
             ...topupcreditdata,
-            ...freebiesdata
+            ...freebiesdata,
+            ...chestData
         ]
 
         const itemBulkWrite = itemData.map(item => ({
@@ -3075,7 +3077,7 @@ exports.initialize = async () => {
                 console.log("No items available to create market");
                 return;
             }
-
+ 
 
             const marketitems = availableItems.filter(item => item.currency === "coins");
             const storeitems = availableItems.filter(item => item.currency !== "coins");
@@ -3243,6 +3245,12 @@ exports.initialize = async () => {
         if (badges.length <= 0) {
             await Badge.insertMany(badgesdata);
             console.log("Badges initialized");
+        }
+
+        const chests = await Chest.find({});
+        if (chests.length <= 0) {
+            await Chest.insertMany(chestItems);
+            console.log("Chests initialized");
         }
 
 

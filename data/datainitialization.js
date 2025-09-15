@@ -4053,3 +4053,322 @@ const raidbossdata = [
 ]
 exports.raidbossdata = raidbossdata;
 //#endregion
+
+
+
+// #region CHEST REWARDS
+
+// initialize chest to items
+const chestData = [
+    // same fields as other items
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc54960e"),
+        name: "Brown Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "basic",
+        gender: "unisex",
+        price: 100,
+        currency: "crystal",
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc54960f"),
+        name: "Silver Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "common",
+        currency: "crystal",
+        price: 250,
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549610"),
+        name: "Gold Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "common",
+        currency: "crystal",
+        price: 500,
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549611"),
+        name: "Platinum Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "rare",
+        currency: "crystal",
+        price: 750,
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549612"),
+        name: "Diamond Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "rare",
+        currency: "crystal",
+        price: 1000,
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549613"),
+        name: "Ace Chest",
+        type: "chests",
+        inventorytype: "chests",
+        rarity: "legendary",
+        currency: "crystal",
+        price: 1500,
+        description: "N/A",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    }
+]
+
+exports.chestData = chestData;
+
+const chestItems = [
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc54960e"),
+        name: "Brown Chest",
+        amount: 100,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: 1,
+                    name: "Ace"
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 50,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 100,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 500,
+                probability: 25
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc54960f"),
+        name: "Silver Chest",
+        amount: 250,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f2042749600",
+                    name: "Fire Blade"
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 75,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 150,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 750,
+                probability: 25
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549610"),
+        name: "Gold Chest",
+        amount: 500,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "weapon",
+                reward: {
+
+                    id: "6828695886cc0f20427495f3",
+                    name:  "Male Epic Outfit 1",
+                    fid: "6828695886cc0f2042749510",
+                    fname: "Female Epic Outfit 1"
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 75,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 150,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 750,
+                probability: 25
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549611"),
+        name: "Platinum Chest",
+        amount: 750,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: 4,
+                    name:  "PVP",
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 75,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 150,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 750,
+                probability: 25
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549612"),
+        name: "Diamond Chest",
+        amount: 1000,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: "6828695886cc0f20427495e7",
+                    name: "Uke Outfit",
+                    fid: "6828695886cc0f2042749504",
+                    fname: "Warrior Princess Outfit"
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 75,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 150,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 750,
+                probability: 25
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549613"),
+        name: "Ace Chest",
+        amount: 1500,
+        currency: "crystal",
+        rewards: [
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: "6828695886cc0f20427495e7",
+                    name: "Uke Outfit",
+                    fid: "6828695886cc0f2042749504",
+                    fname: "Warrior Princess Outfit"
+                },
+                probability: 40
+            },
+            {
+                rewardtype: "crystal",
+                amount: 75,
+                probability: 10
+            },
+            {
+                rewardtype: "exp",
+                amount: 150,
+                probability: 25
+            },
+            {
+                rewardtype: "coins",
+                amount: 750,
+                probability: 25
+            }
+        ]    
+    }
+]
+
+exports.chestItems = chestItems;
+// #endregion

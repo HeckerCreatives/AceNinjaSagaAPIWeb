@@ -262,8 +262,8 @@ exports.editmonthlylogin = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input all fields." })
     }
 
-    if(type !== "exp" && type !== "coins" && type !== "crystal"){
-        return res.status(400).json({ message: "failed", data: "Type must be exp, coins or crystal." })
+    if(type !== "exp" && type !== "coins" && type !== "crystal" && type !== "chest"){
+        return res.status(400).json({ message: "failed", data: "Type must be exp, coins, crystal or chest." })
     }
 
     if(amount < 0 && typeof amount !== "string"){
@@ -307,8 +307,8 @@ exports.editweeklylogin = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Please input all fields." })
     }
 
-    if(type !== "exp" && type !== "coins" && type !== "crystal"){
-        return res.status(400).json({ message: "failed", data: "Type must be exp, coins or crystal." })
+    if(type !== "exp" && type !== "coins" && type !== "crystal" && type !== "chest"){
+        return res.status(400).json({ message: "failed", data: "Type must be exp, coins, crystal or chest." })
     }
 
 
@@ -319,7 +319,7 @@ exports.editweeklylogin = async (req, res) => {
     if(!mongoose.Types.ObjectId.isValid(amount) && typeof amount === "string"){
         return res.status(400).json({ message: "failed", data: "Amount must be a valid ObjectId string." })
     }
-    
+
     if(day < 1 || day > 7){
         return res.status(400).json({ message: "failed", data: "Day must be between 1 and 7." })
     }

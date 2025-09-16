@@ -45,6 +45,12 @@ exports.editchestrewards = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "You can only add up to 10 rewards per chest." });
     }
 
+    // Ensure total probability does not exceed 100
+    const totalProbability = rewards.reduce((sum, r) => sum + (Number(r.probability) || 0), 0);
+    if (totalProbability > 100) {
+        return res.status(400).json({ message: "bad-request", data: "The total probability of rewards cannot exceed 100." });
+    }
+
     try {
         const updated = await Chest.findOneAndUpdate(
             { _id: chestid },

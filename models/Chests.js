@@ -55,14 +55,14 @@ ChestSchema.pre('save', function(next) {
     next();
 });
 
-// dont allow more than 100 probability total
-ChestSchema.pre('save', function(next) {
-    const totalProbability = this.rewards.reduce((total, reward) => total + reward.probability, 0);
-    if (totalProbability > 100) {
-        return next(new Error("The total probability of rewards cannot exceed 100"));
-    }
-    next();
-});
+// // dont allow more than 100 probability total
+// ChestSchema.pre('save', function(next) {
+//     const totalProbability = this.rewards.reduce((total, reward) => total + reward.probability, 0);
+//     if (totalProbability > 100) {
+//         return next(new Error("The total probability of rewards cannot exceed 100"));
+//     }
+//     next();
+// });
 
 
 const Chest = mongoose.model("Chest", ChestSchema);

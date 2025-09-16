@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin } = require("../models/Rewards")
 const { checkcharacter } = require("../utils/character")
 
@@ -265,8 +266,12 @@ exports.editmonthlylogin = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Type must be exp, coins or crystal." })
     }
 
-    if(amount < 0){
+    if(amount < 0 && typeof amount !== "string"){
         return res.status(400).json({ message: "failed", data: "Amount must be greater than 0." })
+    }
+
+    if(!mongoose.Types.ObjectId.isValid(amount) && typeof amount === "string"){
+        return res.status(400).json({ message: "failed", data: "Amount must be a valid ObjectId string." })
     }
 
     if(!day.match(/^day[1-9][0-9]*$/)){
@@ -306,9 +311,15 @@ exports.editweeklylogin = async (req, res) => {
         return res.status(400).json({ message: "failed", data: "Type must be exp, coins or crystal." })
     }
 
-    if(amount < 0){
+
+    if(amount < 0 && typeof amount !== "string"){
         return res.status(400).json({ message: "failed", data: "Amount must be greater than 0." })
     }
+
+    if(!mongoose.Types.ObjectId.isValid(amount) && typeof amount === "string"){
+        return res.status(400).json({ message: "failed", data: "Amount must be a valid ObjectId string." })
+    }
+    
     if(day < 1 || day > 7){
         return res.status(400).json({ message: "failed", data: "Day must be between 1 and 7." })
     }

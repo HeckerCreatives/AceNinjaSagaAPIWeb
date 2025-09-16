@@ -51,6 +51,13 @@ exports.editchestrewards = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "The total probability of rewards cannot exceed 100." });
     }
 
+    const rewardIds = rewards.map(r => r.reward && r.reward.id).filter(id => id);
+    const uniqueRewardIds = new Set(rewardIds);
+
+    if (uniqueRewardIds.size !== rewardIds.length) {
+        return res.status(400).json({ message: "bad-request", data: "Duplicate reward IDs are not allowed." });
+    }
+
     try {
         const updated = await Chest.findOneAndUpdate(
             { _id: chestid },

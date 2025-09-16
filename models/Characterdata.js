@@ -60,6 +60,11 @@ const CharacterDataSchema = new mongoose.Schema(
         },
         itemindex: {
             type: Number
+        },
+        status: {
+            type: String,
+            index: true,
+            default: "active"
         }
     },
     {
@@ -86,7 +91,8 @@ CharacterDataSchema.pre('save', async function(next) {
             }
         }
 
-        // Auto-increment logic with fallback mechanism
+        // Auto-increment logic with fallback mechanism        
+        
         const MAX_RETRIES = 3;
         
         for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {

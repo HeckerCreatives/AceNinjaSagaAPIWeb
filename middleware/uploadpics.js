@@ -57,7 +57,14 @@ var upload = multer({
                 '.unity3d',
                 '.assetbundle',
                 '.bytes',
-                '.txt'
+                '.txt',
+                // for testing purposes only
+                "image/png",
+                "image/jpg",
+                "image/jpeg",
+                "video/mp4",
+                "video/quicktime", // for .mov files
+                "video/x-msvideo"  // for .avi files
             ];
             
             const fileExt = path.extname(file.originalname).toLowerCase();

@@ -18,6 +18,7 @@ const routers = app => {
     app.use("/news", require("./news"))
     app.use("/newsletter", require("./newsletter"))
     app.use("/patchnote", require("./patchnote"))
+    app.use("/patchnotefilemanager", require("./patchnotefilemanager"))
     app.use("/payin", require("./payin"))
     app.use("/pvp", require('./pvp'));
     app.use("/quest", require('./quest'));

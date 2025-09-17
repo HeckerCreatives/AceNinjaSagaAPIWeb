@@ -2,13 +2,16 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 
-// Disk storage for regular uploads
-var diskStorage = multer.diskStorage({
+var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let folder = 'uploads/';
 
         if (file.fieldname === "imageUrl") {
             folder = 'uploads/market/';
+        } else if (file.fieldname === "addressableFile") {
+            // For addressable files, use the platform folder from request body
+            const platform = req.body.platform || 'Android'; // default to Android
+            folder = `addressables/${platform}/`;
         }
 
         fs.mkdirSync(folder, { recursive: true });
@@ -16,17 +19,18 @@ var diskStorage = multer.diskStorage({
         cb(null, folder);
     },
     filename: function (req, file, cb) {
-        let ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext);
+        if (file.fieldname === "addressableFile") {
+            // Keep original filename for addressable files to allow overwriting
+            cb(null, file.originalname);
+        } else {
+            let ext = path.extname(file.originalname);
+            cb(null, Date.now() + ext);
+        }
     }
 });
 
-// Memory storage for addressableFile so we don't write large assets to disk
-var memoryStorage = multer.memoryStorage();
-
-// Create multer instances for each storage strategy. We'll dispatch in middleware
 var upload = multer({
-    storage: diskStorage,
+    storage: storage,
     fileFilter: function (req, file, callback) {
         let allowedMimeTypes = [];
         let allowedExtensions = [];
@@ -83,13 +87,4 @@ var upload = multer({
     }
 });
 
-// Export a small helper that chooses the correct multer middleware based on fieldname.
-// For single-field usage you can call: uploadFields.single('addressableFile')
-const uploadFields = {
-    // For addressableFile we use memoryStorage so files are available at req.file.buffer
-    addressableFile: multer({ storage: memoryStorage, fileFilter: upload._options.fileFilter }),
-    // Default handler for other file uploads (imageUrl etc.)
-    default: upload
-};
-
-module.exports = uploadFields;
+module.exports = upload;

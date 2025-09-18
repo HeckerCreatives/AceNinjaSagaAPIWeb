@@ -64,7 +64,8 @@ var upload = multer({
                 ".jpeg",
                 ".mp4",
                 ".mov", // for .mov files
-                ".avi"  // for .avi files
+                ".avi", // for .avi files
+                ".zip" // for .zip files
             ];
             
             const fileExt = path.extname(file.originalname).toLowerCase();

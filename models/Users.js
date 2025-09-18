@@ -33,6 +33,13 @@ const UsersSchema = new mongoose.Schema(
         auth: {
             type: String
         }
+        ,
+        // Number of character slots available to this user (default 1, max 4 enforced in controller)
+        characterSlots: {
+            type: Number,
+            default: 1
+        },
+        slotsunlocked: [Number] // Array to track which slots are unlocked (e.g., [1, 2] means slots 1 and 2 are unlocked)
     },
     {
         timestamps: true

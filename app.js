@@ -9,7 +9,7 @@ require("dotenv").config();
 const app = express();
 
 const {initialize} = require("./initialization/serverinitialize")
-
+const {socketserver} = require("./socket/socket-web-config")
 const CORS_ALLOWED = process.env.ALLOWED_CORS
 
 const corsConfig = {
@@ -42,6 +42,7 @@ app.use(cookieParser());
 // Routes
 require("./routes")(app);
 
+socketserver(server, corsConfig);
 
 const port = process.env.PORT || 5001; // Dynamic port for deployment
 server.listen(port, () => console.log(`Server is running on port: ${port}`));

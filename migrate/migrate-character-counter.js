@@ -6,7 +6,7 @@ const Counter = require('../models/Counter');
 async function ensureConnected() {
     if (mongoose.connection.readyState && mongoose.connection.readyState !== 0) return;
 
-    const uri = process.env.DATABASE_URL || 'mongodb+srv://cbsadmin:Creativebrain2022@creativebraindevelopmen.itmjhkl.mongodb.net/acegame?retryWrites=true&w=majority';
+    const uri = process.env.DATABASE_URL || 'mongodb://axcela:Axcela2025Ph@143.198.206.121:27017/ace?authSource=admin';
     console.log(`Connecting to MongoDB at ${uri} ...`);
     await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Connected to MongoDB.');

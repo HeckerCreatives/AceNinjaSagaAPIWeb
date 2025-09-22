@@ -1,3 +1,5 @@
+
+
 let Server; // will be lazy-required inside socketserver
 let io; // store globally
 
@@ -44,6 +46,7 @@ const socketserver = async (server, corsconfig) => {
         // Expecting payload: { socketId, file, status, progress }
         socket.on('game:patchstatus', (payload) => {
             if (!payload || !payload.socketId) return;
+            console.log(payload)
             try {
                 io.to(payload.socketId).emit('fileUploadStatus', {
                     file: payload.file,

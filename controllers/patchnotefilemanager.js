@@ -22,10 +22,6 @@ exports.uploadpatchnotesfile = async (req, res) => {
 	if (platform) form.append('platform', platform);
 	if (version) form.append('version', version);
 	if (description) form.append('description', description);
-    // NOTE: This endpoint forwards files to the Game API. The Game API is
-    // responsible for emitting progress/status events back to the Web API
-    // (which will forward to frontend rooms). To avoid duplicate events we do
-    // NOT emit socket events from this forwarder.
 
 	for (const file of files) {
 		// Support memory-buffered uploads (req.file.buffer) or disk-based streams
@@ -47,9 +43,6 @@ exports.uploadpatchnotesfile = async (req, res) => {
             return res.status(500).json({ message: 'server-error', data: 'Server is not configured to forward patchnotes. Missing API key.' });
         }
 
-        // Respond immediately and perform the forward in the background to avoid
-        // HTTP timeouts. The Game API will use the provided `socketId` to emit
-        // progress back to the Web API socket server.
         res.status(202).json({ message: 'accepted', data: { files: files.map(f => f.originalname), socketId } });
 
         // Background forward (do not await)
@@ -92,7 +85,6 @@ exports.uploadpatchnotesfile = async (req, res) => {
                     timeout: 0
                 });
 
-                // We don't emit from the web forwarder; Game API will emit progress.
             } catch (bgErr) {
                 console.error('Background forward to Game API failed:', bgErr && (bgErr.message || bgErr));
             }

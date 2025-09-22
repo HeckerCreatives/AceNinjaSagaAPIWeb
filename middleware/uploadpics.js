@@ -88,4 +88,14 @@ var upload = multer({
     }
 });
 
+// Memory storage variant for endpoints that forward files to other services
+// and don't want to persist files on disk. Files will be available as
+// req.files[].buffer
+const memoryStorage = multer.memoryStorage();
+const memoryUpload = multer({
+    storage: memoryStorage,
+    fileFilter: upload.fileFilter // reuse same fileFilter logic
+});
+
 module.exports = upload;
+module.exports.memory = memoryUpload;

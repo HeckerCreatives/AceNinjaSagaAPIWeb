@@ -45,6 +45,20 @@ exports.editchestrewards = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "You can only add up to 10 rewards per chest." });
     }
 
+    // Validate that each reward has a valid rewardtype
+    const validRewardTypes = ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal'];
+    for (const reward of rewards) {
+        if (!reward.rewardtype) {
+            return res.status(400).json({ message: "bad-request", data: "Each reward must have a rewardtype." });
+        }
+        if (!validRewardTypes.includes(reward.rewardtype)) {
+            return res.status(400).json({ 
+                message: "bad-request", 
+                data: `Invalid rewardtype '${reward.rewardtype}'. Valid types are: ${validRewardTypes.join(', ')}.` 
+            });
+        }
+    }
+
     // Ensure total probability does not exceed 100
     const totalProbability = rewards.reduce((sum, r) => sum + (Number(r.probability) || 0), 0);
     if (totalProbability > 100) {

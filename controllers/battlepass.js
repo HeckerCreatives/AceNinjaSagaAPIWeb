@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const { BattlepassSeason, BattlepassHistory, BattlepassProgress } = require("../models/Battlepass");
+const Season = require("../models/Season");
 const { checkcharacter } = require("../utils/character");
 const { Market, Item } = require("../models/Market");
 
@@ -241,6 +242,32 @@ exports.editbattlepassdetails = async (req, res) => {
             console.error(`Error saving battlepass: ${err}`);
             return res.status(500).json({ message: "error", data: "There was an error updating the battlepass. Please try again later." });
         });
+
+    // If dates were updated, sync with the active season
+    if (updateData.startDate || updateData.endDate) {
+        try {
+            const seasonUpdateData = {};
+            if (updateData.startDate) {
+                seasonUpdateData.startedAt = updateData.startDate;
+            }
+            if (updateData.endDate && updateData.startDate) {
+                // Calculate duration in days from start to end date
+                const durationMs = updateData.endDate.getTime() - updateData.startDate.getTime();
+                seasonUpdateData.duration = Math.ceil(durationMs / (24 * 60 * 60 * 1000));
+            }
+
+            // Update the active season with matching dates
+            if (Object.keys(seasonUpdateData).length > 0) {
+                await Season.updateOne(
+                    { isActive: "active" },
+                    seasonUpdateData
+                );
+            }
+        } catch (syncErr) {
+            console.error(`Error syncing season dates: ${syncErr}`);
+            // Don't fail the battlepass update if season sync fails
+        }
+    }
 
     return res.status(200).json({
         message: "success",

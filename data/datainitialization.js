@@ -3425,7 +3425,7 @@ const battlepassData = [
     ],
     grandreward: [new mongoose.Types.ObjectId("6828695886cc0f20427495bc")],
     startDate: new Date(),
-    endDate: new Date(new Date().setMonth(new Date().getMonth() + 2)),            
+    endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
 }
 ]
 exports.battlepassData = battlepassData;

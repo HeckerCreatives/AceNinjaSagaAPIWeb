@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose")
 const Season = require("../models/Season")
+const { BattlepassSeason } = require("../models/Battlepass")
 const { RemainingTime, getSeasonRemainingTimeInMilliseconds, getSeasonRemainingTime } = require("../utils/datetimetools")
 
 
@@ -135,6 +136,18 @@ exports.updateseason = async (req, res) => {
 
             updateFields.isActive = "active";
             updateFields.startedAt = new Date(); // Ensure the correct start time
+
+            // Calculate season end date and sync with active battlepass
+            const seasonEndDate = new Date(updateFields.startedAt.getTime() + (duration * 24 * 60 * 60 * 1000));
+            
+            // Update active battlepass to match season end date
+            await BattlepassSeason.updateMany(
+                { status: "active" },
+                { 
+                    endDate: seasonEndDate,
+                    startDate: updateFields.startedAt
+                }
+            );
         } else {
             updateFields.isActive = existingSeason.isActive; // Preserve current state if not changing to active
         }

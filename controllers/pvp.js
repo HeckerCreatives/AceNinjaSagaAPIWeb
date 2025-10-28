@@ -16,7 +16,7 @@ exports.getpvphistory = async (req, res) => {
             limit: parseInt(limit) || 10,
         };
 
-        let query = { owner: characterid };
+        let query = { owner: new mongoose.Types.ObjectId(characterid) };
 
         if (datefilter) {
             const startOfDay = new Date(datefilter);
@@ -54,6 +54,7 @@ exports.getpvphistory = async (req, res) => {
             opponent: data.opponent ? data.opponent.username : "Unknown",
             status: data.status,
             owner: data.owner,
+            type: data.type,
             createdAt: data.createdAt,
         }));
 
@@ -239,9 +240,20 @@ exports.getcharacterpvpstats = async (req, res) => {
             mmr: user.mmr,
             win: pvpstats[0].win,
             lost: pvpstats[0].lose,
+            draw: pvpstats[0].draw,
             totalMatches: pvpstats[0].totalMatches,
             winRate: pvpstats[0].winRate,
+            rankMatches: pvpstats[0].rankedTotalMatches,
+            rankWin: pvpstats[0].rankedWin,
+            rankLose: pvpstats[0].rankedLose,
+            rankDraw: pvpstats[0].rankedDraw,
+            rankWinRate: pvpstats[0].rankedWinRate,
             rank: userrank + 1,
+            normalMatches: pvpstats[0].normalTotalMatches,
+            normalWin: pvpstats[0].normalWin,
+            normalLose: pvpstats[0].normalLose,
+            normalDraw: pvpstats[0].normalDraw,
+            normalWinRate: pvpstats[0].normalWinRate,
             username: pvpstats[0].owner.username
         }
         return res.status(200).json({

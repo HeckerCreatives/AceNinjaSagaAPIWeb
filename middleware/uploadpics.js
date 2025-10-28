@@ -12,8 +12,7 @@ var storage = multer.diskStorage({
             // For addressable files, use the platform folder from request body
             const platform = req.body.platform || 'Android'; // default to Android
             folder = `addressables/${platform}/`;
-        }
-
+        } 
         fs.mkdirSync(folder, { recursive: true });
 
         cb(null, folder);
@@ -77,6 +76,15 @@ var upload = multer({
                 callback(new Error('Invalid addressable file type'));
                 return;
             }
+        } else {
+            allowedMimeTypes = [
+                "image/png",
+                "image/jpg",
+                "image/jpeg",
+                "video/mp4",
+                "video/quicktime", // for .mov files
+                "video/x-msvideo"  // for .avi files
+            ];
         }
         
         if (allowedMimeTypes.length > 0 && allowedMimeTypes.includes(file.mimetype)) {

@@ -4053,9 +4053,6 @@ const raidbossdata = [
 ]
 exports.raidbossdata = raidbossdata;
 //#endregion
-
-
-
 // #region CHEST REWARDS
 
 // initialize chest to items

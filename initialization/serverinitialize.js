@@ -559,10 +559,10 @@ exports.initialize = async () => {
             effects: { "critchance": 1 },
             prerequisites: [speed._id, crit1._id, armorpen._id, lifesteal._id]
         })
-
+        // crit damage
         const tbd = await Skill.create({
             _id: new mongoose.Types.ObjectId('6828695886cc0f2042749625'),
-            name: "tbd",
+            name: "Crit Damage +1",
             category: "Basic",
             path: "Utility",
             type: "Stat",
@@ -570,7 +570,7 @@ exports.initialize = async () => {
             currency: "skillpoints",
             spCost: 4,
             maxLevel: 1,
-            effects: { "tbd": 1 },
+            effects: { "critdamage": 1 },
             prerequisites: [speed._id]
         })
 
@@ -601,10 +601,10 @@ exports.initialize = async () => {
             effects: { "omnivamp": 1 },
             prerequisites: [speed._id, tbd._id, magicpen1._id]
         })
-
+        // crit damage
         const tbd2 = await Skill.create({
             _id: new mongoose.Types.ObjectId('6828695886cc0f2042749628'),
-            name: "tbd",
+            name: "Crit Damage +1",
             category: "Basic",
             path: "Utility",
             type: "Stat",
@@ -612,7 +612,7 @@ exports.initialize = async () => {
             currency: "skillpoints",
             spCost: 4,
             maxLevel: 1,
-            effects: { "tbd": 1 },
+            effects: { "critdamage": 1 },
             prerequisites: [speed._id, tbd._id, magicpen1._id, omnivamp._id]
         })
 

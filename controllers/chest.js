@@ -9,7 +9,11 @@ exports.getChestRewards = async (req, res) => {
             .sort({ createdAt: -1 });
 
         if (!chests || chests.length === 0) {
-            return res.status(404).json({ message: "not-found", data: "No chests found." });
+            return res.status(200).json({ message: "success", data: [], pagination: {
+                currentPage: 1,
+                totalPages: 0,
+                totalItems: 0
+            } });
         }
 
         const formatted = chests.map(chest => ({

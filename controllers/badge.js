@@ -36,9 +36,14 @@ exports.getBadges = async (req, res) => {
         const hasPrev = pageOptions.pageNum > 1;
 
         if (!badges || badges.length === 0) {
-            return res.status(404).json({
-                message: "failed",
-                data: search ? "No badges found matching your search." : "No badges found."
+            return res.status(200).json({
+                message: "success",
+                data: [],
+                pagination: {
+                    currentPage: pageOptions.pageNum,
+                    totalPages: 0,
+                    totalItems: 0
+                }
             });
         }
 

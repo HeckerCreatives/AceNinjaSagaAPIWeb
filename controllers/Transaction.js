@@ -477,7 +477,11 @@ exports.gettopuphistory = async (req, res) => {
         });
 
     if (!transactions || transactions.length === 0) {
-        return res.status(404).json({ message: "failed", data: "No transactions found for this character." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalTransactions = await Transaction.countDocuments({ owner: characterid })
@@ -533,7 +537,11 @@ exports.gettopuphistorysa = async (req, res) => {
         });
 
     if (!transactions || transactions.length === 0) {
-        return res.status(404).json({ message: "failed", data: "No transactions found for this character." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalTransactions = await Transaction.countDocuments({ owner: characterid })
@@ -646,7 +654,11 @@ exports.getcharactertopuphistorysa = async (req, res) => {
     });
 
     if (!transactions || transactions.length === 0) {
-        return res.status(404).json({ message: "failed", data: "No transactions found!" });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
     
     const formattedTransactions = transactions.map(transaction => ({

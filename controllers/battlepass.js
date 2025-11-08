@@ -32,7 +32,11 @@ exports.getbattlepass = async (req, res) => {
             return res.status(500).json({ message: "error", data: "There was an error counting battlepass documents. Please try again later." });
         });
     if (!battlepassdata || battlepassdata.length === 0) {
-        return res.status(404).json({ message: "not-found", data: "No battlepass data found." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalPages = Math.ceil(totalCount / pageOptions.limit);
@@ -342,7 +346,11 @@ exports.getbattlepassclaimhistory = async (req, res) => {
         });
 
     if (!data || data.length === 0) {
-        return res.status(404).json({ message: "not-found", data: "No battlepass claim history found." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalCount = await BattlepassHistory.countDocuments({ owner: id })
@@ -416,7 +424,11 @@ exports.getcharacterbattlepassclaimhistory = async (req, res) => {
         });
 
     if (!data || data.length === 0) {
-        return res.status(404).json({ message: "not-found", data: "No battlepass claim history found." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalCount = await BattlepassHistory.countDocuments({ owner: characterid })

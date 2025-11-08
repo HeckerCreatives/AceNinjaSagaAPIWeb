@@ -197,7 +197,7 @@ exports.getseasonforleaderboards = async (req, res) => {
         const seasonList = await Season.find({ isActive: { $in: ["active", "ended"] } });
 
         if (!seasonList || seasonList.length === 0) {
-            return res.status(404).json({ message: "not-found", data: [] });
+            return res.status(204).json({ message: "not-found", data: [] });
         }
 
         return res.status(200).json({

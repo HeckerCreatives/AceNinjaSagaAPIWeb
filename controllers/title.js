@@ -31,9 +31,14 @@ exports.getTitles = async (req, res) => {
     const hasNext = pageOptions.pageNum < totalPages;
     const hasPrev = pageOptions.pageNum > 1;
     if (!titles || titles.length === 0) {
-        return res.status(404).json({
-            message: "failed",
-            data: search ? "No titles found matching your search." : "No titles found."
+        return res.status(200).json({
+            message: "success",
+            data: [],
+            pagination: {
+                currentPage: pageOptions.pageNum,
+                totalPages: totalPages,
+                totalItems: totalTitles
+            }
         });
     }
 

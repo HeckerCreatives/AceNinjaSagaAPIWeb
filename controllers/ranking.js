@@ -504,7 +504,11 @@ exports.getRankingHistory = async (req, res) => {
             return res.status(400).json({ message: "bad-request", data: "There's a problem fetching ranking history!" });
         });
     if (data.length === 0) {
-        return res.status(404).json({ message: "not-found", data: "No ranking history found for this index." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: pageOptions.page,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const totalCount = await RankingHistory.countDocuments({ index });

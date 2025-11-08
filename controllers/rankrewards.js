@@ -10,7 +10,11 @@ exports.getRankRewards = async (req, res) => {
         .sort({ createdAt: -1 });
     
     if (!rewards || rewards.length === 0) {
-        return res.status(404).json({ message: "not-found", data: "No rank rewards found." });
+        return res.status(200).json({ message: "success", data: [], pagination: {
+            currentPage: 1,
+            totalPages: 0,
+            totalItems: 0
+        } });
     }
 
     const formattedRewards = rewards.map(reward => ({

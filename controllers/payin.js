@@ -255,7 +255,7 @@ exports.deletepayinplayersuperadmin = async (req, res) => {
 
 exports.getpayinhistorysuperadmin = async (req, res) => {
     try {
-        const { page, limit, searchUsername } = req.query;
+        const { page, limit, searchUsername, currency} = req.query;
 
         const pageOptions = {
             page: parseInt(page) || 0,
@@ -271,6 +271,10 @@ exports.getpayinhistorysuperadmin = async (req, res) => {
             ];
         }
 
+        if (currency) {
+            matchCondition.currency = currency;
+        }
+        
         const pipeline = [
             {
                 $lookup: {

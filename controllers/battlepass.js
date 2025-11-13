@@ -1,8 +1,11 @@
 const { default: mongoose } = require("mongoose");
 const { BattlepassSeason, BattlepassHistory, BattlepassProgress } = require("../models/Battlepass");
 const Season = require("../models/Season");
-const { checkcharacter } = require("../utils/character");
+const { checkcharacter, getCharacterGenderString } = require("../utils/character");
+const { filterRewardByGender } = require("../utils/rewardfilter");
 const { Market, Item } = require("../models/Market");
+const Badge = require("../models/Badge");
+const Title = require("../models/Title");
 
 
 exports.getbattlepass = async (req, res) => {
@@ -527,5 +530,327 @@ exports.checkuserbattlepasssa = async (req, res) => {
         data: {
             hasPremium: battlepass.hasPremium
         }
+    });
+}
+
+// Web API viewing endpoints
+
+exports.getbattlepassforuser = async (req, res) => {
+    const { id } = req.user;
+    const { characterid } = req.query;
+    
+    if (!characterid || !mongoose.Types.ObjectId.isValid(characterid)) {
+        return res.status(400).json({ message: "failed", data: "Character ID is required and must be valid." });
+    }
+    
+    // Check character ownership
+    const checker = await checkcharacter(id, characterid);
+    if (checker === "failed") {
+        return res.status(400).json({
+            message: "Unauthorized",
+            data: "You are not authorized to view this battlepass. Please login to the correct account."
+        });
+    }
+
+    // Check real season status first
+    const realSeason = await Season.findOne({ isActive: "active" });
+    if (!realSeason) {
+        return res.status(404).json({ message: "failed", data: "No active season found." });
+    }
+
+    const currentSeason = await BattlepassSeason.findOne({
+        status: "active",
+    })
+    .sort({ startDate: -1 })
+    .populate('grandreward', 'type name rarity description gender inventorytype');
+
+    if (!currentSeason) {
+        return res.status(404).json({ message: "failed", data: "No battle pass season found." });
+    }
+
+    // Get battle pass progress for the character
+    let battlepassData = await BattlepassProgress.findOne({
+        owner: characterid,
+        season: currentSeason._id
+    });
+
+    // Get character gender for reward filtering
+    const characterGender = await getCharacterGenderString(characterid);
+    
+    // Calculate time remaining
+    const enddate = currentSeason.endDate;
+    const currentDate = new Date();
+    const remainingMilliseconds = enddate - currentDate;
+    const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
+
+    // Calculate daily reset timer
+    const now = new Date();
+    const phTime = new Date(now.getTime());
+    const midnight = new Date(phTime);
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0, 0, 0, 0);
+    
+    const timeUntilMidnight = midnight - phTime;
+    const hoursRemaining = Math.floor(timeUntilMidnight / (1000 * 60 * 60));
+    const minutesRemaining = Math.floor((timeUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+
+    // Format response for viewing
+    const formattedResponse = {
+        battlepass: {
+            id: currentSeason._id,
+            title: currentSeason.title,
+            season: currentSeason.season,
+            timeleft: remainingSeconds,
+            status: currentSeason.status,
+            premiumCost: currentSeason.premiumCost,
+            tierCount: currentSeason.tierCount,
+            tiers: await Promise.all(currentSeason.tiers.map(async (tier, index) => {
+                const tierNumber = index + 1;
+                const freeClaimed = battlepassData?.claimedRewards.some(r => r.tier === tierNumber && r.rewardType === "free") || false;
+                const premiumClaimed = battlepassData?.claimedRewards.some(r => r.tier === tierNumber && r.rewardType === "premium") || false;
+                
+                // Apply gender filtering to rewards
+                const filteredFreeReward = await filterRewardByGender(tier.freeReward);
+                const filteredPremiumReward = await filterRewardByGender(tier.premiumReward);
+                
+                return {
+                    tierNumber: tier.tierNumber,
+                    freeReward: {
+                        ...filteredFreeReward,
+                        hasclaimed: freeClaimed
+                    },
+                    premiumReward: {
+                        ...filteredPremiumReward,
+                        hasclaimed: premiumClaimed
+                    },
+                    xpRequired: tier.xpRequired,
+                };
+            })),
+            grandreward: {
+                items: currentSeason.grandreward
+                    .filter(item => {
+                        // Filter grand rewards by character gender if they are gender-specific
+                        if (!characterGender || !['outfit', 'skin'].includes(item.type)) {
+                            return true; // Include non-outfit items or if no gender info
+                        }
+                        
+                        // If item has gender property, check if it matches character or is unisex
+                        if (item.gender) {
+                            return item.gender === characterGender || item.gender === 'unisex' || item.gender === 'unixsex';
+                        }
+                        
+                        return true; // Include if no gender property
+                    })
+                    .map(item => ({
+                        id: item._id,
+                        name: item.name,
+                        type: item.type,
+                        inventorytype: item.inventorytype,
+                        rarity: item.rarity,
+                        description: item.description,
+                        gender: item.gender
+                    }))
+            }
+        },
+        progress: battlepassData ? {
+            currentTier: battlepassData.currentTier,
+            currentXP: battlepassData.currentXP,
+            hasPremium: battlepassData.hasPremium,
+            claimedRewards: battlepassData.claimedRewards
+        } : {
+            currentTier: 1,
+            currentXP: 0,
+            hasPremium: false,
+            claimedRewards: []
+        },
+        missions: {
+            free: currentSeason.freeMissions.map(mission => ({
+                id: mission._id,
+                missionName: mission.missionName,
+                description: mission.description,
+                xpReward: mission.xpReward,
+                requirements: mission.requirements,
+                rewardtype: mission.rewardtype || "none",
+                daily: mission.daily || false
+            })),
+            premium: currentSeason.premiumMissions.map(mission => ({
+                id: mission._id,
+                missionName: mission.missionName,
+                description: mission.description,
+                xpReward: mission.xpReward,
+                requirements: mission.requirements,
+                rewardtype: mission.rewardtype || "none",
+                daily: mission.daily || false
+            }))
+        },
+        resetin: {
+            hours: hoursRemaining,
+            minutes: minutesRemaining
+        }
+    };
+
+    return res.status(200).json({
+        message: "success",
+        data: formattedResponse
+    });
+}
+
+exports.getbattlepassforsuperadmin = async (req, res) => {
+    const { characterid } = req.query;
+    
+    // Superadmin endpoint - no character ownership check required
+    // Optional characterid to view specific character's progress
+    
+    // Check real season status first
+    const realSeason = await Season.findOne({ isActive: "active" });
+    if (!realSeason) {
+        return res.status(404).json({ message: "failed", data: "No active season found." });
+    }
+
+    const currentSeason = await BattlepassSeason.findOne({
+        status: "active",
+    })
+    .sort({ startDate: -1 })
+    .populate('grandreward', 'type name rarity description gender inventorytype');
+
+    if (!currentSeason) {
+        return res.status(404).json({ message: "failed", data: "No battle pass season found." });
+    }
+
+    // Get battle pass progress if characterid provided
+    let battlepassData = null;
+    if (characterid && mongoose.Types.ObjectId.isValid(characterid)) {
+        battlepassData = await BattlepassProgress.findOne({
+            owner: characterid,
+            season: currentSeason._id
+        });
+    }
+
+    // Get character gender for reward filtering (if characterid provided)
+    let characterGender = null;
+    if (characterid && mongoose.Types.ObjectId.isValid(characterid)) {
+        characterGender = await getCharacterGenderString(characterid);
+    }
+
+    // Calculate time remaining
+    const enddate = currentSeason.endDate;
+    const currentDate = new Date();
+    const remainingMilliseconds = enddate - currentDate;
+    const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
+
+    // Calculate daily reset timer
+    const now = new Date();
+    const phTime = new Date(now.getTime());
+    const midnight = new Date(phTime);
+    midnight.setDate(midnight.getDate() + 1);
+    midnight.setHours(0, 0, 0, 0);
+    
+    const timeUntilMidnight = midnight - phTime;
+    const hoursRemaining = Math.floor(timeUntilMidnight / (1000 * 60 * 60));
+    const minutesRemaining = Math.floor((timeUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+
+    // Format response for superadmin viewing
+    const formattedResponse = {
+        battlepass: {
+            id: currentSeason._id,
+            title: currentSeason.title,
+            season: currentSeason.season,
+            timeleft: remainingSeconds,
+            startDate: currentSeason.startDate,
+            endDate: currentSeason.endDate,
+            status: currentSeason.status,
+            premiumCost: currentSeason.premiumCost,
+            tierCount: currentSeason.tierCount,
+            tiers: await Promise.all(currentSeason.tiers.map(async (tier, index) => {
+                const tierNumber = index + 1;
+                const freeClaimed = battlepassData?.claimedRewards.some(r => r.tier === tierNumber && r.rewardType === "free") || false;
+                const premiumClaimed = battlepassData?.claimedRewards.some(r => r.tier === tierNumber && r.rewardType === "premium") || false;
+                
+                // Apply gender filtering to rewards (if characterid provided)
+                const filteredFreeReward = await filterRewardByGender(tier.freeReward);
+                const filteredPremiumReward = await filterRewardByGender(tier.premiumReward);
+                
+                return {
+                    tierNumber: tier.tierNumber,
+                    freeReward: {
+                        ...filteredFreeReward,
+                        hasclaimed: freeClaimed
+                    },
+                    premiumReward: {
+                        ...filteredPremiumReward,
+                        hasclaimed: premiumClaimed
+                    },
+                    xpRequired: tier.xpRequired,
+                };
+            })),
+            grandreward: {
+                items: currentSeason.grandreward
+                    .filter(item => {
+                        // Filter grand rewards by character gender if characterid provided and item is gender-specific
+                        if (!characterGender || !['outfit', 'skin'].includes(item.type)) {
+                            return true; // Include non-outfit items or if no gender info
+                        }
+                        
+                        // If item has gender property, check if it matches character or is unisex
+                        if (item.gender) {
+                            return item.gender === characterGender || item.gender === 'unisex' || item.gender === 'unixsex';
+                        }
+                        
+                        return true; // Include if no gender property
+                    })
+                    .map(item => ({
+                        id: item._id,
+                        name: item.name,
+                        type: item.type,
+                        inventorytype: item.inventorytype,
+                        rarity: item.rarity,
+                        description: item.description,
+                        gender: item.gender
+                    }))
+            },
+            createdAt: currentSeason.createdAt,
+            updatedAt: currentSeason.updatedAt
+        },
+        progress: battlepassData ? {
+            characterId: characterid,
+            currentTier: battlepassData.currentTier,
+            currentXP: battlepassData.currentXP,
+            hasPremium: battlepassData.hasPremium,
+            claimedRewards: battlepassData.claimedRewards
+        } : characterid ? {
+            characterId: characterid,
+            message: "No progress data found for this character"
+        } : {
+            message: "No character specified"
+        },
+        missions: {
+            free: currentSeason.freeMissions.map(mission => ({
+                id: mission._id,
+                missionName: mission.missionName,
+                description: mission.description,
+                xpReward: mission.xpReward,
+                requirements: mission.requirements,
+                rewardtype: mission.rewardtype || "none",
+                daily: mission.daily || false
+            })),
+            premium: currentSeason.premiumMissions.map(mission => ({
+                id: mission._id,
+                missionName: mission.missionName,
+                description: mission.description,
+                xpReward: mission.xpReward,
+                requirements: mission.requirements,
+                rewardtype: mission.rewardtype || "none",
+                daily: mission.daily || false
+            }))
+        },
+        resetin: {
+            hours: hoursRemaining,
+            minutes: minutesRemaining
+        }
+    };
+
+    return res.status(200).json({
+        message: "success",
+        data: formattedResponse
     });
 }

@@ -14,6 +14,7 @@ const Users = require("../models/Users");
 const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter")
 const RankTier = require("../models/RankTier");
 const { Companion, CharacterCompanion } = require("../models/Companion")
+const { findweaponandskillbyid } = require("../utils/stats")
 
 
 
@@ -924,10 +925,10 @@ exports.getcharacterstatssa = async (req, res) => {
             });
         }
 
+        const objectId = new mongoose.Types.ObjectId(characterid);
+
         // Fetch base character stats
-        const characterStats = await CharacterStats.findOne({ 
-            owner: new mongoose.Types.ObjectId(characterid) 
-        });
+        const characterStats = await CharacterStats.findOne({ owner: objectId });
 
         if (!characterStats) {
             return res.status(404).json({
@@ -936,63 +937,149 @@ exports.getcharacterstatssa = async (req, res) => {
             });
         }
 
-        // Fetch equipped skills and their effects
-        const characterSkills = await CharacterSkillTree.aggregate([
-            {
-                $match: {
-                    owner: new mongoose.Types.ObjectId(characterid)
-                }
-            },
-            {
-                $unwind: "$skills"
-            },
-            {
-                $lookup: {
-                    from: "skills",
-                    localField: "skills.skill",
-                    foreignField: "_id",
-                    as: "skillDetails"
-                }
-            },
-            {
-                $unwind: "$skillDetails"
-            },
-            {
-                $match: {
-                    "skillDetails.type": "Stat" // Only get stats-type skills
-                }
-            }
+        // Parallelize all data fetching
+        const characterSkillsP = CharacterSkillTree.aggregate([
+            { $match: { owner: objectId } },
+            { $unwind: "$skills" },
+            { $lookup: { from: "skills", localField: "skills.skill", foreignField: "_id", as: "skillDetails" } },
+            { $unwind: "$skillDetails" },
+            { $match: { "skillDetails.type": "Stat" } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedPassiveSkillsP = CharacterSkillTree.aggregate([
+            { $match: { owner: objectId } },
+            { $unwind: "$skills" },
+            { $match: { "skills.isEquipped": true } },
+            { $lookup: { from: "skills", localField: "skills.skill", foreignField: "_id", as: "skillDetails" } },
+            { $unwind: "$skillDetails" },
+            { $match: { "skillDetails.type": "Passive" } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedWeaponsP = CharacterInventory.aggregate([
+            { $match: { owner: objectId, type: "weapon" } },
+            { $unwind: "$items" },
+            { $match: { "items.isEquipped": true } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedCompanionsP = CharacterCompanion.find({ owner: objectId, isEquipped: true }).lean();
+
+        const [characterSkills, equippedPassiveSkills, equippedWeapons, equippedCompanions] = await Promise.all([
+            characterSkillsP,
+            equippedPassiveSkillsP,
+            equippedWeaponsP,
+            equippedCompanionsP
         ]);
 
-
+        // Base stats (ensure defaults to 0 to avoid NaN in calculations)
         const totalStats = {
-            health: characterStats.health,
-            energy: characterStats.energy,
-            armor: characterStats.armor,
-            magicresist: characterStats.magicresist,
-            speed: characterStats.speed,
-            attackdamage: characterStats.attackdamage,
-            armorpen: characterStats.armorpen,
-            magicpen: characterStats.magicpen,
-            critchance: characterStats.critchance,
-            magicdamage: characterStats.magicdamage,
-            lifesteal: characterStats.lifesteal,
-            omnivamp: characterStats.omnivamp,
-            healshieldpower: characterStats.healshieldpower,
-            critdamage: characterStats.critdamage
+            health: characterStats.health || 0,
+            energy: characterStats.energy || 0,
+            armor: characterStats.armor || 0,
+            magicresist: characterStats.magicresist || 0,
+            speed: characterStats.speed || 0,
+            attackdamage: characterStats.attackdamage || 0,
+            armorpen: characterStats.armorpen || 0,
+            magicpen: characterStats.magicpen || 0,
+            critchance: characterStats.critchance || 0,
+            magicdamage: characterStats.magicdamage || 0,
+            lifesteal: characterStats.lifesteal || 0,
+            omnivamp: characterStats.omnivamp || 0,
+            healshieldpower: characterStats.healshieldpower || 0,
+            critdamage: characterStats.critdamage || 0
         };
 
-        characterSkills.forEach(skill => {
-            if (skill.skillDetails.effects) {
-                const effects = new Map(Object.entries(skill.skillDetails.effects));
+        // Batch fetch unique skill/weapon/companion details
+        const passiveIds = (equippedPassiveSkills || []).map(s => String(s.skills.skill));
+        const weaponIds = (equippedWeapons || []).map(w => String(w.items.item));
+        const companionIds = (equippedCompanions || []).map(c => String(c.companion));
+        const uniqueIds = Array.from(new Set([...passiveIds, ...weaponIds, ...companionIds]));
 
-                effects.forEach((value, stat) => {
+        const detailsMap = {};
+        if (uniqueIds.length > 0) {
+            const details = await Promise.all(uniqueIds.map(async id => {
+                try {
+                    return await findweaponandskillbyid(id);
+                } catch (err) {
+                    return null;
+                }
+            }));
+            uniqueIds.forEach((id, idx) => { if (details[idx]) detailsMap[id] = details[idx]; });
+        }
+
+        // Apply passive skills (add type)
+        for (const skill of (equippedPassiveSkills || [])) {
+            const id = String(skill.skills.skill);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply equipped weapon stats
+        for (const weapon of (equippedWeapons || [])) {
+            const id = String(weapon.items.item);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
                     if (totalStats.hasOwnProperty(stat)) {
-                        totalStats[stat] += value * skill.skills.level;
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
+                    }
+                });
+            } else if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply equipped companion stats
+        for (const comp of (equippedCompanions || [])) {
+            const id = String(comp.companion);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) {
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
+                    }
+                });
+            } else if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply stat-type skills (multiplicative based on skill level)
+        for (const skill of (characterSkills || [])) {
+            if (skill.skillDetails && skill.skillDetails.effects) {
+                const effects = new Map(Object.entries(skill.skillDetails.effects));
+                effects.forEach((value, stat) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value * (skill.skills.level || 0);
+                });
+            }
+        }
+
+        // Apply passive skills (percentage type) at the end
+        for (const skill of (equippedPassiveSkills || [])) {
+            const id = String(skill.skills.skill);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) {
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
                     }
                 });
             }
-        });
+        }
 
         return res.json({
             message: "success",
@@ -1000,7 +1087,7 @@ exports.getcharacterstatssa = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error in getcharacterstats:', error);
+        console.error('Error in getcharacterstatssa:', error);
         return res.status(500).json({
             message: "failed",
             data: "An error occurred while fetching character stats"
@@ -1029,10 +1116,10 @@ exports.getcharacterstats = async (req, res) => {
             });
         }
 
+        const objectId = new mongoose.Types.ObjectId(characterid);
+
         // Fetch base character stats
-        const characterStats = await CharacterStats.findOne({ 
-            owner: new mongoose.Types.ObjectId(characterid) 
-        });
+        const characterStats = await CharacterStats.findOne({ owner: objectId });
 
         if (!characterStats) {
             return res.status(404).json({
@@ -1041,63 +1128,149 @@ exports.getcharacterstats = async (req, res) => {
             });
         }
 
-        // Fetch equipped skills and their effects
-        const characterSkills = await CharacterSkillTree.aggregate([
-            {
-                $match: {
-                    owner: new mongoose.Types.ObjectId(characterid)
-                }
-            },
-            {
-                $unwind: "$skills"
-            },
-            {
-                $lookup: {
-                    from: "skills",
-                    localField: "skills.skill",
-                    foreignField: "_id",
-                    as: "skillDetails"
-                }
-            },
-            {
-                $unwind: "$skillDetails"
-            },
-            {
-                $match: {
-                    "skillDetails.type": "Stat" // Only get stats-type skills
-                }
-            }
+        // Parallelize all data fetching
+        const characterSkillsP = CharacterSkillTree.aggregate([
+            { $match: { owner: objectId } },
+            { $unwind: "$skills" },
+            { $lookup: { from: "skills", localField: "skills.skill", foreignField: "_id", as: "skillDetails" } },
+            { $unwind: "$skillDetails" },
+            { $match: { "skillDetails.type": "Stat" } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedPassiveSkillsP = CharacterSkillTree.aggregate([
+            { $match: { owner: objectId } },
+            { $unwind: "$skills" },
+            { $match: { "skills.isEquipped": true } },
+            { $lookup: { from: "skills", localField: "skills.skill", foreignField: "_id", as: "skillDetails" } },
+            { $unwind: "$skillDetails" },
+            { $match: { "skillDetails.type": "Passive" } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedWeaponsP = CharacterInventory.aggregate([
+            { $match: { owner: objectId, type: "weapon" } },
+            { $unwind: "$items" },
+            { $match: { "items.isEquipped": true } }
+        ]).allowDiskUse(true).exec();
+
+        const equippedCompanionsP = CharacterCompanion.find({ owner: objectId, isEquipped: true }).lean();
+
+        const [characterSkills, equippedPassiveSkills, equippedWeapons, equippedCompanions] = await Promise.all([
+            characterSkillsP,
+            equippedPassiveSkillsP,
+            equippedWeaponsP,
+            equippedCompanionsP
         ]);
 
-
+        // Base stats (ensure defaults to 0 to avoid NaN in calculations)
         const totalStats = {
-            health: characterStats.health,
-            energy: characterStats.energy,
-            armor: characterStats.armor,
-            magicresist: characterStats.magicresist,
-            speed: characterStats.speed,
-            attackdamage: characterStats.attackdamage,
-            armorpen: characterStats.armorpen,
-            magicpen: characterStats.magicpen,
-            critchance: characterStats.critchance,
-            magicdamage: characterStats.magicdamage,
-            lifesteal: characterStats.lifesteal,
-            omnivamp: characterStats.omnivamp,
-            healshieldpower: characterStats.healshieldpower,
-            critdamage: characterStats.critdamage
+            health: characterStats.health || 0,
+            energy: characterStats.energy || 0,
+            armor: characterStats.armor || 0,
+            magicresist: characterStats.magicresist || 0,
+            speed: characterStats.speed || 0,
+            attackdamage: characterStats.attackdamage || 0,
+            armorpen: characterStats.armorpen || 0,
+            magicpen: characterStats.magicpen || 0,
+            critchance: characterStats.critchance || 0,
+            magicdamage: characterStats.magicdamage || 0,
+            lifesteal: characterStats.lifesteal || 0,
+            omnivamp: characterStats.omnivamp || 0,
+            healshieldpower: characterStats.healshieldpower || 0,
+            critdamage: characterStats.critdamage || 0
         };
 
-        characterSkills.forEach(skill => {
-            if (skill.skillDetails.effects) {
-                const effects = new Map(Object.entries(skill.skillDetails.effects));
+        // Batch fetch unique skill/weapon/companion details
+        const passiveIds = (equippedPassiveSkills || []).map(s => String(s.skills.skill));
+        const weaponIds = (equippedWeapons || []).map(w => String(w.items.item));
+        const companionIds = (equippedCompanions || []).map(c => String(c.companion));
+        const uniqueIds = Array.from(new Set([...passiveIds, ...weaponIds, ...companionIds]));
 
-                effects.forEach((value, stat) => {
+        const detailsMap = {};
+        if (uniqueIds.length > 0) {
+            const details = await Promise.all(uniqueIds.map(async id => {
+                try {
+                    return await findweaponandskillbyid(id);
+                } catch (err) {
+                    return null;
+                }
+            }));
+            uniqueIds.forEach((id, idx) => { if (details[idx]) detailsMap[id] = details[idx]; });
+        }
+
+        // Apply passive skills (add type)
+        for (const skill of (equippedPassiveSkills || [])) {
+            const id = String(skill.skills.skill);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply equipped weapon stats
+        for (const weapon of (equippedWeapons || [])) {
+            const id = String(weapon.items.item);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
                     if (totalStats.hasOwnProperty(stat)) {
-                        totalStats[stat] += value * skill.skills.level;
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
+                    }
+                });
+            } else if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply equipped companion stats
+        for (const comp of (equippedCompanions || [])) {
+            const id = String(comp.companion);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) {
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
+                    }
+                });
+            } else if (result.type === "add") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value;
+                });
+            }
+        }
+
+        // Apply stat-type skills (multiplicative based on skill level)
+        for (const skill of (characterSkills || [])) {
+            if (skill.skillDetails && skill.skillDetails.effects) {
+                const effects = new Map(Object.entries(skill.skillDetails.effects));
+                effects.forEach((value, stat) => {
+                    if (totalStats.hasOwnProperty(stat)) totalStats[stat] += value * (skill.skills.level || 0);
+                });
+            }
+        }
+
+        // Apply passive skills (percentage type) at the end
+        for (const skill of (equippedPassiveSkills || [])) {
+            const id = String(skill.skills.skill);
+            const result = detailsMap[id];
+            if (!result) continue;
+            if (result.type === "percentage") {
+                Object.entries(result.stats || {}).forEach(([stat, value]) => {
+                    if (totalStats.hasOwnProperty(stat)) {
+                        const multiplier = 1 + ((Number(value) || 0) / 100);
+                        totalStats[stat] = Math.ceil(totalStats[stat] * multiplier);
                     }
                 });
             }
-        });
+        }
 
         return res.json({
             message: "success",

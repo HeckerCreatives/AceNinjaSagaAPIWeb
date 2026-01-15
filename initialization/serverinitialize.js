@@ -10,7 +10,7 @@ const { Companion } = require("../models/Companion")
 const CharacterData = require("../models/Characterdata")
 const { Market, Item, CharacterInventory } = require("../models/Market")
 const { Skill } = require("../models/Skills")
-const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata, raidbossdata, chestData, chestItems } = require("../data/datainitialization")
+const { hairData, weaponData, outfitData, crystalPackData, goldPackData, companiondata, ranktierdata, dailyexpdata, dailyspindata, weeklylogindata, monthlylogindata, battlepassData, seasonData, chapterlistdata, questmissionsdata, topupcreditdata, freebiesdata, titlesdata, badgesdata, rankrewarddata, raidbossdata, chestData, chestItems, vippacksData, vippacksItems } = require("../data/datainitialization")
 const Characterwallet = require("../models/Characterwallet")
 const { DailyExpSpin, DailySpin, WeeklyLogin, MonthlyLogin, CharacterDailySpin, CharacterMonthlyLogin, CharacterWeeklyLogin } = require("../models/Rewards")
 const { CharacterChapter } = require("../models/Chapter")
@@ -22,6 +22,7 @@ const Title = require("../models/Title")
 const Badge = require("../models/Badge")
 const Raidboss = require("../models/Raidboss")
 const Chest = require("../models/Chests")
+const Packs = require("../models/Packs")
 
 exports.initialize = async () => {
 
@@ -151,7 +152,8 @@ exports.initialize = async () => {
             ...goldPackData,
             ...topupcreditdata,
             ...freebiesdata,
-            ...chestData
+            ...chestData,
+            ...vippacksData
         ]
 
         const itemBulkWrite = itemData.map(item => ({
@@ -3253,6 +3255,12 @@ exports.initialize = async () => {
             console.log("Chests initialized");
         }
 
+        const packs = await Packs.find({});
+        if (packs.length <= 0) {
+            await Packs.insertMany(vippacksItems);
+            console.log("Packs initialized");
+        }
+
 
 
         // #region INITIALIZE FOR EXISTING PLAYERS
@@ -3270,7 +3278,7 @@ exports.initialize = async () => {
 
                 console.log(`Topup credit wallet created for character ${character.username}`);
             }
-            const inventoryListData = ["goldpacks", "crystalpacks", "chests", "freebie"];
+            const inventoryListData = ["goldpacks", "crystalpacks", "chests", "freebie", "packs"];
 
             const checkifisininventorylistdata = await CharacterInventory.findOne({ owner: character._id, type: { $in: inventoryListData } });
             

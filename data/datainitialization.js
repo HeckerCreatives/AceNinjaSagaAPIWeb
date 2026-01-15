@@ -4369,3 +4369,171 @@ const chestItems = [
 
 exports.chestItems = chestItems;
 // #endregion
+
+// #region VIP PACKS
+// Pack items for Item/Market collection
+const vippacksData = [
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549700"),
+        name: "Silver VIP Pack",
+        type: "packs",
+        inventorytype: "packs",
+        rarity: "common",
+        gender: "unisex",
+        price: 5,
+        currency: "topupcredit",
+        description: "Starter VIP pack with essential rewards",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549701"),
+        name: "Gold VIP Pack",
+        type: "packs",
+        inventorytype: "packs",
+        rarity: "rare",
+        gender: "unisex",
+        price: 10,
+        currency: "topupcredit",
+        description: "Premium VIP pack with valuable rewards",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549702"),
+        name: "Platinum VIP Pack",
+        type: "packs",
+        inventorytype: "packs",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 15,
+        currency: "topupcredit",
+        description: "Ultimate VIP pack with exclusive rewards",
+        stats: {
+            level: 1,
+            damage: 0,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: "",
+        isOpenable: true
+    }
+]
+
+exports.vippacksData = vippacksData;
+
+// Pack items for Packs collection with rewards
+const vippacksItems = [
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549700"),
+        name: "Silver VIP Pack",
+        amount: 5,
+        currency: "topupcredit",
+        rewards: [
+            {
+                rewardtype: "crystal",
+                amount: 500,
+            },
+            {
+                rewardtype: "coins",
+                amount: 50000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 1000,
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549701"),
+        name: "Gold VIP Pack",
+        amount: 10,
+        currency: "topupcredit",
+        rewards: [
+            {
+                rewardtype: "crystal",
+                amount: 1200,
+            },
+            {
+                rewardtype: "coins",
+                amount: 120000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 2500,
+            }
+        ]
+    },
+    {
+        _id: new mongoose.Types.ObjectId("68c78c72325350e7fc549702"),
+        name: "Platinum VIP Pack",
+        amount: 15,
+        currency: "topupcredit",
+        rewards: [
+            {
+                rewardtype: "crystal",
+                amount: 2000,
+            },
+            {
+                rewardtype: "coins",
+                amount: 200000,
+            },
+            {
+                rewardtype: "exp",
+                amount: 5000,
+            },
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f20427495c5",
+                    name: "Moonstone"
+                },
+            },
+            {
+                rewardtype: "outfit",
+                reward: {
+                    id: "6828695886cc0f20427495e0",
+                    name: "Gakuran Attire",
+                    fid: "6828695886cc0f2042749510",
+                    fname: "Female Epic Attire 1"
+                },
+            },
+            {
+                rewardtype: "title",
+                reward: {
+                    id: 1,
+                    name: "Ace"
+                },
+            },
+            {
+                rewardtype: "badge",
+                reward: {
+                    id: 4,
+                    name: "Raid Boss"
+                },
+            },
+            {
+                rewardtype: "weapon",
+                reward: {
+                    id: "6828695886cc0f2042749603",
+                    name: "God's Axe"
+                },
+            }
+        ]
+    }
+]
+
+exports.vippacksItems = vippacksItems;
+// #endregion

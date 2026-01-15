@@ -14,7 +14,7 @@ const Users = require("../models/Users");
 const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter")
 const RankTier = require("../models/RankTier");
 const { Companion, CharacterCompanion } = require("../models/Companion")
-const { findweaponandskillbyid } = require("../utils/stats")
+const { findweaponandskillbyid } = require("../utils/stats.js")
 
 
 

@@ -175,6 +175,7 @@ exports.getPackRewards = async (req, res) => {
             amount: pack.amount,
             currency: pack.currency,
             rewards: pack.rewards.map(r => ({
+                _id: r._id,
                 rewardType: r.rewardtype,
                 amount: r.amount,
                 reward: r.reward,
@@ -247,12 +248,17 @@ exports.editpackrewards = async (req, res) => {
     }
 }
 
-// Edit pack metadata (amount and currency) and propagate changes to Item and Market.items
+// Edit pack metadata (name, amount and currency) and propagate changes to Item and Market.items
 exports.editpack = async (req, res) => {
-    const { packid, amount, currency } = req.body;
+    const { packid, name, amount, currency } = req.body;
 
-    if (!packid || amount == null || !currency) {
-        return res.status(400).json({ message: "bad-request", data: "packid, amount and currency are required." });
+    if (!packid) {
+        return res.status(400).json({ message: "bad-request", data: "packid is required." });
+    }
+
+    // At least one field to update must be provided
+    if (name === undefined && amount === undefined && currency === undefined) {
+        return res.status(400).json({ message: "bad-request", data: "At least one field (name, amount, or currency) must be provided." });
     }
 
     const session = await mongoose.startSession();
@@ -266,8 +272,10 @@ exports.editpack = async (req, res) => {
             return res.status(404).json({ message: "not-found", data: "Pack not found." });
         }
 
-        pack.amount = amount;
-        pack.currency = currency;
+        // Update pack fields if provided
+        if (name !== undefined) pack.name = name;
+        if (amount !== undefined) pack.amount = amount;
+        if (currency !== undefined) pack.currency = currency;
         await pack.save({ session });
 
         // Update Item (assuming pack _id maps to an Item with same _id)
@@ -277,8 +285,9 @@ exports.editpack = async (req, res) => {
             return res.status(404).json({ message: "not-found", data: "Associated item not found." });
         }
 
-        item.price = amount;
-        item.currency = currency;
+        if (name !== undefined) item.name = name;
+        if (amount !== undefined) item.price = amount;
+        if (currency !== undefined) item.currency = currency;
         await item.save({ session });
 
         // Update any Market documents that reference this item in their items array
@@ -286,12 +295,14 @@ exports.editpack = async (req, res) => {
         for (const market of markets) {
             const idx = market.items.findIndex(i => i._id.toString() === packid.toString());
             if (idx !== -1) {
-                market.items[idx].price = amount;
-                market.items[idx].currency = currency;
+                if (name !== undefined) market.items[idx].name = name;
+                if (amount !== undefined) market.items[idx].price = amount;
+                if (currency !== undefined) market.items[idx].currency = currency;
                 // in case the market stores crystals/coins fields too
                 if (market.items[idx].crystals !== undefined) market.items[idx].crystals = item.crystals || 0;
                 if (market.items[idx].coins !== undefined) market.items[idx].coins = item.coins || 0;
             }
+            market.lastUpdated = new Date();
             await market.save({ session });
         }
 

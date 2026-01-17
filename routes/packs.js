@@ -4,7 +4,7 @@ const { getPackRewards, editpackrewards, editpack, createpack, deletepack } = re
 const { protectplayer, protectsuperadmin } = require("../middleware/middleware");
 
 router
- .get("/getpackrewardsuser", protectplayer, getPackRewards)
+ .get("/getpackrewardsplayer", protectplayer, getPackRewards)
  .get("/getpackrewards", protectsuperadmin, getPackRewards)
  .post("/createpack", protectsuperadmin, createpack)
  .post("/editpackreward", protectsuperadmin, editpackrewards)

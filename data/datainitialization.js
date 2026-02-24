@@ -254,6 +254,114 @@ exports.weaponData = [
             speed: 0
         },
         imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749604"),
+        name: "Aetherion Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increase max health and energy by 15%",
+        stats: {
+            level: 11,
+            damage: 150,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749605"),
+        name: "Ignarok Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Grant player immunity to burn effect. Reduce incoming damage by 170",
+        stats: {
+            level: 13,
+            damage: 150,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749606"),
+        name: "Tectalon Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increase physical and magic damage by 15%. Increase all damage by 150 points.",
+        stats: {
+            level: 18,
+            damage: 200,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749607"),
+        name: "Umbraxis Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increase armor and magic resist by 15%. Gain 10% chance to block opponent’s attack.",
+        stats: {
+            level: 18,
+            damage: 200,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749608"),
+        name: "Colossus Blade",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Weapon attack has 100% chance to remove all buffs from the target.",
+        stats: {
+            level: 18,
+            damage: 250,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
+    },
+    {
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749609"),
+        name: "Damascus Cleaver",
+        type: "skins",
+        inventorytype: "weapon",
+        rarity: "legendary",
+        gender: "unisex",
+        price: 1000,
+        currency: "crystal",
+        description: "Increase crit chance by 10%, crit damage by 15%, physical and attack damage by 10%, armor and magic resist by 10%, and gain 10% lifesteal and omnivamp.",
+        stats: {
+            level: 20,
+            damage: 200,
+            defense: 0,
+            speed: 0
+        },
+        imageUrl: ""
     }
 ]
 

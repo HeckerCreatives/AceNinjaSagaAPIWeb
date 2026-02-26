@@ -50,7 +50,7 @@ exports.editchestrewards = async (req, res) => {
     }
 
     // Validate that each reward has a valid rewardtype
-    const validRewardTypes = ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal'];
+    const validRewardTypes = ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal', 'skill'];
     for (const reward of rewards) {
         if (!reward.rewardtype) {
             return res.status(400).json({ message: "bad-request", data: "Each reward must have a rewardtype." });

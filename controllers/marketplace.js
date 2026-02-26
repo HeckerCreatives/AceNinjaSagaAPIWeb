@@ -44,7 +44,7 @@ exports.getMarketItems = async (req, res) => {
                 }
             },
             { $unwind: '$items' },
-            { $match: { "items.inventorytype": { $nin: ["hair", "weapon"] } } },
+            { $match: { "items.inventorytype": { $nin: ["hair"] } } },
             {
                 $lookup: {
                     from: 'skills',
@@ -71,8 +71,11 @@ exports.getMarketItems = async (req, res) => {
         }
 
         // Add type filter if specified
-        if (type) {
-            matchConditions.push({ 'items.type': type });
+        if (type && type === "skins") {
+             matchConditions.push({ 'items.type': type });
+             matchConditions.push({ 'items.inventorytype': { $nin: ["weapon"] } });
+        } else {
+            matchConditions.push({ 'items.inventorytype': type });
         }
 
         // Add rarity filter if specified
@@ -138,6 +141,8 @@ exports.getMarketItems = async (req, res) => {
             }
             }
         );
+
+
 
         // Execute aggregation
         const items = await Market.aggregate(pipeline);
@@ -677,13 +682,18 @@ exports.grantplayeritemsuperadmin = async (req, res) => {
             }
 
             const itemData = marketItem.items[0];
-            if(charactergender !== itemData.gender){
+            console.log(charactergender, itemData.gender)
+            if(itemData.gender !== "unisex"){
+                console.log()
+                if (itemData.gender !== charactergender) {
                 results.push({
                     itemid,
                     status: 'failed',
                     message: 'Character gender does not match item gender'
                 });
-                continue
+                continue;
+                }
+            
             }
 
             const hairItem = gethairbundle(itemData._id.toString())

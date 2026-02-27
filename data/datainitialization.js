@@ -257,6 +257,7 @@ exports.weaponData = [
     }
 ]
 
+
 exports.nonmarketWeaponData = [
        // PvP Reward Weapon
     {
@@ -383,7 +384,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -401,7 +402,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -419,7 +420,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -437,7 +438,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -455,7 +456,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -473,7 +474,7 @@ exports.outfitData = [
         gender: "male",
         price: 5000,
         currency: "coins",
-        description: "Basic ninja attire perfect for starting your journey.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -491,7 +492,7 @@ exports.outfitData = [
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Traditional Japanese school uniform style outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -509,7 +510,7 @@ exports.outfitData = [
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Sleek and sharp looking ninja attire.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -527,7 +528,7 @@ exports.outfitData = [
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Classic shinobi outfit for stealth missions.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -538,14 +539,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e3"),
-        name: "Male Fashion Attire 4",
+        name: "Frost Wraps",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Modern fashion-inspired ninja outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -556,14 +557,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e4"),
-        name: "Male Fashion Attire 5",
+        name: "Ghostwind Robes",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Modern fashion-inspired ninja outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -574,14 +575,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e5"),
-        name: "Male Fashion Attire 6",
+        name: "Storm Shinobi Robes",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Modern fashion-inspired ninja outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -592,14 +593,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e6"),
-        name: "Male Fashion Attire 7",
+        name: "Iron Lotus Armor",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
         gender: "male",
         price: 100,
         currency: "crystal",
-        description: "Modern fashion-inspired ninja outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -617,7 +618,7 @@ exports.outfitData = [
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Elegant and refined attire for the sophisticated ninja.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -635,7 +636,7 @@ exports.outfitData = [
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Battle-ready outfit with flowing cloak.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -646,14 +647,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495e9"),
-        name: "Male Drip Attire 3",
+        name: "Ashen Blade Attire",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Trendy and stylish drip outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -664,14 +665,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f0"),
-        name: "Male Drip Attire 4",
+        name: "Blood Moon Suit",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Trendy and stylish drip outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -682,14 +683,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f1"),
-        name: "Male Drip Attire 5",
+        name: "Crimson Viper Suit",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Trendy and stylish drip outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -700,14 +701,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f2"),
-        name: "Male Drip Attire 6",
+        name: "Ember Fang Outfit",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
         gender: "male",
         price: 500,
         currency: "crystal",
-        description: "Trendy and stylish drip outfit.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -718,14 +719,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f3"),
-        name: "Male Epic Attire 1",
+        name: "Moon Reaper",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
         gender: "male",
         price: 1000,
         currency: "crystal",
-        description: "Legendary outfit with epic design.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -736,14 +737,14 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f4"),
-        name: "Male Epic Attire 2",
+        name: "Dawn Breaker",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
         gender: "male",
         price: 1000,
         currency: "crystal",
-        description: "Legendary outfit with epic design.",
+        description: "N/A",
         stats: {
             level: 1,
             damage: 0,
@@ -754,7 +755,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f5"),
-        name: "Male Epic Attire 3",
+        name: "Iron Lotus",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -772,7 +773,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f6"),
-        name: "Male Epic Attire 4",
+        name: "Blood Eclipse",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -790,7 +791,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f7"),
-        name: "Male Epic Attire 5",
+        name: "Phantom Ronin",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -808,7 +809,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f20427495f8"),
-        name: "Male Epic Attire 6",
+        name: "Mech Armor",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -988,7 +989,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749500"),
-        name: "Female Fashion Attire 4",
+        name: "Silent Orchid",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -1006,7 +1007,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749501"),
-        name: "Female Fashion Attire 5",
+        name: "Night Bloom",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -1024,7 +1025,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749502"),
-        name: "Female Fashion Attire 6",
+        name: "Eclipse Siren",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -1042,7 +1043,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749503"),
-        name: "Female Fashion Attire 7",
+        name: "Venom Kiss",
         type: "skins",
         inventorytype: "outfit",
         rarity: "common",
@@ -1096,7 +1097,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749506"),
-        name: "Female Drip Attire 3",
+        name: "Blood Rose Shadow",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -1114,7 +1115,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749507"),
-        name: "Female Drip Attire 4",
+        name: "Dawn Lily",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -1132,7 +1133,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749508"),
-        name: "Female Drip Attire 5",
+        name: "Silent Valkyrie",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -1150,7 +1151,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749509"),
-        name: "Female Drip Attire 6",
+        name: "Iron Petal Guard",
         type: "skins",
         inventorytype: "outfit",
         rarity: "rare",
@@ -1168,7 +1169,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749510"),
-        name: "Female Epic Attire 1",
+        name: "Scarlet Phantom",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -1186,7 +1187,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749511"),
-        name: "Female Epic Attire 2",
+        name: "Night Seraph",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -1204,7 +1205,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749512"),
-        name: "Female Epic Attire 3",
+        name: "Obsidian Temptress ",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -1222,7 +1223,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749513"),
-        name: "Female Epic Attire 4",
+        name: "Widow Prime",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -1240,7 +1241,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749514"),
-        name: "Female Epic Attire 5",
+        name: "Eclipse Dancer",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -1258,7 +1259,7 @@ exports.outfitData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749515"),
-        name: "Female Epic Attire 6",
+        name: "Storm Siren",
         type: "skins",
         inventorytype: "outfit",
         rarity: "legendary",
@@ -2309,7 +2310,7 @@ exports.goldPackData = [
         gender: "unisex",
         currency: "crystal",
         price: 100,
-        coins: 1000,
+        coins: 10000,
         imageUrl: "",
         description: "Best value for new players!",
         stats: {
@@ -2461,7 +2462,7 @@ exports.topupcreditdata = [
         gender: "unisex",
         price: 4.99,
         currency: "usd",
-        topupcredit: 55,
+        topupcredit: 65,
         imageUrl: "",
         description: "Great value credit pack!",
         stats: {
@@ -2522,9 +2523,9 @@ exports.topupcreditdata = [
         inventorytype: "topupcredit",
         rarity: "rare",
         gender: "unisex",
-        price: 49.99, 
+        price: 49.99,
         currency: "usd",
-        topupcredit: 600,
+        topupcredit: 800,
         imageUrl: "",
         description: "Ultimate credit collection!",
         stats: {

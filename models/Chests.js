@@ -25,7 +25,7 @@ const ChestSchema = new mongoose.Schema(
             {
                 rewardtype: {
                     type: String,
-                    enum: ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal'],
+                    enum: ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal', 'skill'],
                     required: true
                 },
                 amount: {

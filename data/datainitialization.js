@@ -261,7 +261,7 @@ exports.weaponData = [
 exports.nonmarketWeaponData = [
        // PvP Reward Weapon
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345603"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749609"),
         name: "Damascus Cleaver",
         type: "skins",
         inventorytype: "weapon",
@@ -280,7 +280,7 @@ exports.nonmarketWeaponData = [
     },
     // Raid Boss Chest Weapons
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345604"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749606"),
         name: "Tectalon Blade",
         type: "skins",
         inventorytype: "weapon",
@@ -298,7 +298,7 @@ exports.nonmarketWeaponData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345605"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749607"),
         name: "Ubmraxis Blade",
         type: "skins",
         inventorytype: "weapon",
@@ -316,7 +316,7 @@ exports.nonmarketWeaponData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345606"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749605"),
         name: "Ignarok Blade",
         type: "skins",
         inventorytype: "weapon",
@@ -334,7 +334,7 @@ exports.nonmarketWeaponData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345607"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749604"),
         name: "Aetherion Blade",
         type: "skins",
         inventorytype: "weapon",
@@ -352,7 +352,7 @@ exports.nonmarketWeaponData = [
         imageUrl: ""
     },
     {
-        _id: new mongoose.Types.ObjectId("6828695886cc0f2012345608"),
+        _id: new mongoose.Types.ObjectId("6828695886cc0f2042749608"),
         name: "Colossus Blade",
         type: "skins",
         inventorytype: "weapon",

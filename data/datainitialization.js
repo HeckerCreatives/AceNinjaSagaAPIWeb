@@ -299,7 +299,7 @@ exports.nonmarketWeaponData = [
     },
     {
         _id: new mongoose.Types.ObjectId("6828695886cc0f2042749607"),
-        name: "Ubmraxis Blade",
+        name: "Umbraxis Blade",
         type: "skins",
         inventorytype: "weapon",
         rarity: "legendary",

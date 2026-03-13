@@ -1,4 +1,4 @@
-const { editfreebiereward, getMarketItems, buyitem, sellitem, equipitem, unequipitem, listequippeditems, createItem, deleteItem, updateItem, grantplayeritemsuperadmin, getstoreitemlist, addstoreitems, getallitems, getskinitems, getskills, getallitemsandskill } = require('../controllers/marketplace');
+const { editfreebiereward, getMarketItems, buyitem, sellitem, equipitem, unequipitem, listequippeditems, createItem, deleteItem, updateItem, grantplayeritemsuperadmin, getstoreitemlist, addstoreitems, getallitems, getskinitems, getskills, getallitemsandskill, editpacks } = require('../controllers/marketplace');
 const { protectplayer, protectsuperadmin } = require('../middleware/middleware');
 
 const router = require('express').Router();
@@ -46,7 +46,7 @@ router
  .get("/getskinitems", protectsuperadmin, getskinitems)
  .get("/getskills", protectsuperadmin, getskills)
  .post("/editfreebiereward", protectsuperadmin, editfreebiereward)
-
+ .post("/editpacks", protectsuperadmin, editpacks)
  .get("/getallitemsandskills", protectsuperadmin, getallitemsandskill)
 // #endregion
 module.exports = router;

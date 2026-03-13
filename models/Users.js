@@ -39,7 +39,17 @@ const UsersSchema = new mongoose.Schema(
             type: Number,
             default: 1
         },
-        slotsunlocked: [Number] // Array to track which slots are unlocked (e.g., [1, 2] means slots 1 and 2 are unlocked)
+        slotsunlocked: [Number], // Array to track which slots are unlocked (e.g., [1, 2] means slots 1 and 2 are unlocked)
+        vipHistory: [
+            {
+                characterId: { type: mongoose.Schema.Types.ObjectId, ref: "Characterdata" },
+                oldCustomId: { type: Number },
+                newCustomId: { type: Number },
+                tier: { type: String, enum: ["platinum", "gold", "silver"] },
+                transactionId: { type: String, index: true },
+                purchaseDate: { type: Date, default: Date.now }
+            }
+        ]
     },
     {
         timestamps: true
@@ -47,13 +57,18 @@ const UsersSchema = new mongoose.Schema(
 )
 
 UsersSchema.pre("save", async function (next) {
-    if (!this.isModified){
-        next();
+    try {
+        // Only hash when password field is modified
+        if (!this.isModified('password')) {
+            return next();
+        }
+        const saltRounds = 10;
+        this.password = await bcrypt.hash(this.password, saltRounds);
+        return next();
+    } catch (err) {
+        return next(err);
     }
-
-    this.password = await bcrypt.hashSync(this.password, 10)
 })
-
 UsersSchema.methods.matchPassword = async function(password){
     return await bcrypt.compare(password, this.password)
 }

@@ -15,6 +15,7 @@ const { CharacterChapter, CharacterChapterHistory } = require("../models/Chapter
 const RankTier = require("../models/RankTier");
 const { Companion, CharacterCompanion } = require("../models/Companion")
 const { findweaponandskillbyid } = require("../utils/stats.js")
+const { getSmallestAvailableInTier, changeVIPId } = require("../utils/vipidtools")
 
 
 
@@ -1327,9 +1328,78 @@ exports.getcharacterchapters = async (req, res) => {
         })
     })
 
-    return res.status(200).json({ 
+    return res.status(200).json({
         message: "success", 
         data: finaldata 
     })
 }
 
+// #region VIP ID
+
+/**
+ * GET /character/available-ids?characterid=XXX
+ * Returns the smallest 5 available IDs in the character's VIP tier.
+ * Player must own the character and the character must have a vipTier set.
+ */
+exports.getAvailableIds = async (req, res) => {
+    const { id } = req.user;
+    const { characterid } = req.query;
+
+    if (!characterid) {
+        return res.status(400).json({ message: "failed", data: "characterid is required." });
+    }
+
+    const character = await Characterdata.findOne({
+        _id: new mongoose.Types.ObjectId(characterid),
+        owner: new mongoose.Types.ObjectId(id),
+        status: { $ne: "deleted" }
+    }).lean().catch(() => null);
+
+    if (!character) {
+        return res.status(404).json({ message: "failed", data: "Character not found or not owned by user." });
+    }
+
+    if (!character.vipTier) {
+        return res.status(400).json({ message: "failed", data: "Character does not have an active VIP tier." });
+    }
+
+    const smallest5 = await getSmallestAvailableInTier(character.vipTier, 5);
+
+    return res.status(200).json({
+        message: "success",
+        data: {
+            tier: character.vipTier,
+            currentCustomId: character.customid,
+            availableCount: smallest5.length,
+            smallest5
+        }
+    });
+};
+
+/**
+ * POST /character/change-id
+ * Atomically claims the smallest available VIP ID for the character.
+ * Body: { characterid: "XXX" }
+ * Player must own the character and have a vipTier.
+ */
+exports.changeCharacterId = async (req, res) => {
+    const { id } = req.user;
+    const { characterid } = req.body;
+
+    if (!characterid) {
+        return res.status(400).json({ message: "failed", data: "characterid is required." });
+    }
+
+    const result = await changeVIPId(id, characterid);
+
+    if (!result.success) {
+        return res.status(400).json({ message: "failed", data: result.error });
+    }
+
+    return res.status(200).json({
+        message: "success",
+        data: result.data
+    });
+};
+
+// #endregion

@@ -1,8 +1,17 @@
+const axios = require("axios");
 const Characterwallet = require("../models/Characterwallet");
 const { Item } = require("../models/Market");
 const Transaction = require("../models/Transaction");
 const { checkcharacter } = require("../utils/character");
-const { get_access_token } = require("../utils/paypaltools")
+const { get_access_token } = require("../utils/paypaltools");
+const { populate } = require("../models/Maintenance");
+
+// Must match VIP_PACK_TIERS in the Game API Transaction controller
+const VIP_PACK_TIERS = {
+    "platinum vip pack": "platinum",
+    "gold vip pack": "gold",
+    "silver vip pack": "silver"
+};
 // const Transaction = require("../models/Transaction")
 // const Characterwallet = require("../models/Characterwallet")
 // const { default: mongoose } = require("mongoose")
@@ -320,20 +329,21 @@ exports.gettopupmarketcredits = async (req, res) => {
 
     const { id } = req.user;
     const { characterid } = req.query;
-    if (!id || !characterid) {
+    if (!id) {
         return res.status(400).json({ message: "failed", data: "Unauthorized! Please login to the right account." });
     }
 
-        const checker = await checkcharacter(id, characterid);
+        // const checker = await checkcharacter(id, characterid);
 
-        if (checker === "failed") {
-            return res.status(400).json({
-                message: "Unauthorized",
-                data: "You are not authorized to view this page. Please login the right account to view the page."
-            });
-        }
+        // if (checker === "failed") {
+        //     return res.status(400).json({
+        //         message: "Unauthorized",
+        //         data: "You are not authorized to view this page. Please login the right account to view the page."
+        //     });
+        // }
 
-    const gettransactions = await Transaction.find({ owner: characterid })
+    const gettransactions = await Transaction.find(...characterid ? [{ owner: characterid }] : [])
+        .populate({ path: "owner", populate: { path: "owner", match: { _id: id } } })
         .then(data => data)
         .catch(err => {
             console.log(`There's a problem encountered while fetching transactions for character: ${characterid}. Error: ${err}`);
@@ -440,8 +450,41 @@ exports.completeorder = async (req, res) => {
             return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please try again later" });
         });
 
+    // VIP pack handling: notify Game API to mark vipTier on character
+    const vipTier = VIP_PACK_TIERS[(itemdata.name || "").toLowerCase().trim()];
+    let vipResponse = null;
+
+    if (vipTier) {
+        try {
+            const gameApiRes = await axios.post(
+                `${process.env.GAME_API_URL}/completeTransaction`,
+                {
+                    id: id,
+                    characterid: characterid,
+                    transactionId: orderdata.id,
+                    items: [{ name: itemdata.name, quantity: 1, price: itemdata.price }]
+                },
+                {
+                    headers: { 'x-api-key': process.env.PATCHNOTES_API_KEY }
+                }
+            );
+            if (gameApiRes.data && gameApiRes.data.vipTierAssigned) {
+                vipResponse = {
+                    activated: true,
+                    tier: vipTier,
+                    nextStep: "Claim your VIP ID from the character page"
+                };
+            }
+        } catch (err) {
+            // Non-blocking: purchase already succeeded; log for monitoring
+            console.error(`[VIP] Game API /completeTransaction failed for character ${characterid}:`, err.message);
+        }
+    }
+
     return res.status(200).json({
         message: "success",
+        purchased: true,
+        ...(vipResponse ? { vip: vipResponse } : {})
     });
 
 }

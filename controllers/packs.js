@@ -1,6 +1,21 @@
 const Packs = require('../models/Packs');
 const mongoose = require('mongoose');
 const { Item, Market } = require('../models/Market');
+const Characterdata = require('../models/Characterdata');
+const Characterwallet = require('../models/Characterwallet');
+const Transaction = require('../models/Transaction');
+const Users = require('../models/Users');
+const TierAvailability = require('../models/TierAvailability');
+const { claimSmallestInTier, releaseIdToTier } = require('../utils/vipidtools');
+const { applyPackRewards, validatePackReward } = require('../utils/rewardtools');
+
+const VIP_PACK_TIERS = {
+    "platinum vip pack": "platinum",
+    "gold vip pack": "gold",
+    "silver vip pack": "silver"
+};
+
+const LOCK_TIMEOUT_MS = 30_000;
 
 // Create a new pack
 exports.createpack = async (req, res) => {
@@ -10,28 +25,35 @@ exports.createpack = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "name, amount, and currency are required." });
     }
 
-    // Validate rewards if provided
+    // Validate rewards if provided using centralized validator
     if (rewards && Array.isArray(rewards)) {
         if (rewards.length > 10) {
             return res.status(400).json({ message: "bad-request", data: "You can only add up to 10 rewards per pack." });
         }
 
-        const validRewardTypes = ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal'];
+        // Validate each reward structure
         for (const reward of rewards) {
-            if (!reward.rewardtype) {
-                return res.status(400).json({ message: "bad-request", data: "Each reward must have a rewardtype." });
-            }
-            if (!validRewardTypes.includes(reward.rewardtype)) {
-                return res.status(400).json({ 
-                    message: "bad-request", 
-                    data: `Invalid rewardtype '${reward.rewardtype}'. Valid types are: ${validRewardTypes.join(', ')}.` 
-                });
+            if (!validatePackReward(reward)) {
+                return res.status(400).json({ message: "bad-request", data: `Invalid reward structure for rewardtype '${reward && reward.rewardtype}'` });
             }
         }
 
         const totalProbability = rewards.reduce((sum, r) => sum + (Number(r.probability) || 0), 0);
         if (totalProbability > 100) {
             return res.status(400).json({ message: "bad-request", data: "The total probability of rewards cannot exceed 100." });
+        }
+
+        // Ensure no duplicate item IDs across id/fid/_id for item rewards
+        const rewardIds = [];
+        for (const r of rewards) {
+            const obj = r.reward || {};
+            if (obj.id) rewardIds.push(String(obj.id));
+            if (obj._id) rewardIds.push(String(obj._id));
+            if (obj.fid) rewardIds.push(String(obj.fid));
+        }
+        const uniqueRewardIds = new Set(rewardIds);
+        if (uniqueRewardIds.size !== rewardIds.length) {
+            return res.status(400).json({ message: "bad-request", data: "Duplicate reward IDs are not allowed." });
         }
     }
 
@@ -158,31 +180,45 @@ exports.deletepack = async (req, res) => {
 // Get all packs and their rewards
 exports.getPackRewards = async (req, res) => {
     try {
-        const packs = await Packs.find()
-            .sort({ createdAt: -1 });
+        const [packs, tierDocs] = await Promise.all([
+            Packs.find().sort({ createdAt: -1 }),
+            TierAvailability.find({}).lean()
+        ]);
 
         if (!packs || packs.length === 0) {
-            return res.status(200).json({ message: "success", data: [], pagination: {
-                currentPage: 1,
-                totalPages: 0,
-                totalItems: 0
-            } });
+            return res.status(200).json({ message: "success", data: [] });
         }
 
-        const formatted = packs.map(pack => ({
-            id: pack._id,
-            name: pack.name,
-            amount: pack.amount,
-            currency: pack.currency,
-            rewards: pack.rewards.map(r => ({
-                _id: r._id,
-                rewardType: r.rewardtype,
-                amount: r.amount,
-                reward: r.reward,
-                probability: r.probability
-            })),
-            createdAt: pack.createdAt.toISOString().split('T')[0]
-        }));
+        // Build a map of tier → smallest 5 available IDs
+        const tierAvailabilityMap = {};
+        for (const doc of tierDocs) {
+            tierAvailabilityMap[doc.tier] = {
+                availableCount: doc.available.length,
+                smallest5: doc.available.slice(0, 5)
+            };
+        }
+
+        const formatted = packs.map(pack => {
+            const vipTier = VIP_PACK_TIERS[(pack.name || "").toLowerCase().trim()];
+            return {
+                id: pack._id,
+                name: pack.name,
+                amount: pack.amount,
+                currency: pack.currency,
+                rewards: pack.rewards.map(r => ({
+                    _id: r._id,
+                    rewardType: r.rewardtype,
+                    amount: r.amount,
+                    reward: r.reward,
+                    probability: r.probability
+                })),
+                createdAt: pack.createdAt.toISOString().split('T')[0],
+                ...(vipTier ? {
+                    vipTier,
+                    availability: tierAvailabilityMap[vipTier] || { availableCount: 0, smallest5: [] }
+                } : {})
+            };
+        });
 
         return res.status(200).json({ message: "success", data: formatted });
     } catch (error) {
@@ -190,6 +226,194 @@ exports.getPackRewards = async (req, res) => {
         return res.status(500).json({ message: "server-error", data: "An error occurred while fetching packs." });
     }
 }
+
+// Purchase a VIP pack using in-game currency, claim a specific (or the smallest) available ID
+exports.purchasevippack = async (req, res) => {
+    const { id, username } = req.user;
+    const { characterid, packid, idempotencyKey } = req.body;
+
+    if (!characterid || !packid) {
+        return res.status(400).json({ message: "bad-request", data: "characterid and packid are required." });
+    }
+
+    // Generate idempotency key if not provided (backend auto-generates on first attempt)
+    // Frontend can optionally send one for explicit retry control
+    const txKey = (idempotencyKey && typeof idempotencyKey === "string" && idempotencyKey.trim().length > 0)
+        ? idempotencyKey.trim()
+        : new mongoose.Types.ObjectId().toString();
+
+    // Idempotency check: if this key was already processed, return the original result
+    const existingTx = await Transaction.findOne({ transactionid: txKey }).lean().catch(() => null);
+    if (existingTx) {
+        return res.status(200).json({
+            message: "success",
+            data: { idempotent: true, transactionid: txKey }
+        });
+    }
+
+    // Find the pack
+    const pack = await Packs.findById(packid).lean().catch(() => null);
+    if (!pack) return res.status(404).json({ message: "not-found", data: "Pack not found." });
+
+    // Confirm it's a VIP pack
+    const tier = VIP_PACK_TIERS[(pack.name || "").toLowerCase().trim()];
+    if (!tier) {
+        return res.status(400).json({ message: "bad-request", data: "This pack is not a VIP pack." });
+    }
+
+    // Pre-check wallet balance (non-authoritative; definitive check happens inside the session)
+    const wallet = await Characterwallet.findOne({ owner: characterid, type: pack.currency }).lean().catch(() => null);
+    if (!wallet || wallet.amount < pack.amount) {
+        return res.status(400).json({
+            message: "bad-request",
+            data: `Insufficient ${pack.currency}. Required: ${pack.amount}, Available: ${wallet ? wallet.amount : 0}.`
+        });
+    }
+
+    // Look up user email for the Transaction record
+    const userRecord = await Users.findById(id).lean().catch(() => null);
+
+    // Atomically acquire per-character lock (prevents concurrent duplicate purchases for the same character)
+    const lockedChar = await Characterdata.findOneAndUpdate(
+        {
+            _id: new mongoose.Types.ObjectId(characterid),
+            owner: new mongoose.Types.ObjectId(id),
+            status: { $ne: "deleted" },
+            $or: [
+                { vipIdChangeLocked: { $ne: true } },
+                { vipIdChangeLockAt: { $lt: new Date(Date.now() - LOCK_TIMEOUT_MS) } }
+            ]
+        },
+        { $set: { vipIdChangeLocked: true, vipIdChangeLockAt: new Date() } },
+        { new: true }
+    ).lean().catch(() => null);
+
+
+    if (!lockedChar) {
+        const check = await Characterdata.findOne({
+            _id: new mongoose.Types.ObjectId(characterid),
+            owner: new mongoose.Types.ObjectId(id),
+            status: { $ne: "deleted" }
+        }).lean();
+        if (!check) return res.status(404).json({ message: "not-found", data: "Character not found or not owned by user." });
+        return res.status(409).json({ message: "conflict", data: "A VIP ID operation is already in progress for this character. Please try again." });
+    }
+
+    // Prevent repurchase of the same VIP tier
+    if (lockedChar.vipTier === tier) {
+        await Characterdata.updateOne(
+            { _id: new mongoose.Types.ObjectId(characterid) },
+            { $set: { vipIdChangeLocked: false } }
+        ).catch(() => {});
+        return res.status(409).json({ message: "conflict", data: `You already own a ${tier} VIP pack. Cannot purchase the same tier again.` });
+    }
+
+
+    const claimedId = await claimSmallestInTier(tier);
+    if (claimedId === null) {
+        await Characterdata.updateOne(
+            { _id: new mongoose.Types.ObjectId(characterid) },
+            { $set: { vipIdChangeLocked: false } }
+        ).catch(() => {});
+        return res.status(410).json({ message: "sold-out", data: `All ${tier} VIP IDs have been claimed. No more are available.` });
+    }
+
+    const oldCustomId = lockedChar.customid;
+    const existingVipTier = lockedChar.vipTier || null; // tier the character currently holds (may differ from new tier)
+
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        // Deduct wallet (authoritative balance guard inside the session)
+        const updatedWallet = await Characterwallet.findOneAndUpdate(
+            { owner: characterid, type: pack.currency, amount: { $gte: pack.amount } },
+            { $inc: { amount: -pack.amount } },
+            { new: true, session }
+        );
+        if (!updatedWallet) {
+            await session.abortTransaction();
+            await releaseIdToTier(tier, claimedId);
+            await Characterdata.updateOne(
+                { _id: new mongoose.Types.ObjectId(characterid) },
+                { $set: { vipIdChangeLocked: false } }
+            ).catch(() => {});
+            return res.status(400).json({ message: "bad-request", data: `Insufficient ${pack.currency} to complete the purchase.` });
+        }
+
+        // Update character: assign new ID, set vipTier, release lock
+        await Characterdata.findOneAndUpdate(
+            { _id: new mongoose.Types.ObjectId(characterid) },
+            { $set: { customid: claimedId, vipTier: tier, vipIdChangeLocked: false } },
+            { session }
+        );
+
+        // Mark claimedId as taken in TierAvailability
+        await TierAvailability.findOneAndUpdate(
+            { tier },
+            { $addToSet: { taken: claimedId } },
+            { session }
+        );
+
+        // Release the old VIP ID back to its tier pool if the character previously had a VIP tier
+        if (existingVipTier) {
+            await TierAvailability.findOneAndUpdate(
+                { tier: existingVipTier },
+                {
+                    $pull: { taken: oldCustomId },
+                    $push: { available: { $each: [oldCustomId], $position: 0 } }
+                },
+                { session }
+            );
+        }
+
+        // Record the transaction
+        await Transaction.create([{
+            owner: characterid,
+            transactionid: txKey,
+            amount: pack.amount,
+            item: pack._id,
+            name: pack.name,
+            email: userRecord ? userRecord.email : "ingame@system",
+            currency: pack.currency,
+            status: "completed",
+            items: [{ name: pack.name, quantity: 1, price: pack.amount }]
+        }], { session });
+
+        // Award pack rewards
+        const rewardResults = await applyPackRewards(characterid, pack.rewards, 1, session);
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            message: "success",
+            data: {
+                transactionId: txKey,
+                claimedId,
+                oldCustomId,
+                tier,
+                rewards: rewardResults
+            }
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        await releaseIdToTier(tier, claimedId);
+        await Characterdata.updateOne(
+            { _id: new mongoose.Types.ObjectId(characterid) },
+            { $set: { vipIdChangeLocked: false } }
+        ).catch(() => {});
+
+        // Duplicate key on transactionid means a concurrent request already committed — treat as idempotent
+        if (err.code === 11000 && err.keyPattern?.transactionid) {
+            return res.status(200).json({ message: "success", data: { idempotent: true, transactionid: txKey } });
+        }
+
+        console.error(`[VIP Pack] Purchase failed for user ${username}, character ${characterid}:`, err);
+        return res.status(500).json({ message: "server-error", data: "Purchase failed. Please try again." });
+    } finally {
+        session.endSession();
+    }
+};
 
 // Edit pack rewards for a specific pack
 exports.editpackrewards = async (req, res) => {
@@ -203,17 +427,10 @@ exports.editpackrewards = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "You can only add up to 10 rewards per pack." });
     }
 
-    // Validate that each reward has a valid rewardtype
-    const validRewardTypes = ['badge', 'title', 'weapon', 'outfit', 'exp', 'coins', 'crystal'];
+    // Use centralized validator
     for (const reward of rewards) {
-        if (!reward.rewardtype) {
-            return res.status(400).json({ message: "bad-request", data: "Each reward must have a rewardtype." });
-        }
-        if (!validRewardTypes.includes(reward.rewardtype)) {
-            return res.status(400).json({ 
-                message: "bad-request", 
-                data: `Invalid rewardtype '${reward.rewardtype}'. Valid types are: ${validRewardTypes.join(', ')}.` 
-            });
+        if (!validatePackReward(reward)) {
+            return res.status(400).json({ message: "bad-request", data: `Invalid reward structure for rewardtype '${reward && reward.rewardtype}'` });
         }
     }
 
@@ -223,7 +440,14 @@ exports.editpackrewards = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "The total probability of rewards cannot exceed 100." });
     }
 
-    const rewardIds = rewards.map(r => r.reward && r.reward.id).filter(id => id);
+    // Ensure no duplicate item IDs across id/fid/_id for item rewards
+    const rewardIds = [];
+    for (const r of rewards) {
+        const obj = r.reward || {};
+        if (obj.id) rewardIds.push(String(obj.id));
+        if (obj._id) rewardIds.push(String(obj._id));
+        if (obj.fid) rewardIds.push(String(obj.fid));
+    }
     const uniqueRewardIds = new Set(rewardIds);
 
     if (uniqueRewardIds.size !== rewardIds.length) {

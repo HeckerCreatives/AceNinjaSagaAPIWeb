@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const http = require("http");
 const cors = require("cors");
+const dns = require("dns").setServers(['1.1.1.1', '8.8.8.8'])
 require("dotenv").config();
 
 const app = express();

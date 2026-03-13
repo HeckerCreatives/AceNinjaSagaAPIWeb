@@ -1320,25 +1320,18 @@ exports.getallitems = async (req, res) => {
 };
 
 exports.editfreebiereward = async (req, res) => {
-    const { itemid, amount, description, } = req.body;
+    const { itemid, amount, description } = req.body;
 
-    if (!itemid || !amount) {
-        return res.status(400).json({ message: "failed", data: "Please provide item ID and amount." });
+    if (!amount) {
+        return res.status(400).json({ message: "failed", data: "Please provide amount." });
     }
 
-    let item = await Item.findById(itemid)
-        .then(data => data)
-        .catch(err => {
-            console.log(`There's a problem encountered while fetching item. Error: ${err}`);
-            return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
-        });
+    let item = await validateItemIdAndReturnItem(itemid);
 
-    if (!item) {
-        return res.status(404).json({ message: "failed", data: "Item not found." });
-    }
-
-    if (item.type !== "freebie") {
+    if (item && item.type !== "freebie" ) {
         return res.status(400).json({ message: "failed", data: "Item is not a freebie." });
+    } else if (!item) {
+        return res.status(404).json({ message: "failed", data: "Item not found." });
     }
 
     // Determine which field to update
@@ -1387,6 +1380,80 @@ exports.editfreebiereward = async (req, res) => {
     });
 }
 
+exports.editpacks = async (req, res) => {
+    const { itemid, price, amount, description } = req.body;
+
+    if (!price || !amount) {
+        return res.status(400).json({ message: "failed", data: "Please provide price and amount." });
+    }
+
+    let item = await validateItemIdAndReturnItem(itemid);
+
+    if (!item) {
+        return res.status(404).json({ message: "failed", data: "Item not found." });
+    }
+
+    // Start transaction session
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
+
+        switch (item.type) {
+            case "crystalpacks":
+                item.price = price;
+                item.crystals = amount;
+                await Market.updateMany(
+                    { "items._id": itemid },
+                    { $set: { "items.$.price": price, "items.$.crystals": amount, 'items.$.description': description || item.description } },
+                    { session }
+                );
+                break;
+            case "goldpacks":
+                item.price = price;
+                item.coins = amount;
+                await Market.updateMany(
+                    { "items._id": itemid },
+                    { $set: { "items.$.price": price, "items.$.coins": amount, 'items.$.description': description || item.description } },
+                    { session }
+                );
+                break;
+            default:
+                await session.abortTransaction();
+                return res.status(400).json({ message: "failed", data: "Item is not a pack." });
+        }
+
+        // Update Item collection
+        await Item.findOneAndUpdate(
+            { _id: itemid },
+            { 
+                price: item.price,
+                crystals: item.crystals || 0,
+                coins: item.coins || 0,
+                description: description || item.description 
+            },
+            { session }
+        );
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            message: "success",
+            data: {
+                itemid: item._id,
+                name: item.name,
+                type: item.type,
+                price: item.price,
+                amount: item.crystals || item.coins
+            }
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(`Error in editpacks: ${err}`);
+        return res.status(500).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details." });
+    } finally {
+        session.endSession();
+    }
+}
 
 exports.getallitemsandskill  = async (req, res) => {
 
@@ -1549,3 +1616,21 @@ exports.getallitemsandskill  = async (req, res) => {
         });
     }
 }
+
+const validateItemIdAndReturnItem = async (itemId) => {
+    if (!mongoose.Types.ObjectId.isValid(itemId)) {
+        return false;
+    }
+
+    const item = await Item.findById(itemId)
+        .then(data => data)
+        .catch(err => {
+            console.log(`There's a problem encountered while fetching item. Error: ${err}`);
+            return null;
+        });
+
+    if (!item) {
+        return false;
+    }
+    return item;
+    }

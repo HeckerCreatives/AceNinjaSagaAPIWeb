@@ -37,6 +37,7 @@ const routers = app => {
     app.use("/sociallinks", require("./sociallinks"))
     app.use("/subscription", require("./subscription"))
     app.use("/title", require("./title"))
+    app.use("/tieravailability", require("./tieravailability"))
     app.use("/transaction", require("./transaction"))
     app.use("/uploads", require('./picture'));
     app.use("/user", require("./user"))

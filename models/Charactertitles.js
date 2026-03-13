@@ -16,7 +16,7 @@ const CharacterTitleSchema = new mongoose.Schema(
             required: true,
             index: true
         },
-        title: {
+        name: {
             type: String,
             required: true,
             index: true

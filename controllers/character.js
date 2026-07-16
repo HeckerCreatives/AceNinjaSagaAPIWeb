@@ -271,6 +271,8 @@ exports.getplayerdata = async (req, res) => {
             user: user?.username,
             id: character._id,
             username: character.username,
+            customid: character.customid ?? null,
+            vipTier: character.vipTier ?? null,
             title: character.title,
             level: character.level,
             badge: character.badge,

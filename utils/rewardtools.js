@@ -14,6 +14,56 @@ const Characterdata = require('../models/Characterdata');
 const { validatePackReward } = require('./packtools');
 
 /**
+ * Build a human-readable list of rewards (e.g. "100 crystal, 1 Badge, 1 Weapon")
+ * from applyPackRewards' / awardRankRewards' result array, used in in-game mails.
+ * @param {Array} rewardResults - Array of { rewardtype, success, details } objects.
+ * @returns {String} Comma-joined summary, or "your rewards" as a fallback.
+ */
+exports.summarizeAppliedRewards = (rewardResults = []) => {
+    const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    const lines = [];
+    for (const r of rewardResults) {
+        if (!r || r.success === false) continue;
+        // Tolerate both pack-reward shape ({ rewardtype, details:{amount,quantity} })
+        // and rank-reward shape ({ type, amount, quantity }).
+        const t = (r.rewardtype || r.type || '').toLowerCase();
+        const amount = (r.details && r.details.amount) || r.amount;
+        const quantity = (r.details && r.details.quantity) || r.quantity;
+        switch (t) {
+            case 'crystal':
+            case 'coins':
+                if (amount) lines.push(`${amount.toLocaleString()} ${t}`);
+                break;
+            case 'exp':
+                if (amount) lines.push(`${amount.toLocaleString()} EXP`);
+                break;
+            case 'badge': lines.push('1 Badge'); break;
+            case 'title': lines.push('1 Title'); break;
+            case 'skill': lines.push('1 Skill'); break;
+            case 'companion': lines.push('1 Companion'); break;
+            case 'weapon':
+            case 'outfit':
+            case 'hair':
+            case 'face':
+            case 'eyes':
+            case 'skincolor':
+            case 'skins':
+                lines.push(`1 ${capitalize(t)}`);
+                break;
+            case 'chest':
+            case 'chests': {
+                const q = quantity || 1;
+                lines.push(`${q} Chest${q > 1 ? 's' : ''}`);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    return lines.length > 0 ? lines.join(', ') : 'your rewards';
+};
+
+/**
  * Award currency (coins/crystals) to character wallet
  * @param {String} characterid - Character ID  
  * @param {String} type - Currency type ('coins' or 'crystal')
@@ -509,6 +559,17 @@ exports.applyPackRewards = async (characterId, packRewards, quantity = 1, sessio
                             ? `Added ${quantity} chest(s)` 
                             : result !== 'failed' ? 'Chest awarded' : 'Failed to award chest';
                         rewardResult.details = { itemId, quantity, status: result };
+                        break;
+                    }
+
+                    case 'customid': {
+                        // Custom VIP ID claiming is handled atomically by purchasevippack
+                        // (it calls claimSmallestInTier and releases the previous ID).
+                        // applyPackRewards must NOT claim again here, but we mark success
+                        // so the summary picks it up correctly.
+                        rewardResult.success = true;
+                        rewardResult.message = 'Custom VIP ID claimed';
+                        rewardResult.details = { digits: Number(reward.reward && reward.reward.id) };
                         break;
                     }
 

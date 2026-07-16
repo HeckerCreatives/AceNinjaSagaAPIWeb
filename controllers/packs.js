@@ -6,13 +6,81 @@ const Characterwallet = require('../models/Characterwallet');
 const Transaction = require('../models/Transaction');
 const Users = require('../models/Users');
 const TierAvailability = require('../models/TierAvailability');
+const Mail = require('../models/Mail');
+const Badge = require('../models/Badge');
+const Title = require('../models/Title');
 const { claimSmallestInTier, releaseIdToTier } = require('../utils/vipidtools');
-const { applyPackRewards, validatePackReward } = require('../utils/rewardtools');
+const { applyPackRewards, summarizeAppliedRewards } = require('../utils/rewardtools');
+const { validatePackReward } = require('../utils/packtools');
 
-const VIP_PACK_TIERS = {
-    "platinum vip pack": "platinum",
-    "gold vip pack": "gold",
-    "silver vip pack": "silver"
+// Inventory-style reward types whose reward.id is an Item._id (ObjectId).
+const ITEM_REWARD_TYPES = ['weapon', 'outfit', 'hair', 'face', 'eyes', 'skincolor', 'skins', 'chest', 'chests'];
+
+/**
+ * Batch-fetch display names for rewards across an array of packs. Existing
+ * pack records have `reward.id` populated by the superadmin form but very
+ * often have `reward.name` empty (Radix Select's onClick passthrough is
+ * unreliable), so we hydrate names from the catalogs here. Returns lookup
+ * maps the caller uses to fill in `reward.name` when missing.
+ */
+const buildRewardNameMaps = async (packs) => {
+    const itemIds = new Set();
+    const badgeIndices = new Set();
+    const titleIndices = new Set();
+
+    for (const pack of packs) {
+        for (const r of (pack.rewards || [])) {
+            const t = (r.rewardtype || '').toLowerCase();
+            const rid = r.reward && r.reward.id;
+            if (rid == null) continue;
+            if (ITEM_REWARD_TYPES.includes(t)) {
+                if (mongoose.Types.ObjectId.isValid(String(rid))) itemIds.add(String(rid));
+            } else if (t === 'badge') {
+                const n = Number(rid);
+                if (!Number.isNaN(n)) badgeIndices.add(n);
+            } else if (t === 'title') {
+                const n = Number(rid);
+                if (!Number.isNaN(n)) titleIndices.add(n);
+            }
+        }
+    }
+
+    const [items, badges, titles] = await Promise.all([
+        itemIds.size ? Item.find({ _id: { $in: [...itemIds] } }).select('_id name').lean() : [],
+        badgeIndices.size ? Badge.find({ index: { $in: [...badgeIndices] } }).select('index title').lean() : [],
+        titleIndices.size ? Title.find({ index: { $in: [...titleIndices] } }).select('index title').lean() : [],
+    ]);
+
+    return {
+        itemNameById: new Map(items.map(i => [String(i._id), i.name])),
+        badgeNameByIndex: new Map(badges.map(b => [b.index, b.title])),
+        titleNameByIndex: new Map(titles.map(t => [t.index, t.title])),
+    };
+};
+
+const resolveRewardName = (r, maps) => {
+    if (r.reward && r.reward.name) return r.reward.name;
+    const t = (r.rewardtype || '').toLowerCase();
+    const rid = r.reward && r.reward.id;
+    if (rid == null) return null;
+    if (ITEM_REWARD_TYPES.includes(t)) return maps.itemNameById.get(String(rid)) || null;
+    if (t === 'badge') return maps.badgeNameByIndex.get(Number(rid)) || null;
+    if (t === 'title') return maps.titleNameByIndex.get(Number(rid)) || null;
+    return null;
+};
+
+// Tier is derived entirely from the per-pack "customid" reward (reward.id is
+// the digit count). 3 digits → "silver" pool, 2 digits → "gold" pool.
+const DIGITS_TO_TIER = { 3: "silver", 2: "gold" };
+
+const getPackTier = (pack) => {
+    if (!pack || !Array.isArray(pack.rewards)) return null;
+    const customid = pack.rewards.find(
+        r => (r && r.rewardtype || "").toString().toLowerCase() === "customid"
+    );
+    if (!customid || customid.reward == null) return null;
+    const digits = Number(customid.reward.id);
+    return DIGITS_TO_TIER[digits] || null;
 };
 
 const LOCK_TIMEOUT_MS = 30_000;
@@ -198,20 +266,27 @@ exports.getPackRewards = async (req, res) => {
             };
         }
 
+        const nameMaps = await buildRewardNameMaps(packs);
+
         const formatted = packs.map(pack => {
-            const vipTier = VIP_PACK_TIERS[(pack.name || "").toLowerCase().trim()];
+            const vipTier = getPackTier(pack);
             return {
                 id: pack._id,
                 name: pack.name,
                 amount: pack.amount,
                 currency: pack.currency,
-                rewards: pack.rewards.map(r => ({
-                    _id: r._id,
-                    rewardType: r.rewardtype,
-                    amount: r.amount,
-                    reward: r.reward,
-                    probability: r.probability
-                })),
+                rewards: pack.rewards.map(r => {
+                    const resolvedName = resolveRewardName(r, nameMaps);
+                    return {
+                        _id: r._id,
+                        rewardType: r.rewardtype,
+                        amount: r.amount,
+                        reward: r.reward
+                            ? { ...(r.reward.toObject ? r.reward.toObject() : r.reward), name: (r.reward && r.reward.name) || resolvedName || null }
+                            : (resolvedName ? { name: resolvedName } : null),
+                        probability: r.probability
+                    };
+                }),
                 createdAt: pack.createdAt.toISOString().split('T')[0],
                 ...(vipTier ? {
                     vipTier,
@@ -255,10 +330,19 @@ exports.purchasevippack = async (req, res) => {
     const pack = await Packs.findById(packid).lean().catch(() => null);
     if (!pack) return res.status(404).json({ message: "not-found", data: "Pack not found." });
 
-    // Confirm it's a VIP pack
-    const tier = VIP_PACK_TIERS[(pack.name || "").toLowerCase().trim()];
+    // Confirm it's a VIP pack — prefer per-pack customid reward, fall back to name map.
+    const tier = getPackTier(pack);
     if (!tier) {
         return res.status(400).json({ message: "bad-request", data: "This pack is not a VIP pack." });
+    }
+
+    // Guard against accidental misconfiguration in the superadmin: only one
+    // customid reward allowed per pack, otherwise tier assignment is ambiguous.
+    const customidCount = (pack.rewards || []).filter(
+        r => (r && r.rewardtype || "").toString().toLowerCase() === "customid"
+    ).length;
+    if (customidCount > 1) {
+        return res.status(400).json({ message: "bad-request", data: "Pack is misconfigured: more than one Custom ID reward defined." });
     }
 
     // Pre-check wallet balance (non-authoritative; definitive check happens inside the session)
@@ -383,6 +467,27 @@ exports.purchasevippack = async (req, res) => {
         // Award pack rewards
         const rewardResults = await applyPackRewards(characterid, pack.rewards, 1, session);
 
+        // In-game notification mail. Rewards are already applied directly above,
+        // so the Mail.rewards map stays empty — this mail is informational only,
+        // not a claim screen. If the client treats non-empty Mail.rewards as
+        // claimable, putting them here would double-grant.
+        // applyPackRewards returns { success, results, failedReward? } — pull
+        // the inner array for the summarizer. Fall back to an empty array if
+        // applyPackRewards returned a shape we don't recognize.
+        const appliedList = Array.isArray(rewardResults)
+            ? rewardResults
+            : Array.isArray(rewardResults && rewardResults.results)
+                ? rewardResults.results
+                : [];
+        const rewardsSummary = summarizeAppliedRewards(appliedList);
+        await Mail.create([{
+            owner: characterid,
+            title: 'Thank you for your purchase!',
+            description: `Thank you for purchasing ${pack.name}! You get ${rewardsSummary}. You will receive these automatically and can use them immediately.`,
+            type: 'purchase',
+            status: 'unread',
+        }], { session });
+
         await session.commitTransaction();
 
         return res.status(200).json({
@@ -409,7 +514,12 @@ exports.purchasevippack = async (req, res) => {
         }
 
         console.error(`[VIP Pack] Purchase failed for user ${username}, character ${characterid}:`, err);
-        return res.status(500).json({ message: "server-error", data: "Purchase failed. Please try again." });
+        // Surface the underlying error so the dashboard toast can show something
+        // actionable instead of a generic retry message.
+        return res.status(500).json({
+            message: "server-error",
+            data: `Purchase failed: ${err && err.message ? err.message : "Please try again."}`,
+        });
     } finally {
         session.endSession();
     }

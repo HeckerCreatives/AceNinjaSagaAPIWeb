@@ -64,6 +64,15 @@ exports.validatePackReward = (reward) => {
         return true;
     }
 
+    // Custom VIP ID — reward.id encodes the digit count and must be 2 or 3.
+    // Tier mapping: 3 → "silver" pool, 2 → "gold" pool (see getPackTier in packs.js).
+    if (reward.rewardtype === 'customid') {
+        if (!reward.reward) return false;
+        const digits = Number(reward.reward.id);
+        if (digits !== 2 && digits !== 3) return false;
+        return true;
+    }
+
     // Unknown reward type - accept it but log warning
     console.warn(`Unknown reward type in pack: ${reward.rewardtype}`);
     return true;

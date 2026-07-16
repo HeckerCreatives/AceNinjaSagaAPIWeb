@@ -167,7 +167,7 @@ exports.claimcode = async (req, res) => {
         return res.status(400).json({ message: "bad-request", data: "There's a problem with the server. Please contact support for more details."})
     })
 
-    await Mail.create({ owner: characterid, title: codedeets.title, message: codedeets.description, status: "unread", type: "rewards", rewards: codedeets.rewards })
+    await Mail.create({ owner: characterid, title: codedeets.title, description: codedeets.description, status: "unread", type: "rewards", rewards: codedeets.rewards })
     .then(data => data)
     .catch(async err => {
         console.log(`There's a problem while creating redeem code. Error: ${err}`)

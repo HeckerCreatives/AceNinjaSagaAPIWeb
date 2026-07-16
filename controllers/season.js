@@ -1,6 +1,11 @@
 const { default: mongoose } = require("mongoose")
 const Season = require("../models/Season")
 const { BattlepassSeason } = require("../models/Battlepass")
+const { Rankings, RankReward } = require("../models/Ranking")
+const Characterdata = require("../models/Characterdata")
+const Mail = require("../models/Mail")
+const { awardRankRewards } = require("../utils/rankrewards")
+const { summarizeAppliedRewards } = require("../utils/rewardtools")
 const { RemainingTime, getSeasonRemainingTimeInMilliseconds, getSeasonRemainingTime } = require("../utils/datetimetools")
 
 
@@ -189,6 +194,157 @@ exports.getcurrentseason = async (req, res) => {
             message: "server-error",
             data: "There's a problem with the server. Please try again later."
         });
+    }
+};
+
+// Strip mongoose-assigned _ids from embedded subdocs before cloning into a new
+// document so Mongoose generates fresh _ids on insert. Without this, cloning a
+// BattlepassSeason's tiers/missions would copy the original _ids and violate
+// the embedded subdoc unique-_id invariant.
+const stripIds = (arr) => {
+    if (!Array.isArray(arr)) return [];
+    return arr.map(item => {
+        const obj = item && item.toObject ? item.toObject() : { ...item };
+        if (obj && typeof obj === 'object') delete obj._id;
+        return obj;
+    });
+};
+
+exports.endseason = async (req, res) => {
+    const { newSeason, newBattlepass } = req.body || {};
+
+    // Input validation — both new-season and new-battlepass blocks are required because
+    // ending without setting up a successor leaves the game with no active season,
+    // breaking BP, rank progression, and several other queries that assume one exists.
+    if (!newSeason || !newSeason.title || newSeason.duration == null) {
+        return res.status(400).json({ message: "failed", data: "New season title and duration are required." });
+    }
+    if (Number(newSeason.duration) <= 0) {
+        return res.status(400).json({ message: "failed", data: "Season duration must be a positive number of days." });
+    }
+    if (!newBattlepass || !newBattlepass.title || newBattlepass.seasonNumber == null ||
+        newBattlepass.premiumCost == null || newBattlepass.tierCount == null) {
+        return res.status(400).json({
+            message: "failed",
+            data: "New battle pass title, season number, premium cost, and tier count are required."
+        });
+    }
+
+    const session = await mongoose.startSession();
+
+    try {
+        session.startTransaction();
+
+        // 1. Find the current active season.
+        const currentSeason = await Season.findOne({ isActive: "active" }).session(session);
+        if (!currentSeason) {
+            await session.abortTransaction();
+            return res.status(404).json({ message: "not-found", data: "No active season to end." });
+        }
+
+        // 2. Distribute rank rewards (only if rankings exist for this season).
+        const rankings = await Rankings.find({ season: currentSeason._id }).session(session);
+        const allRankRewards = await RankReward.find({}).session(session);
+
+        let rewardedCount = 0;
+        let mailedCount = 0;
+
+        if (rankings.length > 0 && allRankRewards.length > 0) {
+            const characterIds = rankings.map(r => r.owner);
+            const characters = await Characterdata.find({ _id: { $in: characterIds } }).session(session);
+            const characterMap = new Map(characters.map(c => [c._id.toString(), c]));
+
+            for (const ranking of rankings) {
+                const character = characterMap.get(ranking.owner.toString());
+                if (!character) continue;
+
+                const player = {
+                    owner: ranking.owner,
+                    rank: ranking.rank,
+                    character: { gender: character.gender === 0 ? 'male' : 'female' }
+                };
+
+                const results = await awardRankRewards(player, allRankRewards, session);
+
+                // Skip mail if nothing was awarded (e.g. their rank had no configured payout).
+                const succeeded = (results || []).filter(r => r && r.success);
+                if (succeeded.length === 0) continue;
+
+                rewardedCount++;
+
+                const summary = summarizeAppliedRewards(results);
+
+                await Mail.create([{
+                    owner: ranking.owner,
+                    title: "Season Rewards",
+                    description: `Congratulations on finishing ${currentSeason.title}! You received: ${summary}. Thank you for playing — these have been added to your account.`,
+                    type: "rank-reward",
+                    status: "unread"
+                }], { session });
+
+                mailedCount++;
+            }
+        }
+
+        // 3. End the current season.
+        await Season.findByIdAndUpdate(currentSeason._id, { isActive: "ended" }, { session });
+
+        // 4. Deactivate the previous active BattlepassSeason (also captures it for cloning).
+        const previousBP = await BattlepassSeason.findOne({ status: "active" }).session(session);
+        if (previousBP) {
+            await BattlepassSeason.findByIdAndUpdate(previousBP._id, { status: "inactive" }, { session });
+        }
+
+        // 5. Create the new active Season.
+        const startedAt = new Date();
+        const newSeasonDocs = await Season.create([{
+            title: newSeason.title,
+            duration: Number(newSeason.duration),
+            isActive: "active",
+            startedAt
+        }], { session });
+        const newSeasonDoc = newSeasonDocs[0];
+
+        // 6. Create the new active BattlepassSeason, bound to the new season's window.
+        const endDate = new Date(startedAt.getTime() + Number(newSeason.duration) * 24 * 60 * 60 * 1000);
+        const cloneFromPrev = !!newBattlepass.cloneFromPreviousBP && !!previousBP;
+
+        const newBPDocs = await BattlepassSeason.create([{
+            title: newBattlepass.title,
+            season: Number(newBattlepass.seasonNumber),
+            startDate: startedAt,
+            endDate,
+            status: "active",
+            tierCount: Number(newBattlepass.tierCount),
+            premiumCost: Number(newBattlepass.premiumCost),
+            tiers: cloneFromPrev ? stripIds(previousBP.tiers) : [],
+            freeMissions: cloneFromPrev ? stripIds(previousBP.freeMissions) : [],
+            premiumMissions: cloneFromPrev ? stripIds(previousBP.premiumMissions) : [],
+            grandreward: cloneFromPrev ? (previousBP.grandreward || []) : []
+        }], { session });
+        const newBPDoc = newBPDocs[0];
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            message: "success",
+            data: {
+                endedSeasonId: currentSeason._id,
+                newSeasonId: newSeasonDoc._id,
+                newBattlepassId: newBPDoc._id,
+                rewardedCharacterCount: rewardedCount,
+                mailedCharacterCount: mailedCount
+            }
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        console.error(`[endseason] Error: ${err}`);
+        return res.status(500).json({
+            message: "server-error",
+            data: err && err.message ? err.message : "There's a problem with the server. Please try again later."
+        });
+    } finally {
+        session.endSession();
     }
 };
 

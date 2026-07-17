@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const mongoose = require('mongoose');
 const Characterdata = require('../models/Characterdata');
 const Counter = require('../models/Counter');
@@ -6,8 +8,11 @@ const Counter = require('../models/Counter');
 async function ensureConnected() {
     if (mongoose.connection.readyState && mongoose.connection.readyState !== 0) return;
 
-    const uri = process.env.DATABASE_URL || 'mongodb://axcela:Axcela2025Ph@143.198.206.121:27017/ace?authSource=admin';
-    console.log(`Connecting to MongoDB at ${uri} ...`);
+    const uri = process.env.DATABASE_URL;
+    if (!uri) {
+        throw new Error('DATABASE_URL is not set. Refusing to run without an explicit connection string.');
+    }
+    console.log(`Connecting to MongoDB at ${uri.replace(/\/\/.*@/, '//***@')} ...`);
     await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log('Connected to MongoDB.');
 }

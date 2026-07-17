@@ -4,10 +4,19 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const http = require("http");
 const cors = require("cors");
+const mongoSanitize = require("express-mongo-sanitize");
 const dns = require("dns").setServers(['1.1.1.1', '8.8.8.8'])
 require("dotenv").config();
 
+const { securityHeaders } = require("./middleware/security");
+
 const app = express();
+
+// Behind a reverse proxy (deployment): trust it so secure cookies and the
+// rate limiter see the real client IP / protocol.
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
+app.use(securityHeaders);
 
 const {initialize} = require("./initialization/serverinitialize")
 const {socketserver} = require("./socket/socket-web-config")
@@ -36,9 +45,12 @@ mongoose
   .catch((err) => console.log(err));
   
 
-app.use(bodyParser.json({ limit: "50mb" }))
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: false, parameterLimit: 50000 }))
+app.use(bodyParser.json({ limit: "10mb" }))
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: false, parameterLimit: 5000 }))
 app.use(cookieParser());
+// Strip keys containing `$` or `.` from body/query/params to block NoSQL
+// operator injection ($ne, $gt, $where, ...).
+app.use(mongoSanitize());
 
 // Routes
 require("./routes")(app);

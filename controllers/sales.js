@@ -304,7 +304,8 @@ const httpJson = (urlString, { method = "GET", headers = {}, timeoutMs = 25000 }
  *
  * Query params (forwarded as-is):
  *   time        - ISO 8601 start time, required
- *   type        - PURCHASE | REFUND | CHARGEBACK | RESTORE | ALL (default ALL)
+ *   type        - GAMESALES | SETTLEMENT | STEAMSTORESALES | CHARGEBACK | SUBSCRIPTION
+ *                 (Game API defaults to GAMESALES if omitted). Case-sensitive; "ALL" is invalid.
  *   maxresults  - 1..1000, default 1000
  *
  * Required Web API env:

@@ -8,10 +8,11 @@ const Characterdata = require('../models/Characterdata');
 // Database connection
 const connectDB = async () => {
     try {
-        const uri = process.env.DATABASE_URL || 'mongodb+srv://doadmin:V87f0KM254wNF91C@ace-ninja-path-database-e115c1d7.mongo.ondigitalocean.com/aceninjapath?tls=true&authSource=admin';
-        // const uri = process.env.DATABASE_URL || 'mongodb://axcela:Axcela2025Ph@143.198.206.121:27017/ace?authSource=admin';
-        // const uri = process.env.DATABASE_URL || 'mongodb+srv://cbsadmin:Creativebrain2022@creativebraindevelopmen.itmjhkl.mongodb.net/acegame?retryWrites=true&w=majority';
-        await mongoose.connect(process.env.MONGODB_URI || uri, {
+        const uri = process.env.DATABASE_URL || process.env.MONGODB_URI;
+        if (!uri) {
+            throw new Error('DATABASE_URL is not set. Refusing to run without an explicit connection string.');
+        }
+        await mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });

@@ -16,6 +16,22 @@ const encrypt = async password => {
     return await bcrypt.hash(password, salt);
 }
 
+// Escape regex metacharacters so a username can be matched case-insensitively
+// without allowing ReDoS or regex injection from user input.
+const escapeRegex = (str = "") => String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Token lifetimes — issued tokens now expire (previously never expired).
+const ADMIN_TOKEN_TTL = "1d";
+const PLAYER_TOKEN_TTL = "30d";
+
+// Hardened session cookie flags. httpOnly blocks JS/XSS from reading the token.
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+};
+
 exports.register = async (req, res) => {
     const { username, password, email } = req.body
 
@@ -98,9 +114,12 @@ exports.registerstaffuser = async (req, res) => {
 
 
 exports.authlogin = async(req, res) => {
-    const { username, password } = req.query;
+    // Prefer POST body; fall back to query for the legacy GET route. Body keeps
+    // passwords out of URLs/access logs.
+    const username = req.body?.username ?? req.query.username;
+    const password = req.body?.password ?? req.query.password;
 
-    await Staffusers.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i') } })
+    await Staffusers.findOne({ username: { $regex: new RegExp('^' + escapeRegex(username) + '$', 'i') } })
     .then(async user => {
 
         if (user && (await user.matchPassword(password))){
@@ -116,23 +135,26 @@ exports.authlogin = async(req, res) => {
                     let jwtoken = ""
 
                     try {
-                        jwtoken = await jsonwebtokenPromisified.sign(payload, privateKey, { algorithm: 'RS256' });
+                        jwtoken = await jsonwebtokenPromisified.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: ADMIN_TOKEN_TTL });
                     } catch (error) {
                         console.error('Error signing token:', error.message);
                         return res.status(500).json({ error: 'Internal Server Error', data: "There's a problem signing in! Please contact customer support for more details! Error 004" });
                     }
 
-                    res.cookie('sessionToken', jwtoken, { secure: true, sameSite: 'None' } )
+                    res.cookie('sessionToken', jwtoken, cookieOptions)
                     return res.json({message: "success", data: {
                             auth: user.auth
                         }
                     })
                 })
-                .catch(err => res.status(400).json({ message: "bad-request2", data: "There's a problem with your account! There's a problem with your account! Please contact customer support for more details."  + err }))
-           
+                .catch(err => {
+                    console.log(`Staff login token update error: ${err}`)
+                    return res.status(400).json({ message: "bad-request2", data: "There's a problem with your account! Please contact customer support for more details." })
+                })
+
         } else {
 
-            await Users.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i') } })
+            await Users.findOne({ username: { $regex: new RegExp('^' + escapeRegex(username) + '$', 'i') } })
             .then(async user => {
                 if (!user || !(await user.matchPassword(password))){
                     return res.status(401).json({ message: 'failed', data: 'Invalid username or password' });
@@ -152,28 +174,38 @@ exports.authlogin = async(req, res) => {
                    const payload = { id: user._id, username: user.username, status: user.status, token: token, auth: "player" }
                    
                    let jwtoken = ""
-                   
+
                    try {
-                       jwtoken = await jsonwebtokenPromisified.sign(payload, privateKey, { algorithm: 'RS256' });
+                       jwtoken = await jsonwebtokenPromisified.sign(payload, privateKey, { algorithm: 'RS256', expiresIn: PLAYER_TOKEN_TTL });
                     } catch (error) {
                         console.error('Error signing token:', error.message);
                         return res.status(500).json({ error: 'Internal Server Error', data: "There's a problem signing in! Please contact customer support for more details! Error 004" });
                     }
-                    
-                    res.cookie('sessionToken', jwtoken, { secure: true, sameSite: 'None' } )
+
+                    res.cookie('sessionToken', jwtoken, cookieOptions)
                     return res.json({message: "success", data: {
                         auth: "player",
                     }})
                 })
-                .catch(err => res.status(400).json({ message: "bad-request2", data: "There's a problem with your account! There's a problem with your account! Please contact customer support for more details."  + err }))
+                .catch(err => {
+                    console.log(`Player login token update error: ${err}`)
+                    return res.status(400).json({ message: "bad-request2", data: "There's a problem with your account! Please contact customer support for more details." })
+                })
             })
-            .catch(err => res.status(400).json({ message: "bad-request1", data: "There's a problem with your account! There's a problem with your account! Please contact customer support for more details." + err }))
+            .catch(err => {
+                console.log(`Player login error: ${err}`)
+                return res.status(400).json({ message: "bad-request1", data: "There's a problem with the server. Please try again later." })
+            })
         }
     })
-    .catch(err => res.status(400).json({ message: "bad-request1", data: "There's a problem with your account! There's a problem with your account! Please contact customer support for more details." + err }))
+    .catch(err => {
+        console.log(`Login error: ${err}`)
+        return res.status(400).json({ message: "bad-request1", data: "There's a problem with the server. Please try again later." })
+    })
 }
 
 exports.logout = async (req, res) => {
-    res.clearCookie('sessionToken', { path: '/' })
+    // Match the flags the cookie was set with so browsers actually clear it.
+    res.clearCookie('sessionToken', { httpOnly: true, secure: true, sameSite: 'None', path: '/' })
     return res.json({message: "success"})
 }

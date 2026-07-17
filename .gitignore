@@ -79,6 +79,12 @@ web_modules/
 .env.production.local
 .env.local
 
+# Cryptographic keys / secrets — must never be committed
+keys/
+*.pem
+*.key
+secure/
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

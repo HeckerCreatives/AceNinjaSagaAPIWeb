@@ -28,11 +28,15 @@ const StaffUsersSchema = new mongoose.Schema(
 )
 
 StaffUsersSchema.pre("save", async function (next) {
-    if (!this.isModified){
-        next();
+    // Only (re)hash when the password actually changed, otherwise every save
+    // would double-hash and break login. `isModified` is a method — it must be
+    // called with the field name.
+    if (!this.isModified('password')) {
+        return next();
     }
 
-    this.password = await bcrypt.hashSync(this.password, 10)
+    this.password = bcrypt.hashSync(this.password, 10)
+    return next();
 })
 
 StaffUsersSchema.methods.matchPassword = async function(password){

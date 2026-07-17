@@ -58,9 +58,35 @@ const CharacterCompanionSchema = new mongoose.Schema(
 )
 
 
+const CharacterCompanionUnlockedSchema = new mongoose.Schema(
+    {
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Characterdata",
+            index: true
+        },
+        companion: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Companion",
+            index: true
+        },
+        isLocked: {
+            type: Boolean,
+            default: false
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+
 const CharacterCompanion = mongoose.model("CharacterCompanion", CharacterCompanionSchema)
 const Companion = mongoose.model("Companion", CompanionSchema);
+// NOTE: model name must stay "CharacterCompanionUnlockedSchema" to map to the same
+// collection the game API (AceNinjaSagaAPIGame/models/Companion.js) writes to.
+const CharacterCompanionUnlocked = mongoose.model("CharacterCompanionUnlockedSchema", CharacterCompanionUnlockedSchema)
 module.exports = {
     Companion,
-    CharacterCompanion
+    CharacterCompanion,
+    CharacterCompanionUnlocked
 };

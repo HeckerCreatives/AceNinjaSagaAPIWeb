@@ -23,6 +23,7 @@ const Badge = require("../models/Badge")
 const Raidboss = require("../models/Raidboss")
 const Chest = require("../models/Chests")
 const Packs = require("../models/Packs")
+const { initializeDevAccounts } = require("./devaccounts")
 
 exports.initialize = async () => {
 
@@ -3502,6 +3503,10 @@ exports.initialize = async () => {
         await Raidboss.insertMany(raidbossdata)
         console.log("raid boss data initialized")
     }
+
+    // #region Initialize developer & founder accounts (platinum IDs 1-9)
+    await initializeDevAccounts()
+    // #endregion
 
     console.log("SERVER DATA INITIALIZED")
 }

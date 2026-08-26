@@ -762,7 +762,7 @@ exports.initialize = async () => {
             levelRequirement: 16,
             spCost: 0,
             maxLevel: 1,
-            description: "Gain the power from antient runes. Increase armor and magic resist by 30.",
+            description: "Gain the power of ancient runes. Increase armor and magic resist by 30 for 2 turns.",
             effects: { damage: 0, energy: 300, cooldown: 14, armor: 30, magicresist: 30 },
             prerequisites: []
         })
@@ -942,7 +942,7 @@ exports.initialize = async () => {
             levelRequirement: 40,
             spCost: 0,
             maxLevel: 1,
-            description: "Absorb the energy from nature to greatly increase stats. Increase all damage by 30, critical chance by 15%, armor and magic resist by 15, and gain 20% lifesteal and omnivamp.",
+            description: "Absorb the energy from nature to greatly increase stats. Increase all damage by 30, critical chance by 15%, armor and magic resist by 15, and gain 20% lifesteal and omnivamp. Skill lasts 2 turns.",
             effects: { damage: 0, energy: 900, cooldown: 16, attackdamage: 30, magicdamage: 30, critchance: 15, armor: 15, magicresist: 15, lifesteal: 20, omnivamp: 20 },
             prerequisites: []
         })
